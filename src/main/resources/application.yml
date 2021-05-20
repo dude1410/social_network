@@ -1,5 +1,19 @@
-spring.datasource.driver-class-name: org.postgresql.Driver
-spring.datasource.url:
-spring.datasource.username:
-spring.datasource.password:
+
+spring:
+  datasource:
+    url: jdbc:postgresql://31.40.251.201:5432/test?user=postgres&password=postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL92Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+  liquibase:
+    change-log: classpath:db.changelog/db.changelog-master.yaml
+    url: jdbc:postgresql://31.40.251.201:5432/test
+    user: postgres
+    password: postgres
+
+
+
 
