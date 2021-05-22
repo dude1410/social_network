@@ -4,7 +4,6 @@ import JavaPRO.model.ENUM.Role;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "person")
@@ -30,6 +29,9 @@ public class Person {
     @Column(name = "e_mail", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -40,10 +42,10 @@ public class Person {
     private String about;
 
     @Column(name = "town_id")
-    private String town;
+    private int town_id;
 
     @Column(name = "country_id")
-    private String country;
+    private int country_id;
 
 
     @Column(name = "confirmation_code")
@@ -137,12 +139,20 @@ public class Person {
         this.about = about;
     }
 
-    public String getTown() {
-        return town;
+    public int getTown_id() {
+        return town_id;
     }
 
-    public void setTown(String town) {
-        this.town = town;
+    public void setTown_id(int town_id) {
+        this.town_id = town_id;
+    }
+
+    public int getCountry_id() {
+        return country_id;
+    }
+
+    public void setCountry_id(int country_id) {
+        this.country_id = country_id;
     }
 
     public String getConfirmationCode() {
@@ -183,6 +193,14 @@ public class Person {
 
     public void setBlocked(boolean blocked) {
         isBlocked = blocked;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Role getRole() {
