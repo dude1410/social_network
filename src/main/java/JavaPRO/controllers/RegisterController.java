@@ -1,11 +1,10 @@
 package JavaPRO.controllers;
 
-import JavaPRO.Requests.RegisterRequest;
-import JavaPRO.Responses.Register.RegisterResponse;
-import JavaPRO.Services.RegisterService;
+import JavaPRO.api.request.RegisterRequest;
+import JavaPRO.api.response.RegisterErrorResponse;
+import JavaPRO.services.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +17,13 @@ public class RegisterController {
     }
 
     @PostMapping(value = "/api/v1/account/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> post(@RequestBody @Validated RegisterRequest registerRequest) {
+    public ResponseEntity<?> post(@RequestBody RegisterRequest registerRequest) {
         return new ResponseEntity<>(registerService.registerNewUser(registerRequest), HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        RegisterResponse registerResponse = new RegisterResponse("invalid_request", "bad request");
-        return new ResponseEntity<>(registerResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "error in response process"), HttpStatus.BAD_REQUEST);
     }
 
 }

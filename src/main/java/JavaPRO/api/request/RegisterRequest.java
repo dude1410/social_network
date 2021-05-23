@@ -1,4 +1,4 @@
-package JavaPRO.Requests;
+package JavaPRO.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
