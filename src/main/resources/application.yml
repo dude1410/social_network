@@ -14,7 +14,7 @@ spring:
     url: jdbc:postgresql://31.40.251.201:5432/test
     user: postgres
     password: postgres
-    enabled: false
+#    enabled: false
   mail:
     host: smtp.gmail.com
     post: 465
@@ -32,5 +32,5 @@ spring:
 #  session:
 #    jdbc:
 #      initialize-schema: always
-server:
-  port: 8086
+#server:
+#  port: 8086
