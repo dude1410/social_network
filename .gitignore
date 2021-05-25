@@ -156,3 +156,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of
+
+.idea/
+.target/
+
