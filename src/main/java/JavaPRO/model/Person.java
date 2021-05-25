@@ -1,9 +1,13 @@
 package JavaPRO.model;
 
 import JavaPRO.model.ENUM.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "person")
@@ -20,9 +24,13 @@ public class Person {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH-mm")
     @Column(name = "reg_date", nullable = false)
     private Date regDate;
 
+    @DateTimeFormat(pattern = "yyyy.MM.dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     @Column(name = "birth_date")
     private Date birthDate;
 
@@ -41,12 +49,36 @@ public class Person {
     @Column(name = "about")
     private String about;
 
-    @Column(name = "town_id")
-    private int town_id;
+    //  One town Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @ManyToOne
+////    @JoinColumn(name = "town_id")
+//    @JoinColumn(name = "town_id")
+//    private Town townId;
+//
+//    public void setTownId(Town townId) {
+//        this.townId = townId;
+//    }
+//
+//    public Town getTownId() {
+//        return townId;
+//    }
 
-    @Column(name = "country_id")
-    private int country_id;
+//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+//  One country Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @ManyToOne
+////    @JoinColumn(name = "country_id")
+//    @JoinColumn(name = "country_id")
+//    private Country countryId;
+//
+//    public Country getCountryId() {
+//        return countryId;
+//    }
+//
+//    public void setCountryId(Country countryId) {
+//        this.countryId = countryId;
+//    }
+//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     @Column(name = "confirmation_code")
     private String confirmationCode;
@@ -54,8 +86,20 @@ public class Person {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
 
-    @Column(name = "message_permission_id", nullable = false)
-    private Integer messagePermissionId;
+    //  One messagePermissionId Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @ManyToOne
+////    @JoinColumn(name = "message_permission_id")
+//    @JoinColumn(name = "message_permission_id", nullable = false)
+//    private MessagesPermission messagePermissionId;
+//
+//    public void setMessagePermissionId(MessagesPermission messagePermissionId) {
+//        this.messagePermissionId = messagePermissionId;
+//    }
+//
+//    public MessagesPermission getMessagePermissionId() {
+//        return messagePermissionId;
+//    }
+    //↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     @Column(name = "last_online_time", nullable = false)
     private Date lastOnlineTime;
@@ -65,6 +109,51 @@ public class Person {
 
     @Column(name = "role", nullable = false)
     private Integer role;
+
+
+    //  One notification Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @OneToMany(mappedBy = "person")
+//    private Set<Notification> notifications = new HashSet<>();
+//
+//    public Set<Notification> getNotifications() {
+//        return notifications;
+//    }
+//
+//    public boolean addNotification(Notification notification) {
+//        notification.setPersonId(this);
+//        return getNotifications().add(notification);
+//    }
+//
+//    public void removeNotification(Notification notification) {
+//        getNotifications().remove(notification);
+//    }
+//
+//    public void setNotifications(Set<Notification> notifications) {
+//        this.notifications = notifications;
+//    }
+//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+//  One user Many post ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<Post> posts = new HashSet<>();
+//
+//    public Set<Post> getPosts() {
+//        return posts;
+//    }
+//
+//    public boolean addPost(Post post) {
+//        post.setAuthorId(this);
+//        return getPosts().add(post);
+//    }
+//
+//    public void removePost(Post post) {
+//        getPosts().remove(post);
+//    }
+//
+//    public void setPosts(Set<Post> posts) {
+//        this.posts = posts;
+//    }
+//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 
     public Integer getId() {
@@ -139,22 +228,6 @@ public class Person {
         this.about = about;
     }
 
-    public int getTown_id() {
-        return town_id;
-    }
-
-    public void setTown_id(int town_id) {
-        this.town_id = town_id;
-    }
-
-    public int getCountry_id() {
-        return country_id;
-    }
-
-    public void setCountry_id(int country_id) {
-        this.country_id = country_id;
-    }
-
     public String getConfirmationCode() {
         return confirmationCode;
     }
@@ -169,14 +242,6 @@ public class Person {
 
     public void setApproved(boolean approved) {
         isApproved = approved;
-    }
-
-    public Integer getMessagePermissionId() {
-        return messagePermissionId;
-    }
-
-    public void setMessagePermissionId(Integer messagePermissionId) {
-        this.messagePermissionId = messagePermissionId;
     }
 
     public Date getLastOnlineTime() {
