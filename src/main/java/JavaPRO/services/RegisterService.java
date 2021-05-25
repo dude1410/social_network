@@ -35,7 +35,7 @@ public class RegisterService {
 
     // TODO: 20.05.2021
     private boolean userFindInDB(String email){
-        return true;
+        return false;
     }
 
     // TODO: 23.05.2021

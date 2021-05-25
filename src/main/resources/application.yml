@@ -17,18 +17,19 @@ spring:
     enabled: false
   mail:
     host: smtp.gmail.com
-    post: 465
+    port: 587
     username: devSocialLine@gmail.com
     password: ntcngjxnf12
     properties:
       mail:
-        debug: false
+        debug:
         transport:
           protocol: smtp
         smtp:
           auth: true
           starttls:
             enable: true
+
 server:
   port: 8086
 
