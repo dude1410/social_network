@@ -1,23 +1,24 @@
 package JavaPRO.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "town")
-public class Town {
+@Table(name = "messages_permission")
+public class MessagesPermission  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "permission")
     private String name;
 
-//  One person Many town ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @OneToMany(mappedBy = "town", orphanRemoval = true)
+    //  One messagePermissionId Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//    @OneToMany(mappedBy = "messages_permission")
 //    private Set<Person> person = new HashSet<>();
 //
 //    public Set<Person> getPerson() {
@@ -25,7 +26,7 @@ public class Town {
 //    }
 //
 //    public boolean addPerson(Person person) {
-//        person.setTownId(this);
+//        person.setMessagePermissionId(this);
 //        return getPerson().add(person);
 //    }
 //
@@ -36,8 +37,10 @@ public class Town {
 //    public void setPerson(Set<Person> person) {
 //        this.person = person;
 //    }
+    //↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
 
 
     public int getId() {

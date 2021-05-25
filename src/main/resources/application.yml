@@ -1,23 +1,23 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://31.40.251.201:5432/test?user=postgres&password=postgres
+    url: jdbc:postgresql://31.40.251.201:5432/testForMigration?user=postgres&password=postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL92Dialect
     show-sql: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     generate-ddl: true
   liquibase:
     change-log: classpath:db.changelog/db.changelog-master.yaml
-    url: jdbc:postgresql://31.40.251.201:5432/test
+    url: jdbc:postgresql://31.40.251.201:5432/testForMigration
     user: postgres
     password: postgres
-#  session:
-#    jdbc:
-#      initialize-schema: always
+    enabled: false
 
+server:
+  port: 8086
 
 
 
