@@ -15,7 +15,20 @@ spring:
     user: postgres
     password: postgres
     enabled: false
-
+  mail:
+    host: smtp.gmail.com
+    post: 465
+    username: devSocialLine@gmail.com
+    password: ntcngjxnf12
+    properties:
+      mail:
+        debug: false
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 8086
 
