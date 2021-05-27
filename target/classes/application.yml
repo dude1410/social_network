@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://31.40.251.201:5432/testForMigration?user=postgres&password=postgres
+    url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL92Dialect
@@ -11,9 +11,9 @@ spring:
     generate-ddl: true
   liquibase:
     change-log: classpath:db.changelog/db.changelog-master.yaml
-    url: jdbc:postgresql://31.40.251.201:5432/testForMigration
-    user: postgres
-    password: postgres
+    url: jdbc:postgresql://31.40.251.201:5432/javapro
+    user: javapro
+    password: iddqd
     enabled: false
   mail:
     host: smtp.gmail.com
@@ -22,7 +22,7 @@ spring:
     password: ntcngjxnf12
     properties:
       mail:
-        debug:
+        debug: true
         transport:
           protocol: smtp
         smtp:
