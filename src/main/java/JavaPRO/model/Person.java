@@ -1,5 +1,6 @@
 package JavaPRO.model;
 
+import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.ENUM.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,10 +19,10 @@ public class Person {
     @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false, length = 255)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false, length = 255)
     private String lastName;
 
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
@@ -34,51 +35,28 @@ public class Person {
     @Column(name = "birth_date")
     private Date birthDate;
 
-    @Column(name = "e_mail", nullable = false, unique = true)
+    @Column(name = "e_mail", nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 255)
     private String phone;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "photo")
+    @Column(name = "photo", length = 1000)
     private String photo;
 
-    @Column(name = "about")
+    @Column(name = "about", length = 1000)
     private String about;
 
-    //  One town Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "town_id")
-//    @JoinColumn(name = "town_id")
-//    private Town townId;
-//
-//    public void setTownId(Town townId) {
-//        this.townId = townId;
-//    }
-//
-//    public Town getTownId() {
-//        return townId;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "town_id")
+    private Town townId;
 
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-//  One country Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "country_id")
-//    @JoinColumn(name = "country_id")
-//    private Country countryId;
-//
-//    public Country getCountryId() {
-//        return countryId;
-//    }
-//
-//    public void setCountryId(Country countryId) {
-//        this.countryId = countryId;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private Country countryId;
 
     @Column(name = "confirmation_code")
     private String confirmationCode;
@@ -86,20 +64,9 @@ public class Person {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
 
-    //  One messagePermissionId Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "message_permission_id")
-//    @JoinColumn(name = "message_permission_id", nullable = false)
-//    private MessagesPermission messagePermissionId;
-//
-//    public void setMessagePermissionId(MessagesPermission messagePermissionId) {
-//        this.messagePermissionId = messagePermissionId;
-//    }
-//
-//    public MessagesPermission getMessagePermissionId() {
-//        return messagePermissionId;
-//    }
-    //↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "messages_permission", nullable = false)
+    private MessagesPermission messagesPermission;
 
     @Column(name = "last_online_time", nullable = false)
     private Date lastOnlineTime;
@@ -109,7 +76,6 @@ public class Person {
 
     @Column(name = "role", nullable = false)
     private Integer role;
-
 
     //  One notification Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 //    @OneToMany(mappedBy = "person")
@@ -154,7 +120,6 @@ public class Person {
 //        this.posts = posts;
 //    }
 //↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
 
     public Integer getId() {
         return id;
@@ -282,5 +247,27 @@ public class Person {
         this.role = role;
     }
 
+    public Town getTownId() {
+        return townId;
+    }
 
+    public void setTownId(Town townId) {
+        this.townId = townId;
+    }
+
+    public Country getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Country countryId) {
+        this.countryId = countryId;
+    }
+
+    public MessagesPermission getMessagesPermission() {
+        return messagesPermission;
+    }
+
+    public void setMessagesPermission(MessagesPermission messagesPermission) {
+        this.messagesPermission = messagesPermission;
+    }
 }

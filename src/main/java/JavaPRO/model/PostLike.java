@@ -20,11 +20,13 @@ public class PostLike {
     @Column(name = "time", nullable = false)
     private Date time;
 
-    @Column(name = "person_id", nullable = false)
-    private int personId;
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false)
+    private Person person;
 
-    @Column(name = "post_id", nullable = false)
-    private int postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     public int getId() {
         return id;
@@ -42,19 +44,19 @@ public class PostLike {
         this.time = time;
     }
 
-    public int getPersonId() {
-        return personId;
+    public Person getPerson() {
+        return this.person;
     }
 
-    public void setPersonId(int personId) {
-        this.personId = personId;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
-    public int getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 }
