@@ -2,6 +2,7 @@ package JavaPRO.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Parent;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -21,14 +22,17 @@ public class PostComment {
     @Column(name = "time", nullable = false)
     private Date time;
 
-    @Column(name = "post_id", nullable = false)
-    private int postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "parent_id", nullable = false)
-    private int parentId;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Person parent;
 
-    @Column(name = "author_id", nullable = false)
-    private int authorId;
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private Person author;
 
     @Column(name = "comment_text", nullable = false)
     private String commentText;
@@ -52,32 +56,32 @@ public class PostComment {
         this.time = time;
     }
 
-    public int getPostId() {
-        return postId;
+    public Post getPost() {
+        return this.post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public int getParentId() {
-        return parentId;
+    public Person getParent() {
+        return this.parent;
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
+    public void setParent(Person parent) {
+        this.parent = parent;
     }
 
-    public int getAuthorId() {
-        return authorId;
+    public Person getAuthor() {
+        return this.author;
     }
 
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void setAuthor(Person author) {
+        this.author = author;
     }
 
     public String getCommentText() {
-        return commentText;
+        return this.commentText;
     }
 
     public void setCommentText(String commentText) {
@@ -85,10 +89,10 @@ public class PostComment {
     }
 
     public boolean isBlocked() {
-        return isBlocked;
+        return this.isBlocked;
     }
 
-    public void setBlocked(boolean blocked) {
-        isBlocked = blocked;
+    public void setBlocked(boolean isBlocked) {
+        this.isBlocked = isBlocked;
     }
 }

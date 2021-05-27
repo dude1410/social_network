@@ -1,5 +1,6 @@
 package JavaPRO.model;
 
+import JavaPRO.model.ENUM.FriendshipStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,14 +17,17 @@ public class Friendship  implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "status_id")
-    private int statusId;
+    @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "status_id")
+    private FriendshipStatus status;
 
-    @Column(name = "src_person_id")
-    private int srcPersonId;
+    @ManyToOne
+    @JoinColumn(name = "src_person_id")
+    private Person srcPersonId;
 
-    @Column(name = "dst_person_id")
-    private int dstPersonId;
+    @ManyToOne
+    @JoinColumn(name = "dst_person_id")
+    private Person dstPersonId;
 
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH-mm")
@@ -38,27 +42,27 @@ public class Friendship  implements Serializable {
         this.id = id;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public FriendshipStatus getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatusId(FriendshipStatus status) {
+        this.status = status;
     }
 
-    public int getSrcPersonId() {
+    public Person getSrcPersonId() {
         return srcPersonId;
     }
 
-    public void setSrcPersonId(int srcPersonId) {
+    public void setSrcPersonId(Person srcPersonId) {
         this.srcPersonId = srcPersonId;
     }
 
-    public int getDstPersonId() {
+    public Person getDstPersonId() {
         return dstPersonId;
     }
 
-    public void setDstPersonId(int dstPersonId) {
+    public void setDstPersonId(Person dstPersonId) {
         this.dstPersonId = dstPersonId;
     }
 
