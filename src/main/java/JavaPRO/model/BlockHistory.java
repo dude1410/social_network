@@ -21,14 +21,17 @@ public class BlockHistory implements Serializable {
     @Column(name = "time", nullable = false)
     private Date time;
 
-    @Column(name = "person_id")
-    private int personId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id")
+    private Person personId; 
 
-    @Column(name = "post_id")
-    private int postId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
+    private Post postId;
 
-    @Column(name = "comment_id")
-    private int commentId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id")
+    private PostComment commentId;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
@@ -49,27 +52,27 @@ public class BlockHistory implements Serializable {
         this.time = time;
     }
 
-    public int getPersonId() {
+    public Person getPersonId() {
         return personId;
     }
 
-    public void setPersonId(int personId) {
+    public void setPersonId(Person personId) {
         this.personId = personId;
     }
 
-    public int getPostId() {
+    public Post getPostId() {
         return postId;
     }
 
-    public void setPostId(int postId) {
+    public void setPostId(Post postId) {
         this.postId = postId;
     }
 
-    public int getCommentId() {
+    public PostComment getCommentId() {
         return commentId;
     }
 
-    public void setCommentId(int commentId) {
+    public void setCommentId(PostComment commentId) {
         this.commentId = commentId;
     }
 

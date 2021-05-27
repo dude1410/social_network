@@ -11,13 +11,14 @@ public class PostFile {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "post_id", nullable = false)
-    private int postId;
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "path", nullable = false)
+    @Column(name = "path", nullable = false, length = 1000)
     private String path;
 
     public int getId() {
@@ -28,12 +29,12 @@ public class PostFile {
         this.id = id;
     }
 
-    public int getPostId() {
-        return postId;
+    public Post getPost() {
+        return this.post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getName() {

@@ -14,40 +14,21 @@ public class NotificationEntity  implements Serializable {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "post_id", nullable = false)
-    private int postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @Column(name = "post_comment_id", nullable = false)
-    private int postCommentId;
+    @ManyToOne
+    @JoinColumn(name = "post_comment_id")
+    private PostComment postComment;
 
-    @Column(name = "person_id", nullable = false)
-    private int personId;
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
 
-    @Column(name = "message_id", nullable = false)
-    private int messageId;
-
-//  One notification Many notification_entity ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @OneToMany(mappedBy = "notification_entity", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Notification> notifications = new HashSet<>();
-//
-//    public Set<Notification> getNotification() {
-//        return notifications;
-//    }
-//
-//    public boolean addNotification(Notification notification) {
-//        notification.setEntityId(this);
-//        return getNotification().add(notification);
-//    }
-//
-//    public void removeNotification(Notification notification) {
-//        getNotification().remove(notification);
-//    }
-//
-//    public void setNotification(Set<Notification> notification) {
-//        this.notifications = notification;
-//    }
-
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @ManyToOne
+    @JoinColumn(name = "message_id")
+    private Message message;
 
     public int getId() {
         return id;
@@ -57,35 +38,35 @@ public class NotificationEntity  implements Serializable {
         this.id = id;
     }
 
-    public int getPostId() {
-        return postId;
+    public Post getPost() {
+        return this.post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public int getPostCommentId() {
-        return postCommentId;
+    public PostComment getPostComment() {
+        return this.postComment;
     }
 
-    public void setPostCommentId(int postCommentId) {
-        this.postCommentId = postCommentId;
+    public void setPostComment(PostComment postComment) {
+        this.postComment = postComment;
     }
 
-    public int getPersonId() {
-        return personId;
+    public Person getPerson() {
+        return this.person;
     }
 
-    public void setPersonId(int personId) {
-        this.personId = personId;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
-    public int getMessageId() {
-        return messageId;
+    public Message getMessage() {
+        return this.message;
     }
 
-    public void setMessageId(int messageId) {
-        this.messageId = messageId;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 }

@@ -1,5 +1,6 @@
 package JavaPRO.model;
 
+import JavaPRO.model.ENUM.NotificationType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,55 +17,22 @@ public class Notification  implements Serializable {
     @Column(name = "id", nullable = false)
     private int id;
 
-//↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "type_id")
-//    @JoinColumn(name = "type_id", nullable = false)
-//    private NotificationType typeId;
-//
-//    public void setTypeId(NotificationType notificationTypes) {
-//        this.typeId = notificationTypes;
-//    }
-//
-//    public NotificationType getTypeId() {
-//        return typeId;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @Enumerated
+    @JoinColumn(name = "type_id", nullable = false)
+    private NotificationType notificationType;
 
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH-mm")
     @Column(name = "sent_time", nullable = false)
     private Date sentTime;
 
-//↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "person_id")
-//    @JoinColumn(name = "person_id", nullable = false)
-//    private Person personId;
-//
-//    public void setPersonId(Person personId) {
-//        this.personId = personId;
-//    }
-//
-//    public Person getPersonId(){
-//        return personId;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false)
+    private Person person;
 
-//↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "entity_id")
-//    @JoinColumn(name = "entity_id", nullable = false)
-//    private NotificationEntity entityId;
-//
-//    public NotificationEntity getEntityId() {
-//        return entityId;
-//    }
-//
-//    public void setEntityId(NotificationEntity entityId) {
-//        this.entityId = entityId;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @OneToOne
+    @JoinColumn(name = "entity_id", nullable = false)
+    private NotificationEntity entity;
 
     public int getId() {
         return id;
@@ -82,5 +50,27 @@ public class Notification  implements Serializable {
         this.sentTime = sentTime;
     }
 
+    public Person getPerson(){
+        return person;
+    }
 
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public NotificationEntity getNotificationEntity() {
+        return entity;
+    }
+
+    public void setNotificationEntity(NotificationEntity entity) {
+        this.entity = entity;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
 }

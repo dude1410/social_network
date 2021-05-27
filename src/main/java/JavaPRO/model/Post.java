@@ -20,20 +20,10 @@ public class Post {
     @Column(name = "time", nullable = false)
     private Date time;
 
-//  One user Many post ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @ManyToOne
-////    @JoinColumn(name = "author_id")
-//    @JoinColumn(name = "author_id", nullable = false)
-//    private Person authorId;
-//
-//    public void setAuthorId(Person authorId) {
-//        this.authorId = authorId;
-//    }
-//
-//    public Person getAuthorId() {
-//        return authorId;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private Person author;
+
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -81,5 +71,13 @@ public class Post {
 
     public void setBlocked(boolean blocked) {
         isBlocked = blocked;
+    }
+
+    public void setAuthorId(Person author) {
+        this.author = author;
+    }
+
+    public Person getAuthor() {
+        return author;
     }
 }
