@@ -1,9 +1,13 @@
 package JavaPRO.services;
 
+import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.OkResponse;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.config.MailConfig;
+import JavaPRO.model.ENUM.MessagesPermission;
+import JavaPRO.model.Person;
+import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,38 +23,69 @@ public class RegisterService {
     JavaMailSender javaMailSender;
 
     @Autowired
+    PersonRepository personRepository;
+
+    @Autowired
     MailConfig mailConfig;
 
     public OkResponse registerNewUser(RegisterRequest userInfo){
-
         if (userFindInDB(userInfo.getEmail())){
             return new OkResponse("registration error",
                     getTimestamp(), new ResponseData("the user was previously registered"));
         }
         else {
-            addUserInDB(userInfo);
-            sendRegistryMail(userInfo.getEmail());
+            String token = getToken();
+            int newUserId = addUserInDB(userInfo, token);
+            sendRegistryMail(newUserId, token, userInfo.getEmail());
             return new OkResponse("null", getTimestamp(), new ResponseData("OK"));
+        }
+    }
+
+    public OkResponse confirmRegistration(RegisterConfirmRequest registerConfirmRequest){
+        Integer userId = registerConfirmRequest.getUserId();
+        String token = registerConfirmRequest.getToken();
+        if (personRepository.findByIdAndCode(userId, token) != null) {
+            personRepository.setIsApprovedTrue(userId);
+            return new OkResponse("null", getTimestamp(), new ResponseData("OK"));
+        }
+        else {
+            return new OkResponse("confirm error",
+                    getTimestamp(), new ResponseData("error on confirm registration: user not found"));
         }
     }
 
     // TODO: 20.05.2021
     private boolean userFindInDB(String email){
-        return false;
+        return personRepository.findByEmail(email) != null;
     }
 
     // TODO: 23.05.2021
-    private void addUserInDB(RegisterRequest userInfo){}
+    private int addUserInDB(RegisterRequest userInfo, String token){
+        Person person = new Person();
+        person.setFirstName(userInfo.getFirstName());
+        person.setLastName(userInfo.getLastName());
+        person.setPassword(userInfo.getPasswd1());
+        person.setEmail(userInfo.getEmail());
+        person.setRegDate(new Date());
+        person.setApproved(false);
+        person.setMessagesPermission(MessagesPermission.ALL);
+        //уточнить
+        person.setRole(0);
+        //уточнить
+        person.setLastOnlineTime(new Date());
+        person.setConfirmationCode(token);
+        personRepository.save(person);
+        return person.getId();
+    }
 
-    private void sendRegistryMail(String email){
+    private void sendRegistryMail(int id, String token, String email){
         new Thread(() -> {
             final SimpleMailMessage simpleMail = new SimpleMailMessage();
             simpleMail.setFrom(mailConfig.getUsername());
             simpleMail.setTo(email);
             simpleMail.setSubject("Registration in Developers social network");
-            simpleMail.setText("Hello, to complete the registration, " +
-                    "follow to link http://localhost:8080/api/v1/account/register/complete?userId=1&token="
-                    + getToken());
+            simpleMail.setText("Hello, to complete the registration, " + "follow to link " +
+                    "http://localhost:8080/registration/complete?userId=" + id + "&token=" + token);
             javaMailSender.send(simpleMail);
         }).start();
     }
