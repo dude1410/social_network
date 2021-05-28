@@ -1,4 +1,4 @@
-package JavaPRO.api.controller;
+package JavaPRO.controller;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;

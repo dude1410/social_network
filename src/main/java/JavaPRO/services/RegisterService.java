@@ -4,6 +4,7 @@ import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.RegisterResponse;
 import JavaPRO.api.response.RegisterResponseData;
 import JavaPRO.config.MailConfig;
+import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,6 +32,7 @@ public class RegisterService {
             sendRegistryMail(userInfo.getEmail());
             return new RegisterResponse("null", getTimestamp(), new RegisterResponseData("OK"));
         }
+
     }
 
     // TODO: 20.05.2021
@@ -53,5 +55,7 @@ public class RegisterService {
     private Long getTimestamp(){
         return Long.parseLong(new SimpleDateFormat("ddMMyyHHmmSS").format(new Date()));
     }
+
+
 
 }

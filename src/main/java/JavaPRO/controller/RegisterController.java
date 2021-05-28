@@ -1,4 +1,4 @@
-package JavaPRO.controllers;
+package JavaPRO.controller;
 
 import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.RegisterErrorResponse;
