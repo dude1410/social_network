@@ -1,21 +1,16 @@
 package JavaPRO.controller;
 
-import JavaPRO.model.DTO.Auth.UnauthorizedUserDTO;
+import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.services.AuthService;
-import io.swagger.annotations.Api;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
-@Controller
-@RequestMapping("/api/v1/auth")
-@Api(value = "/api/v1/auth")
+@RestController
+//@Api(value = "/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -25,10 +20,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping(value = "/login",
+    @PostMapping(value = "/api/v1/auth/login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@RequestBody @Valid UnauthorizedUserDTO user, Errors error ) {
+    public ResponseEntity<?> login(@RequestBody UnauthorizedPersonDTO user, Errors error ) {
+
+        System.out.println(user.getEmail() + "--" + user.getPassword() + "  " + error.hasErrors()) ;
         return authService.loginUser(user, error);
     }
 }
