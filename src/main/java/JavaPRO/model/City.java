@@ -1,11 +1,10 @@
 package JavaPRO.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
-@Table(name = "country")
-public class Country  implements Serializable {
+@Table(name = "town")
+public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

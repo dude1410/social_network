@@ -3,13 +3,15 @@ package JavaPRO.model;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.ENUM.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "person")
 public class Person {
@@ -52,7 +54,7 @@ public class Person {
 
     @ManyToOne
     @JoinColumn(name = "town_id")
-    private Town townId;
+    private City cityId;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -77,49 +79,6 @@ public class Person {
     @Column(name = "role", nullable = false)
     private Integer role;
 
-    //  One notification Many person ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @OneToMany(mappedBy = "person")
-//    private Set<Notification> notifications = new HashSet<>();
-//
-//    public Set<Notification> getNotifications() {
-//        return notifications;
-//    }
-//
-//    public boolean addNotification(Notification notification) {
-//        notification.setPersonId(this);
-//        return getNotifications().add(notification);
-//    }
-//
-//    public void removeNotification(Notification notification) {
-//        getNotifications().remove(notification);
-//    }
-//
-//    public void setNotifications(Set<Notification> notifications) {
-//        this.notifications = notifications;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-//  One user Many post ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-//    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Post> posts = new HashSet<>();
-//
-//    public Set<Post> getPosts() {
-//        return posts;
-//    }
-//
-//    public boolean addPost(Post post) {
-//        post.setAuthorId(this);
-//        return getPosts().add(post);
-//    }
-//
-//    public void removePost(Post post) {
-//        getPosts().remove(post);
-//    }
-//
-//    public void setPosts(Set<Post> posts) {
-//        this.posts = posts;
-//    }
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     public Integer getId() {
         return id;
@@ -247,12 +206,12 @@ public class Person {
         this.role = role;
     }
 
-    public Town getTownId() {
-        return townId;
+    public City getTownId() {
+        return cityId;
     }
 
-    public void setTownId(Town townId) {
-        this.townId = townId;
+    public void setTownId(City cityId) {
+        this.cityId = cityId;
     }
 
     public Country getCountryId() {

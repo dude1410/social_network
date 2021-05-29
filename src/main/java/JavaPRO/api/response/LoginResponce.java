@@ -1,6 +1,6 @@
 package JavaPRO.api.response;
 
-import JavaPRO.model.DTO.Auth.AuthorizedUser;
+import JavaPRO.model.DTO.Auth.AuthorizedPerson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -16,5 +16,5 @@ public class LoginResponce {
     @JsonProperty
     private Long timestamp;
     @JsonProperty
-    private AuthorizedUser data;
+    private AuthorizedPerson data;
 }

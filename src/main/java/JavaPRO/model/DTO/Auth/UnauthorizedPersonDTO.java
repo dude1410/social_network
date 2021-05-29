@@ -13,11 +13,8 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @ToString
-public class UnauthorizedUserDTO {
+public class UnauthorizedPersonDTO {
 
-    /**
-     * DTO for a user to be authorized
-     */
     @JsonProperty(value = "e_mail")
     @NotBlank(message = Config.STRING_FIELD_CANT_BE_BLANK)
     @Email(message = Config.STRING_AUTH_INVALID_EMAIL)

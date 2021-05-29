@@ -12,8 +12,8 @@ spring:
   liquibase:
     change-log: classpath:db.changelog/db.changelog-master.yaml
     url: jdbc:postgresql://31.40.251.201:5432/javapro
-    user: postgres
-    password: postgres
+    user: javapro
+    password: iddqd
     enabled: false
   mail:
     host: smtp.gmail.com

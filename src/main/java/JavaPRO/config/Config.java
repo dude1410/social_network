@@ -11,4 +11,5 @@ public class Config {
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 
+
 }
