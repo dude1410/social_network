@@ -61,11 +61,8 @@ public class AuthorizedPerson {
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
-//    @JsonProperty(value = "token")
-//    private String token = "1q2e3e3r4t5";
-
-    @JsonProperty(value = "password")
-    private String password;
+    @JsonProperty(value = "token")
+    private String token;
 
 
 }
