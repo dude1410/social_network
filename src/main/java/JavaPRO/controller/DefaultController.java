@@ -1,4 +1,5 @@
 package JavaPRO.controller;
+package JavaPRO.controllers;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,7 @@ public class DefaultController {
     @ApiOperation(value = "Получение настроек")
     @GetMapping("/")
     public String index() {
-        return "redirect:/swagger-ui.html";
+        return "index";
     }
 
 

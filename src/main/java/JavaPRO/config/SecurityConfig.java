@@ -76,5 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  implements Web
                 .allowedOrigins("http://localhost:8080")
                 .allowCredentials(true)
                 .allowedMethods("*");
+                .allowedMethods("*")
+                .allowCredentials(true);
     }
 }

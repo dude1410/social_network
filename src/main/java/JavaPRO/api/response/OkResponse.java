@@ -3,17 +3,17 @@ package JavaPRO.api.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class RegisterResponse {
+public class OkResponse {
 
     @JsonProperty
     private String error;
     @JsonProperty
     private Long timestamp;
     @JsonProperty
-    private RegisterResponseData data;
+    private ResponseData data;
 
 
-    public RegisterResponse(String error, Long timestamp, RegisterResponseData data) {
+    public OkResponse(String error, Long timestamp, ResponseData data) {
         this.error = error;
         this.timestamp = timestamp;
         this.data = data;
@@ -35,11 +35,11 @@ public class RegisterResponse {
         this.timestamp = timestamp;
     }
 
-    public RegisterResponseData getData() {
+    public ResponseData getData() {
         return data;
     }
 
-    public void setData(RegisterResponseData data) {
+    public void setData(ResponseData data) {
         this.data = data;
     }
 }

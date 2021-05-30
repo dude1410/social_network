@@ -22,7 +22,7 @@ spring:
     password: ntcngjxnf12
     properties:
       mail:
-        debug:
+        debug: true
         transport:
           protocol: smtp
         smtp:

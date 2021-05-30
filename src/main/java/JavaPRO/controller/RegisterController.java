@@ -1,5 +1,6 @@
 package JavaPRO.controller;
 
+import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.RegisterErrorResponse;
 import JavaPRO.services.RegisterService;
@@ -17,8 +18,13 @@ public class RegisterController {
     }
 
     @PostMapping(value = "/api/v1/account/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> post(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> registration(@RequestBody RegisterRequest registerRequest) {
         return new ResponseEntity<>(registerService.registerNewUser(registerRequest), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/api/v1/account/register/confirm", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> registrationConfirm(@RequestBody RegisterConfirmRequest registerConfirmRequest) {
+        return new ResponseEntity<>(registerService.confirmRegistration(registerConfirmRequest), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
