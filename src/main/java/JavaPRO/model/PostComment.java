@@ -2,15 +2,17 @@ package JavaPRO.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.Parent;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "post_comment")
-public class PostComment {
+public class PostComment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,59 +42,4 @@ public class PostComment {
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public Post getPost() {
-        return this.post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public Person getParent() {
-        return this.parent;
-    }
-
-    public void setParent(Person parent) {
-        this.parent = parent;
-    }
-
-    public Person getAuthor() {
-        return this.author;
-    }
-
-    public void setAuthor(Person author) {
-        this.author = author;
-    }
-
-    public String getCommentText() {
-        return this.commentText;
-    }
-
-    public void setCommentText(String commentText) {
-        this.commentText = commentText;
-    }
-
-    public boolean isBlocked() {
-        return this.isBlocked;
-    }
-
-    public void setBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
-    }
 }

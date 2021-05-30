@@ -1,7 +1,11 @@
 package JavaPRO.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class RegisterRequest {
 
     @JsonProperty
@@ -16,37 +20,4 @@ public class RegisterRequest {
     private String lastName;
     @JsonProperty
     private String code;
-
-    public RegisterRequest(String email, String passwd1, String passwd2, String firstName, String lastName, String code) {
-        this.email = email;
-        this.passwd1 = passwd1;
-        this.passwd2 = passwd2;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.code = code;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPasswd1() {
-        return passwd1;
-    }
-
-    public String getPasswd2() {
-        return passwd2;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getCode() {
-        return code;
-    }
 }
