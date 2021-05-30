@@ -1,12 +1,14 @@
 package JavaPRO.model;
 
+import lombok.Data;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
-import java.util.List;
 
+@Data
 @Embeddable
 public class PostTagPK implements Serializable {
 

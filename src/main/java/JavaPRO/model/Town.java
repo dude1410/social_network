@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "country")
-public class Country  implements Serializable {
+@Table(name = "town")
+public class Town implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,5 @@ public class Country  implements Serializable {
 
     @Column(name = "name")
     private String name;
-
 
 }

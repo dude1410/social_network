@@ -19,7 +19,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     @Query("SELECT p " +
             "FROM Person p " +
-            "LEFT JOIN City c ON p.cityId.id = c.id  " +
+            "LEFT JOIN Town t ON p.townId.id = t.id  " +
             "LEFT JOIN Country co ON p.countryId.id = co.id " +
             "WHERE p.email =:email ")
     Person findByEmailForLogin(@Param("email") String email);

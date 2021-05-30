@@ -1,9 +1,8 @@
-package JavaPRO.controllers;
+package JavaPRO.controller;
 
 import JavaPRO.api.request.OnlyMailRequest;
-import JavaPRO.api.response.RegisterErrorResponse;
+import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.services.PassRecoveryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +27,6 @@ public class PassRecoveryController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "error in response process"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("invalid_request", "error in response process"), HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,6 +1,7 @@
 package JavaPRO.model.DTO;
 
-public class Country {
+public class CountryDTO {
+
     private Long id;
     private String name;
 

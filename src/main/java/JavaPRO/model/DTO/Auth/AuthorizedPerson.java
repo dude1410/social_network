@@ -1,8 +1,8 @@
 package JavaPRO.model.DTO.Auth;
 
 
-import JavaPRO.model.DTO.Country;
-import JavaPRO.model.City;
+import JavaPRO.model.DTO.CountryDTO;
+import JavaPRO.model.DTO.TownDTO;
 import JavaPRO.model.ENUM.MessagesPermission;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,10 +47,10 @@ public class AuthorizedPerson {
     private String about;
 
     @JsonProperty(value = "town")
-    private City city;
+    private TownDTO town;
 
     @JsonProperty(value = "country")
-    private Country country;
+    private CountryDTO country;
 
     @JsonProperty(value = "messages_permission")
     private MessagesPermission messagesPermission;

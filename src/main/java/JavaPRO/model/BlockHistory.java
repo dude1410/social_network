@@ -1,12 +1,14 @@
 package JavaPRO.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "block_history")
 public class BlockHistory implements Serializable {
@@ -36,51 +38,5 @@ public class BlockHistory implements Serializable {
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public Person getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(Person personId) {
-        this.personId = personId;
-    }
-
-    public Post getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Post postId) {
-        this.postId = postId;
-    }
-
-    public PostComment getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(PostComment commentId) {
-        this.commentId = commentId;
-    }
-
-    public boolean isBlocked() {
-        return isBlocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        isBlocked = blocked;
-    }
 }
