@@ -5,6 +5,7 @@ import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.OkResponse;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.config.MailConfig;
+import JavaPRO.repository.PersonRepository;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
@@ -120,4 +121,6 @@ public class RegisterService {
             throw new RuntimeException(ex);
         }
     }
+
+
 }

@@ -1,12 +1,15 @@
-package JavaPRO.controllers;
+package JavaPRO.controller;
 
 import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
-import JavaPRO.api.response.RegisterErrorResponse;
+import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.services.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RegisterController {
@@ -29,7 +32,7 @@ public class RegisterController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "error in response process"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("invalid_request", "error in response process"), HttpStatus.BAD_REQUEST);
     }
 
 }

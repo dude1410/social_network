@@ -2,12 +2,14 @@ package JavaPRO.model;
 
 import JavaPRO.model.ENUM.ReadStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "message")
 public class Message  implements Serializable {
@@ -37,51 +39,4 @@ public class Message  implements Serializable {
     @Column(name = "read_status", nullable = false)
     private ReadStatus readStatus;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public Person getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(Person authorId) {
-        this.authorId = authorId;
-    }
-
-    public Person getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(Person recipientId) {
-        this.recipientId = recipientId;
-    }
-
-    public String getMessageText() {
-        return messageText;
-    }
-
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
-    }
-
-    public ReadStatus getReadStatus() {
-        return readStatus;
-    }
-
-    public void setReadStatus(ReadStatus readStatus) {
-        this.readStatus = readStatus;
-    }
 }
