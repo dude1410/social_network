@@ -1,9 +1,11 @@
 package JavaPRO.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class ErrorResponse {
 
     @JsonProperty(value = "error")
