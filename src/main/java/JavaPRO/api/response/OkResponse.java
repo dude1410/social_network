@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OkResponse {
+public class OkResponse implements Response{
 
     @JsonProperty
     private String error;

@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginResponce {
+public class LoginResponce implements Response{
 
     @JsonProperty
     private String error;
