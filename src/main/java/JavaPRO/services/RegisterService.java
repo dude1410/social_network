@@ -4,11 +4,13 @@ import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +29,10 @@ public class RegisterService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<?> registerNewUser(RegisterRequest userInfo){
+    @Value("${spring.mail.address}")
+    private String address;
+
+    public ResponseEntity<Response> registerNewUser(RegisterRequest userInfo){
         if (userFindInDB(userInfo.getEmail())){
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "user previously registered"), HttpStatus.BAD_REQUEST);
         }
@@ -35,14 +40,14 @@ public class RegisterService {
             String token = getToken();
             int newUserId = addUserInDB(userInfo, token);
             String messageBody = "Hello, to complete the registration follow to link " +
-                                "<a href=\"http://localhost:8080/registration/complete?userId=" +
+                                "<a href=\"" + address + "/registration/complete?userId=" +
                                 newUserId + "&token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
     }
 
-    public ResponseEntity<?> confirmRegistration(RegisterConfirmRequest registerConfirmRequest){
+    public ResponseEntity<Response> confirmRegistration(RegisterConfirmRequest registerConfirmRequest){
         Integer userId = registerConfirmRequest.getUserId();
         String token = registerConfirmRequest.getToken();
         Person person = personRepository.findByIdAndCode(userId, token);

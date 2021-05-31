@@ -16,6 +16,7 @@ spring:
     password: iddqd
     enabled: false
   mail:
+    address: http://localhost:8080
     host: smtp.gmail.com
     port: 587
     username: devSocialLine@gmail.com
@@ -32,6 +33,7 @@ spring:
 
 server:
   port: 8086
+
 
 
 

@@ -8,10 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ErrorResponse implements Response{
 
-    @JsonProperty(value = "error")
     private String error;
     @JsonProperty(value = "error_description")
     private String errorDescription;
-
-
 }

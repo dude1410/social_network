@@ -1,14 +1,14 @@
-package JavaPRO.controllers;
+package JavaPRO.controller;
 
 import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
+import JavaPRO.api.response.Response;
 import JavaPRO.services.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 @RestController
 public class RegisterController {
@@ -20,17 +20,17 @@ public class RegisterController {
     }
 
     @PostMapping(value = "/api/v1/account/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> registration(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<Response> registration(@RequestBody RegisterRequest registerRequest) {
         return registerService.registerNewUser(registerRequest);
     }
 
     @PostMapping(value = "/api/v1/account/register/confirm", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> registrationConfirm(@RequestBody @Valid RegisterConfirmRequest registerConfirmRequest) {
+    public ResponseEntity<Response> registrationConfirm(@RequestBody RegisterConfirmRequest registerConfirmRequest) {
         return registerService.confirmRegistration(registerConfirmRequest);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<HttpStatus> handleException(Exception e) {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 

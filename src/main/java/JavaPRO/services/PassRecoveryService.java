@@ -3,10 +3,12 @@ package JavaPRO.services;
 import JavaPRO.api.request.SetPasswordRequest;
 import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +27,14 @@ public class PassRecoveryService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<?> passRecovery(String email){
+    @Value("${spring.mail.address}")
+    private String address;
+
+    public ResponseEntity<Response> passRecovery(String email){
         Person person = personRepository.findByEmail(email);
         if (person != null) {
             String messageBody = "Hello, to recovery your password follow to link " +
-                                "<a href=\"http://localhost:8080/change-password?token=" +
+                                "<a href=\"" + address + "/change-password?token=" +
                                 person.getConfirmationCode() + "\">Password recovery</a>";
             emailService.sendMail("Recovery password in social network", messageBody, email);
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
@@ -39,7 +44,7 @@ public class PassRecoveryService {
         }
     }
 
-    public ResponseEntity<?> setNewPassword(SetPasswordRequest setPasswordRequest){
+    public ResponseEntity<Response> setNewPassword(SetPasswordRequest setPasswordRequest){
         String token = setPasswordRequest.getToken();
         String password = setPasswordRequest.getPassword();
         Person person = personRepository.findByConfirmationCode(token);

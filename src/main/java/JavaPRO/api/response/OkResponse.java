@@ -8,11 +8,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class OkResponse implements Response{
 
-    @JsonProperty
-    private String error;
-    @JsonProperty
-    private Long timestamp;
-    @JsonProperty
-    private ResponseData data;
 
+    private String error;
+
+    private Long timestamp;
+
+    private ResponseData data;
 }
