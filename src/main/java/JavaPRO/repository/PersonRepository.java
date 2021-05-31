@@ -16,15 +16,12 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "WHERE p.email = :email ")
     Person findByEmail(@Param("email") String email);
 
-
     @Query("SELECT p " +
             "FROM Person p " +
             "LEFT JOIN Town t ON p.townId.id = t.id  " +
             "LEFT JOIN Country co ON p.countryId.id = co.id " +
             "WHERE p.email =:email ")
     Person findByEmailForLogin(@Param("email") String email);
-
-
 
     @Query("SELECT p " +
             "FROM Person p " +

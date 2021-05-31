@@ -17,36 +17,15 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String username;
 
-
-    public void sendRegistryMail(int id, String token, String email){
+    public void sendMail(String subject, String messageBody, String email){
         new Thread(() -> {
             MimeMessage message = javaMailSender.createMimeMessage();
             try {
-                String str = "Hello, to complete the registration, " + "follow to link " +
-                        "<a href=\"http://localhost:8080/registration/complete?userId=" + id + "&token=" + token + "\">Confirm registration</a>";
                 MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
                 messageHelper.setFrom(username);
                 messageHelper.setTo(email);
-                messageHelper.setSubject("Registration in Developers social network");
-                message.setContent(str, "text/html");
-                javaMailSender.send(message);
-            } catch (MessagingException e){
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    public void sendRecoveryMail(String token, String email){
-        new Thread(() -> {
-            MimeMessage message = javaMailSender.createMimeMessage();
-            try {
-                String str = "Hello, to recovery your password follow to link " +
-                        "<a href=\"http://localhost:8080/change-password?token=" + token + "\">Password recovery</a>";
-                MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-                messageHelper.setFrom(username);
-                messageHelper.setTo(email);
-                messageHelper.setSubject("Password recovery in Developers social network");
-                message.setContent(str, "text/html");
+                messageHelper.setSubject(subject);
+                message.setContent(messageBody, "text/html");
                 javaMailSender.send(message);
             } catch (MessagingException e){
                 e.printStackTrace();

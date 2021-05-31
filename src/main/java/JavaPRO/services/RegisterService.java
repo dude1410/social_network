@@ -2,17 +2,15 @@ package JavaPRO.services;
 
 import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
+import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
-import JavaPRO.api.response.RegisterErrorResponse;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -29,19 +27,17 @@ public class RegisterService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     public ResponseEntity<?> registerNewUser(RegisterRequest userInfo){
         if (userFindInDB(userInfo.getEmail())){
-            return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "user previously registered"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse("invalid_request", "user previously registered"), HttpStatus.BAD_REQUEST);
         }
         else {
             String token = getToken();
             int newUserId = addUserInDB(userInfo, token);
-            emailService.sendRegistryMail(newUserId, token, userInfo.getEmail());
+            String messageBody = "Hello, to complete the registration follow to link " +
+                                "<a href=\"http://localhost:8080/registration/complete?userId=" +
+                                newUserId + "&token=" + token + "\">Confirm registration</a>";
+            emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
     }
@@ -55,21 +51,19 @@ public class RegisterService {
                 return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
-                return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
 
             }
         }
         else {
-            return new ResponseEntity<>(new RegisterErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // TODO: 20.05.2021
     private boolean userFindInDB(String email){
         return personRepository.findByEmail(email) != null;
     }
 
-    // TODO: 23.05.2021
     private int addUserInDB(RegisterRequest userInfo, String token){
         Person person = new Person();
         person.setFirstName(userInfo.getFirstName());
