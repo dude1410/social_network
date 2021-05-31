@@ -1,8 +1,7 @@
 package JavaPRO.services;
 
 import JavaPRO.Util.PersonToDtoMapper;
-import JavaPRO.api.response.ErrorResponse;
-import JavaPRO.api.response.LoginResponce;
+import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
@@ -38,7 +37,7 @@ public class AuthService {
     }
 
 
-    public ResponseEntity<?> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
+    public ResponseEntity<Response> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
 
         if (validationErrors.hasErrors()) {
             return ResponseEntity
@@ -86,4 +85,13 @@ public class AuthService {
     }
 
 
+    public ResponseEntity<Response> logout() {
+        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("invalid_request", "unsuccessfully"));
+        }
+        return ResponseEntity.ok(new OkResponse("successfully", new Date().getTime(), new ResponseData("ok")));
+    }
 }
