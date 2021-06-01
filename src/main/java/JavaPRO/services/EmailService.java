@@ -42,12 +42,13 @@ public class EmailService {
         if (mailSupportRequest.getEmail() == null) {
             return ResponseEntity
                     .badRequest()
-                    .body(new OkResponse("BAD REQUEST", new Date().getTime(), new ResponseData("NO EMAIL FOUND")));
+                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
         }
         if (mailSupportRequest.getText() == null) {
             return ResponseEntity
                     .badRequest()
-                    .body(new OkResponse("BAD REQUEST", new Date().getTime(), new ResponseData("NO TEXT MESSAGE FOUND")));
+                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
+
         }
        sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()), mailSupportRequest.getText(), mailSupportRequest.getEmail());
         return ResponseEntity
