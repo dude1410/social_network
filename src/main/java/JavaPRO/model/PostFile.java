@@ -16,7 +16,7 @@ public class PostFile implements Serializable {
     private int id;
 
     @OneToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
     private Post post;
 
     @Column(name = "name", nullable = false)

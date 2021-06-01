@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "notification")
-public class Notification  implements Serializable {
+public class Notification implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,11 @@ public class Notification  implements Serializable {
     private Date sentTime;
 
     @ManyToOne
-    @JoinColumn(name = "person_id", nullable = false)
+    @JoinColumn(name = "person_id", nullable = false, foreignKey = @ForeignKey(name = "FK_person_id"))
     private Person person;
 
     @OneToOne
-    @JoinColumn(name = "entity_id", nullable = false)
+    @JoinColumn(name = "entity_id", nullable = false, foreignKey = @ForeignKey(name = "FK_entity_id"))
     private NotificationEntity entity;
 
 

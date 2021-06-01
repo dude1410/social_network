@@ -11,12 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "post2tag")
 public class PostToTag implements Serializable {
-/*
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    */
+
     @EmbeddedId
     private PostTagPK id;
 
