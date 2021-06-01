@@ -24,15 +24,15 @@ public class BlockHistory implements Serializable {
     private Date time;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "person_id")
-    private Person personId; 
+    @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "FK_person_id"))
+    private Person personId;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
     private Post postId;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "FK_comment_id"))
     private PostComment commentId;
 
     @Column(name = "is_blocked", nullable = false)

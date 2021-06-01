@@ -1,11 +1,7 @@
 package JavaPRO.model;
 
 import lombok.Data;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -13,11 +9,11 @@ import java.io.Serializable;
 public class PostTagPK implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
     private Post post;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tag_id", nullable = false)
+    @JoinColumn(name = "tag_id", nullable = false, foreignKey = @ForeignKey(name = "FK_tag_id"))
     private Tag tag;
 
     public PostTagPK(Post post, Tag tag){

@@ -13,10 +13,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "person")
+@Table(name = "person",
+        uniqueConstraints =
+        @UniqueConstraint(columnNames = {"e_mail"}, name = "uq_email")
+)
 public class Person implements Serializable {
 
     @Id
@@ -24,10 +25,10 @@ public class Person implements Serializable {
     @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
-    @Column(name = "first_name", nullable = false, length = 255)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 255)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
@@ -40,13 +41,13 @@ public class Person implements Serializable {
     @Column(name = "birth_date")
     private Date birthDate;
 
-    @Column(name = "e_mail", nullable = false, unique = true, length = 255)
+    @Column(name = "e_mail", nullable = false)
     private String email;
 
-    @Column(name = "phone", length = 255)
+    @Column(name = "phone")
     private String phone;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "photo", length = 1000)
@@ -56,11 +57,11 @@ public class Person implements Serializable {
     private String about;
 
     @ManyToOne
-    @JoinColumn(name = "town_id")
+    @JoinColumn(name = "town_id", foreignKey = @ForeignKey(name = "FK_town_id"))
     private Town townId;
 
     @ManyToOne
-    @JoinColumn(name = "country_id")
+    @JoinColumn(name = "country_id", foreignKey = @ForeignKey(name = "FK_country_id"))
     private Country countryId;
 
     @Column(name = "confirmation_code")

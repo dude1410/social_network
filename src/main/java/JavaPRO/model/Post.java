@@ -24,7 +24,7 @@ public class Post implements Serializable {
     private Date time;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "FK_author_id"))
     private Person author;
 
     @Column(name = "title", nullable = false)
