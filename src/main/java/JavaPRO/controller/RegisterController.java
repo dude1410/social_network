@@ -1,6 +1,6 @@
 package JavaPRO.controller;
 
-import JavaPRO.api.request.MailRequest;
+import JavaPRO.api.request.MailSupportRequest;
 import JavaPRO.api.request.RegisterConfirmRequest;
 import JavaPRO.api.request.RegisterRequest;
 import JavaPRO.api.response.Response;
@@ -36,7 +36,7 @@ public class RegisterController {
     }
 
     @PostMapping("/support")
-    public ResponseEntity<Response> mailSupport (@RequestBody MailRequest request){
+    public ResponseEntity<Response> mailSupport (@RequestBody MailSupportRequest request){
         return emailService.sendMailToSupport(request);
     }
 

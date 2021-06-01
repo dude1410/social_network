@@ -1,6 +1,6 @@
 package JavaPRO.services;
 
-import JavaPRO.api.request.MailRequest;
+import JavaPRO.api.request.MailSupportRequest;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +38,19 @@ public class EmailService {
         }).start();
     }
 
-    public ResponseEntity<Response> sendMailToSupport(MailRequest mailRequest){
-        if (mailRequest.getEmail() == null) {
+    public ResponseEntity<Response> sendMailToSupport(MailSupportRequest mailSupportRequest){
+        if (mailSupportRequest.getEmail() == null) {
             return ResponseEntity
                     .badRequest()
                     .body(new OkResponse("BAD REQUEST", new Date().getTime(), new ResponseData("NO EMAIL FOUND")));
         }
-        if (mailRequest.getText() == null) {
+        if (mailSupportRequest.getText() == null) {
             return ResponseEntity
                     .badRequest()
                     .body(new OkResponse("BAD REQUEST", new Date().getTime(), new ResponseData("NO TEXT MESSAGE FOUND")));
         }
-       sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailRequest.getEmail()), mailRequest.getText(), mailRequest.getEmail());
+       sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()), mailSupportRequest.getText(), mailSupportRequest.getEmail());
         return ResponseEntity
-                .ok(new OkResponse("SUCCESS", new Date().getTime(), new ResponseData(Config.STRING_MAIL_TO_SUPPORT_RESPONSE)));
+                .ok(new MailSupportResponse(true, Config.STRING_MAIL_TO_SUPPORT_RESPONSE));
     }
 }
