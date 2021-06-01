@@ -16,15 +16,12 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "WHERE p.email = :email ")
     Person findByEmail(@Param("email") String email);
 
-
     @Query("SELECT p " +
             "FROM Person p " +
             "LEFT JOIN Town t ON p.townId.id = t.id  " +
             "LEFT JOIN Country co ON p.countryId.id = co.id " +
             "WHERE p.email =:email ")
     Person findByEmailForLogin(@Param("email") String email);
-
-
 
     @Query("SELECT p " +
             "FROM Person p " +
@@ -36,4 +33,11 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     @Transactional
     @Query("UPDATE Person p SET p.isApproved = true WHERE p.id = :id")
     Integer setIsApprovedTrue(@Param("id") int id);
+
+    Person findByConfirmationCode(String confirmationCode);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Person p SET p.password = :newPassword WHERE p.confirmationCode = :code")
+    Integer setNewPassword(@Param("newPassword") String newPassword, @Param("code") String code);
 }

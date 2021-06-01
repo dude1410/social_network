@@ -6,13 +6,12 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OkResponse {
+public class OkResponse implements Response{
 
-    @JsonProperty
+
     private String error;
-    @JsonProperty
-    private Long timestamp;
-    @JsonProperty
-    private ResponseData data;
 
+    private Long timestamp;
+
+    private ResponseData data;
 }

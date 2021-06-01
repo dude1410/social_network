@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class ResponseData {
 
-    @JsonProperty
     private String message;
-
-
-
 }
