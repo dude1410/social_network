@@ -1,11 +1,17 @@
 package JavaPRO.services;
 
+import JavaPRO.api.request.SetPasswordRequest;
+import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
-import JavaPRO.config.MailConfig;
+import JavaPRO.model.Person;
+import JavaPRO.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 
@@ -13,49 +19,49 @@ import java.util.Date;
 public class PassRecoveryService {
 
     @Autowired
-    JavaMailSender javaMailSender;
+    EmailService emailService;
 
     @Autowired
-    MailConfig mailConfig;
+    PersonRepository personRepository;
 
-    public OkResponse passRecovery(String email){
-        if (userFindInDB(email)) {
-            sendRecoveryMail(email);
-            return new OkResponse("null",
-                    getTimestamp(), new ResponseData("OK"));
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Value("${spring.mail.address}")
+    private String address;
+
+    public ResponseEntity<Response> passRecovery(String email){
+        Person person = personRepository.findByEmail(email);
+        if (person != null) {
+            String messageBody = "Hello, to recovery your password follow to link " +
+                                "<a href=\"" + address + "/change-password?token=" +
+                                person.getConfirmationCode() + "\">Password recovery</a>";
+            emailService.sendMail("Recovery password in social network", messageBody, email);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {
-            return new OkResponse("password recovery error",
-                    getTimestamp(), new ResponseData("the user not found in database"));
+            return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // TODO: 27.05.2021
-    private boolean userFindInDB(String email){
-        return true;
-    }
-
-    private void sendRecoveryMail(String email){
-        new Thread(() -> {
-            final SimpleMailMessage simpleMail = new SimpleMailMessage();
-            simpleMail.setFrom(mailConfig.getUsername());
-            simpleMail.setTo(email);
-            simpleMail.setSubject("Recovery password in Developers social network");
-            simpleMail.setText("Hello, to recover your password follow to link http://localhost:8080/password/reset/" + getToken());
-            javaMailSender.send(simpleMail);
-        }).start();
+    public ResponseEntity<Response> setNewPassword(SetPasswordRequest setPasswordRequest){
+        String token = setPasswordRequest.getToken();
+        String password = setPasswordRequest.getPassword();
+        Person person = personRepository.findByConfirmationCode(token);
+        if (person == null) {
+            return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
+        }
+        else {
+            if (personRepository.setNewPassword(passwordEncoder.encode(password), token) != null) {
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
+            }
+        }
     }
 
     private Long getTimestamp(){
         return (new Date().getTime() / 1000);
-    }
-
-    private String getToken(){
-        StringBuilder token = new StringBuilder();
-        String strMass = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-        for (int i = 0; i < 10; i++){
-            token.append(strMass.charAt((int) (Math.random() * (strMass.length()))));
-        }
-        return token.toString();
     }
 }

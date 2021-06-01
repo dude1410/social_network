@@ -5,8 +5,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class OnlyMailRequest {
+public class SetPasswordRequest {
 
-    private String email;
+    String token;
 
+    String password;
 }
