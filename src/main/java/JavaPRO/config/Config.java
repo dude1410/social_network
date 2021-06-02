@@ -14,6 +14,7 @@ public class Config {
     public static final String STRING_MAIL_TO_SUPPORT_NO_EMAIL = "Не указана (указана неверно) почта для обратной связи";
     public static final String STRING_MAIL_TO_SUPPORT_NO_TEXT = "Поле для текста обращения должно быть заполнено";
 
+    public static final String STRING_AUTH_UNAUTHORISED = "Пользователь не авторизован.";
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 
 
