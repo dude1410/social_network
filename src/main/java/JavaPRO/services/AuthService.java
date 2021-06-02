@@ -70,7 +70,7 @@ public class AuthService {
             log.info(String.format("Wrong password for user with email '%s'!", email));
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("passord error", Config.STRING_AUTH_WRONG_PASSWORD));
+                    .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
         }
         log.info(String.format("Correct password for user with email '%s'!", email));
 
