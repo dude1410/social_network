@@ -44,13 +44,14 @@ public class EmailService {
                     .badRequest()
                     .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
         }
-        if (mailSupportRequest.getText() == null) {
+        if (mailSupportRequest.getText() == null || mailSupportRequest.getText().isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
-
+                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
         }
-       sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()), mailSupportRequest.getText(), mailSupportRequest.getEmail());
+       sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()),
+               mailSupportRequest.getText(),
+               mailSupportRequest.getEmail()); // todo: "request.getEmail" change to "username"
         return ResponseEntity
                 .ok(new MailSupportResponse(true, Config.STRING_MAIL_TO_SUPPORT_RESPONSE));
     }
