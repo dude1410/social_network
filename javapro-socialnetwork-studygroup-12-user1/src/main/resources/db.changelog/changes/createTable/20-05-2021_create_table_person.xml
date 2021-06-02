@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="team12" id="20-05-2021_create_table_person">
+        <createTable tableName="person">
+            <column name="id" type="INT4" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="first_name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reg_date" type="TIMESTAMP"/>
+            <column name="birth_date" type="TIMESTAMP"/>
+            <column name="e_mail" type="TEXT">
+                <constraints unique="true" uniqueConstraintName="e_mail"/>
+            </column>
+            <column name="phone" type="TEXT"/>
+            <column name="password" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo" type="TEXT"/>
+            <column name="about" type="TEXT"/>
+            <column name="town_id" type="INT4"/>
+            <column name="country_id" type="INT4"/>
+            <column name="confirmation_code" type="TEXT"/>
+            <column name="is_approved" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="INT4"/>
+            <column name="message_permission_id" type="INT4"/>
+            <column name="last_online_time" type="TIMESTAMP"/>
+            <column name="is_blocked" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
