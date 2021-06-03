@@ -20,9 +20,11 @@ public class PersonToDtoMapper {
         modelMapper.createTypeMap(JavaPRO.model.Town.class, TownDTO.class);
         modelMapper.createTypeMap(Country.class, JavaPRO.model.DTO.CountryDTO.class);
 
+
     }
 
     public AuthorizedPerson convertToDto(Person entity) {
         return modelMapper.map(entity, AuthorizedPerson.class);
     }
+
 }
