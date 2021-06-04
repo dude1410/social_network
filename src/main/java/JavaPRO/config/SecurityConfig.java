@@ -1,5 +1,6 @@
 package JavaPRO.config;
 
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +22,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter  implements WebMvcConfigurer {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+
 
 
     private final UserDetailsService userDetailsService;
@@ -37,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  implements Web
 
         http
                 .csrf().disable()
-                .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
                 .anyRequest()
@@ -73,7 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  implements Web
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080")
+//                .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://31.40.251.201:80")
                 .allowCredentials(true)
                 .allowedMethods("*");
     }

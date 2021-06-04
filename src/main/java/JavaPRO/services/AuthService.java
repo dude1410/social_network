@@ -1,8 +1,7 @@
 package JavaPRO.services;
 
 import JavaPRO.Util.PersonToDtoMapper;
-import JavaPRO.api.response.ErrorResponse;
-import JavaPRO.api.response.LoginResponce;
+import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
@@ -15,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 
 @Slf4j
@@ -38,7 +37,7 @@ public class AuthService {
     }
 
 
-    public ResponseEntity<?> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
+    public ResponseEntity<Response> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
 
         if (validationErrors.hasErrors()) {
             return ResponseEntity
@@ -71,7 +70,7 @@ public class AuthService {
             log.info(String.format("Wrong password for user with email '%s'!", email));
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("passord error", Config.STRING_AUTH_WRONG_PASSWORD));
+                    .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
         }
         log.info(String.format("Correct password for user with email '%s'!", email));
 
@@ -82,8 +81,18 @@ public class AuthService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         return ResponseEntity
-                .ok(new LoginResponce("successfully", new Date().getTime(), authorizedPerson));
+                .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
 
 
+    public ResponseEntity<Response> logout() {
+        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+        log.info(String.format("Result of logout: Is Authenticated? '%s'", SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("invalid_request", "unsuccessfully"));
+        }
+        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()), new ResponseData("ok")));
+    }
 }

@@ -5,14 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginRequest {
+public class MailSupportRequest {
 
     private String email;
-
-    private String password;
-
-
-
+    private String text;
 }
-
-

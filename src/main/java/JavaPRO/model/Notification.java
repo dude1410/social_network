@@ -2,15 +2,17 @@ package JavaPRO.model;
 
 import JavaPRO.model.ENUM.NotificationType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "notification")
-public class Notification  implements Serializable {
+public class Notification implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +20,7 @@ public class Notification  implements Serializable {
     private int id;
 
     @Enumerated
-    @JoinColumn(name = "type_id", nullable = false)
+    @JoinColumn(name = "notification_type", nullable = false)
     private NotificationType notificationType;
 
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
@@ -27,50 +29,12 @@ public class Notification  implements Serializable {
     private Date sentTime;
 
     @ManyToOne
-    @JoinColumn(name = "person_id", nullable = false)
+    @JoinColumn(name = "person_id", nullable = false, foreignKey = @ForeignKey(name = "FK_person_id"))
     private Person person;
 
     @OneToOne
-    @JoinColumn(name = "entity_id", nullable = false)
+    @JoinColumn(name = "entity_id", nullable = false, foreignKey = @ForeignKey(name = "FK_entity_id"))
     private NotificationEntity entity;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getSentTime() {
-        return sentTime;
-    }
-
-    public void setSentTime(Date sentTime) {
-        this.sentTime = sentTime;
-    }
-
-    public Person getPerson(){
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public NotificationEntity getNotificationEntity() {
-        return entity;
-    }
-
-    public void setNotificationEntity(NotificationEntity entity) {
-        this.entity = entity;
-    }
-
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
-
-    public void setNotificationType(NotificationType notificationType) {
-        this.notificationType = notificationType;
-    }
 }

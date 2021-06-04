@@ -8,7 +8,7 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: none
-    generate-ddl: true
+    generate-ddl: false
   liquibase:
     change-log: classpath:db.changelog/db.changelog-master.yaml
     url: jdbc:postgresql://31.40.251.201:5432/javapro
@@ -16,13 +16,14 @@ spring:
     password: iddqd
     enabled: false
   mail:
+    address: http://localhost:8080
     host: smtp.gmail.com
     port: 587
     username: devSocialLine@gmail.com
     password: ntcngjxnf12
     properties:
       mail:
-        debug:
+        debug: true
         transport:
           protocol: smtp
         smtp:
@@ -32,6 +33,7 @@ spring:
 
 server:
   port: 8086
+
 
 
 

@@ -1,25 +1,19 @@
 package JavaPRO.model;
 
-import javax.persistence.*;
-import java.util.List;
+import lombok.Data;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+@Data
 @Entity
 @Table(name = "post2tag")
-public class PostToTag {
-/*
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    */
+public class PostToTag implements Serializable {
+
     @EmbeddedId
     private PostTagPK id;
 
-    public PostTagPK getId() {
-        return id;
-    }
 
-    public void setId(PostTagPK id) {
-        this.id = id;
-    }
 }

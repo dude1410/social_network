@@ -24,4 +24,6 @@ public class UnauthorizedPersonDTO {
     @Size(min = 6, max = 255, message = Config.STRING_AUTH_SHORT_PASSWORD)
     private final String password;
 
+
+//TODO: слить с LoginRequest
 }

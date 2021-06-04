@@ -1,19 +1,17 @@
 package JavaPRO.api.response;
 
 import JavaPRO.model.DTO.Auth.AuthorizedPerson;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
-public class LoginResponce {
+public class LoginResponce implements Response{
 
-    @JsonProperty
+
     private String error;
-    @JsonProperty
+
     private Long timestamp;
-    @JsonProperty
+
     private AuthorizedPerson data;
 }
