@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 
 @Slf4j
@@ -81,17 +81,18 @@ public class AuthService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         return ResponseEntity
-                .ok(new LoginResponce("successfully", new Date().getTime(), authorizedPerson));
+                .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
 
 
     public ResponseEntity<Response> logout() {
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+        log.info(String.format("Result of logout: Is Authenticated? '%s'", SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("invalid_request", "unsuccessfully"));
         }
-        return ResponseEntity.ok(new OkResponse("successfully", new Date().getTime(), new ResponseData("ok")));
+        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()), new ResponseData("ok")));
     }
 }

@@ -8,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.Date;
-
 
 @Data
 @Getter
@@ -29,10 +27,10 @@ public class AuthorizedPerson {
     private String lastName;
 
     @JsonProperty(value = "reg_date")
-    private Date regDate;
+    private Long regDate;
 
     @JsonProperty(value = "birth_date")
-    private Date birthDate;
+    private Long birthDate;
 
     @JsonProperty(value = "email")
     private String email;
@@ -56,13 +54,13 @@ public class AuthorizedPerson {
     private MessagesPermission messagesPermission;
 
     @JsonProperty(value = "last_online_time")
-    private Date lastOnlineTime;
+    private Long lastOnlineTime;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
     @JsonProperty(value = "token")
-    private String token;
+    private String token = "3453wjwerkkjk";
 
 
 }
