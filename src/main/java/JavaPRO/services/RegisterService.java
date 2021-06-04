@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Service
@@ -75,11 +77,11 @@ public class RegisterService {
         person.setLastName(userInfo.getLastName());
         person.setPassword(passwordEncoder.encode(userInfo.getPasswd1()));
         person.setEmail(userInfo.getEmail());
-        person.setRegDate(new Date());
+        person.setRegDate(new Timestamp(System.currentTimeMillis()));
         person.setApproved(false);
         person.setMessagesPermission(MessagesPermission.ALL);
         person.setRole(0);
-        person.setLastOnlineTime(new Date());
+        person.setLastOnlineTime(new Timestamp(System.currentTimeMillis()));
         person.setConfirmationCode(token);
         personRepository.save(person);
         return person.getId();
