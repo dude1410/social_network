@@ -12,7 +12,7 @@ public class OkResponse implements Response{
 
     private String error;
 
-    private long timestamp;
+    private Long timestamp;
 
     private ResponseData data;
 }
