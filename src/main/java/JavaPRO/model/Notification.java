@@ -19,8 +19,7 @@ public class Notification implements Serializable {
     @Column(name = "id", nullable = false)
     private int id;
 
-
-    @Enumerated(EnumType.STRING)
+    @Enumerated
     @JoinColumn(name = "notification_type", nullable = false)
     private NotificationType notificationType;
 
