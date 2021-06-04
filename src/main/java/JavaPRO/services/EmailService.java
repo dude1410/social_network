@@ -35,7 +35,7 @@ public class EmailService {
                 messageHelper.setFrom(username);
                 messageHelper.setTo(email);
                 messageHelper.setSubject(subject);
-                message.setContent(messageBody, "text/html");
+                message.setContent(messageBody, "text/html; charset=UTF-8");
                 javaMailSender.send(message);
             } catch (MessagingException e){
                 e.printStackTrace();
@@ -67,7 +67,7 @@ public class EmailService {
         System.out.println(mailSupportRequest.getText());
        sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()),
                mailSupportRequest.getText(),
-               mailSupportRequest.getEmail()); // todo: "request.getEmail" change to "username"
+               username);
         return ResponseEntity
                 .ok(new MailSupportResponse(true, Config.STRING_MAIL_TO_SUPPORT_RESPONSE));
     }
