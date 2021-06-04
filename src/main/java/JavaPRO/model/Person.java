@@ -2,15 +2,11 @@ package JavaPRO.model;
 
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.ENUM.Role;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -31,15 +27,11 @@ public class Person implements Serializable {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH-mm")
     @Column(name = "reg_date", nullable = false)
-    private Date regDate;
+    private Timestamp regDate;
 
-    @DateTimeFormat(pattern = "yyyy.MM.dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     @Column(name = "birth_date")
-    private Date birthDate;
+    private Timestamp birthDate;
 
     @Column(name = "e_mail", nullable = false)
     private String email;
@@ -75,7 +67,7 @@ public class Person implements Serializable {
     private MessagesPermission messagesPermission;
 
     @Column(name = "last_online_time", nullable = false)
-    private Date lastOnlineTime;
+    private Timestamp lastOnlineTime;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;

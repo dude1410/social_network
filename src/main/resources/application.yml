@@ -31,8 +31,6 @@ spring:
           starttls:
             enable: true
     default-encoding: UTF-8
-
-
 server:
   port: 8086
 

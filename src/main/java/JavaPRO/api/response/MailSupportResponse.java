@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class MailSupportResponse implements Response {
-
-    private boolean sent;
+    private boolean isSent;
     private String text;
 }
