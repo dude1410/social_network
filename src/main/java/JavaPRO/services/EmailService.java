@@ -1,7 +1,8 @@
 package JavaPRO.services;
 
 import JavaPRO.api.request.MailSupportRequest;
-import JavaPRO.api.response.*;
+import JavaPRO.api.response.MailSupportResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.regex.Matcher;
