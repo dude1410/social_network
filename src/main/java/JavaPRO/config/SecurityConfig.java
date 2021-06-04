@@ -41,8 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
-                .anyRequest()
-                .authenticated()
+                .antMatchers("/logs").permitAll()
+                .antMatchers("/login").permitAll()
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -74,8 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-//                .allowedOrigins("http://localhost:8080")
-                .allowedOrigins("http://31.40.251.201:80")
+                .allowedOrigins("http://31.40.251.201:80","http://localhost:8080")
                 .allowCredentials(true)
                 .allowedMethods("*");
     }
