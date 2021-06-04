@@ -14,5 +14,4 @@ public class MailConfig {
     public String getUsername() {
         return username;
     }
-
 }
