@@ -43,7 +43,7 @@ public class RegisterService {
                                 "<a href=\"" + address + "/registration/complete?userId=" +
                                 newUserId + "&token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
         }
     }
 
@@ -53,7 +53,7 @@ public class RegisterService {
         Person person = personRepository.findByIdAndCode(userId, token);
         if (personRepository.findByIdAndCode(userId, token) != null && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(userId) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);

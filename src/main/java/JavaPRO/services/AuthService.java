@@ -101,6 +101,6 @@ public class AuthService {
                     .badRequest()
                     .body(new ErrorResponse("invalid_request", "unsuccessfully"));
         }
-        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()), new ResponseData("ok")));
+        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), new ResponseData("ok")));
     }
 }

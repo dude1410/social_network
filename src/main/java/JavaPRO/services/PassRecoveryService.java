@@ -37,7 +37,7 @@ public class PassRecoveryService {
                                 "<a href=\"" + address + "/change-password?token=" +
                                 person.getConfirmationCode() + "\">Password recovery</a>";
             emailService.sendMail("Recovery password in social network", messageBody, email);
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
@@ -53,7 +53,7 @@ public class PassRecoveryService {
         }
         else {
             if (personRepository.setNewPassword(passwordEncoder.encode(password), token) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
