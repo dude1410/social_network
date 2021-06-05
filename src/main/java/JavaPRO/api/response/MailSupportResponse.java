@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ResponseData {
-
-    private String message;
+public class MailSupportResponse implements Response {
+    private boolean isSent;
+    private String text;
 }

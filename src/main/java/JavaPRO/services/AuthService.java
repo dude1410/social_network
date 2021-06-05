@@ -3,9 +3,12 @@ package JavaPRO.services;
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
+import JavaPRO.controller.LoggingController;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,12 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 
 @Slf4j
 @Service
 public class AuthService {
+    private final Logger logger = LogManager.getLogger(LoggingController.class);
+
     private final PersonRepository personRepository;
     private final AuthenticationManager authenticationManager;
     private final PersonToDtoMapper personToDtoMapper;
@@ -39,6 +44,8 @@ public class AuthService {
 
     public ResponseEntity<Response> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
 
+        logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
+
         if (validationErrors.hasErrors()) {
             return ResponseEntity
                     .badRequest()
@@ -53,26 +60,27 @@ public class AuthService {
                     .badRequest()
                     .body(new ErrorResponse("invalid_request", Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD));
 
-        log.info(String.format("Trying to authenticate user with email '%s' ", email));
+        logger.info(String.format("Trying to authenticate user with email '%s' ", email));
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
 
         if (userFromDB == null) {
-            log.info(String.format("User with email '%s' is not found!", email));
+
+            logger.info(String.format("User with email '%s' is not found!", email));
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("e-mail not found", Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
         }
-        log.info(String.format("User with email '%s' found: %s", email, userFromDB));
+        logger.info(String.format("User with email '%s' found: '%s'", email, userFromDB.getEmail()));
 
         if (!passwordEncoder.matches(password, userFromDB.getPassword())) {
             log.info(String.format("Wrong password for user with email '%s'!", email));
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("passord error", Config.STRING_AUTH_WRONG_PASSWORD));
+                    .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
         }
-        log.info(String.format("Correct password for user with email '%s'!", email));
+        logger.info(String.format("Correct password for user with email '%s'!", email));
 
         var authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -81,17 +89,18 @@ public class AuthService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         return ResponseEntity
-                .ok(new LoginResponce("successfully", new Date().getTime(), authorizedPerson));
+                .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
 
 
     public ResponseEntity<Response> logout() {
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+        logger.info(String.format("Result of logout: Is Authenticated? '%s'", SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("invalid_request", "unsuccessfully"));
         }
-        return ResponseEntity.ok(new OkResponse("successfully", new Date().getTime(), new ResponseData("ok")));
+        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), new ResponseData("ok")));
     }
 }

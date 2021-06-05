@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Service
@@ -33,11 +35,11 @@ public class PassRecoveryService {
     public ResponseEntity<Response> passRecovery(String email){
         Person person = personRepository.findByEmail(email);
         if (person != null) {
-            String messageBody = "Для восстановления пароля следуйте по ссылке " +
+            String messageBody = "Hello, to recovery your password follow to link " +
                                 "<a href=\"" + address + "/change-password?token=" +
                                 person.getConfirmationCode() + "\">Password recovery</a>";
-            emailService.sendMail("Восстановление пароля", messageBody, email);
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            emailService.sendMail("Recovery password in social network", messageBody, email);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
@@ -53,7 +55,7 @@ public class PassRecoveryService {
         }
         else {
             if (personRepository.setNewPassword(passwordEncoder.encode(password), token) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
