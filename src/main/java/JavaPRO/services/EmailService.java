@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 
 @Service
 public class EmailService {
@@ -21,11 +22,11 @@ public class EmailService {
         new Thread(() -> {
             MimeMessage message = javaMailSender.createMimeMessage();
             try {
-                MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
+                MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
                 messageHelper.setFrom(username);
                 messageHelper.setTo(email);
                 messageHelper.setSubject(subject);
-                message.setContent(messageBody, "text/html");
+                message.setContent(messageBody, "text/html; charset=UTF-8");
                 javaMailSender.send(message);
             } catch (MessagingException e){
                 e.printStackTrace();

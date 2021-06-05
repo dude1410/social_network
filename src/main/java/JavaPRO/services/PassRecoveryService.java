@@ -33,10 +33,10 @@ public class PassRecoveryService {
     public ResponseEntity<Response> passRecovery(String email){
         Person person = personRepository.findByEmail(email);
         if (person != null) {
-            String messageBody = "Hello, to recovery your password follow to link " +
+            String messageBody = "Для восстановления пароля следуйте по ссылке " +
                                 "<a href=\"" + address + "/change-password?token=" +
                                 person.getConfirmationCode() + "\">Password recovery</a>";
-            emailService.sendMail("Recovery password in social network", messageBody, email);
+            emailService.sendMail("Восстановление пароля", messageBody, email);
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {

@@ -40,4 +40,9 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     @Transactional
     @Query("UPDATE Person p SET p.password = :newPassword WHERE p.confirmationCode = :code")
     Integer setNewPassword(@Param("newPassword") String newPassword, @Param("code") String code);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Person p SET p.email = :newMail WHERE p.id = :id")
+    Integer setNewMail(@Param("newMail") String newMail, @Param("id") int id);
 }
