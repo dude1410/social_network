@@ -15,6 +15,7 @@ spring:
     user: javapro
     password: iddqd
     enabled: true
+    contexts: dev
   mail:
     address: http://localhost:8080
     host: smtp.gmail.com

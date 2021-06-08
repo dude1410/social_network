@@ -15,6 +15,7 @@ spring:
     user: javapro
     password: iddqd
     enabled: true
+    contexts: prod
   mail:
     address: http://31.40.251.201/
     host: smtp.gmail.com
@@ -35,5 +36,6 @@ server:
   port: 8086
 logging:
   config: src/main/resources/log4j2-spring-prod.xml
+
 
 

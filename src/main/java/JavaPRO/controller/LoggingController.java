@@ -44,6 +44,5 @@ public class LoggingController {
             logsList.add(l);
         }
         return logsList;
-
     }
 }
