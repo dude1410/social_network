@@ -18,7 +18,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public Docket api() {
-        var groupName = "Swagger";
+        String groupName = "Swagger";
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
