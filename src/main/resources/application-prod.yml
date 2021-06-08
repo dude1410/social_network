@@ -16,7 +16,7 @@ spring:
     password: iddqd
     enabled: true
   mail:
-    address: http://31.40.251.201
+    address: http://31.40.251.201/
     host: smtp.gmail.com
     port: 587
     username: devSocialLine@gmail.com
