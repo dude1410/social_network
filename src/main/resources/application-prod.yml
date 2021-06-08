@@ -36,6 +36,6 @@ server:
   port: 8086
 logging:
   config: src/main/resources/log4j2-spring-prod.xml
-
+classpath: log4j2-spring-dev.xml
 
 
