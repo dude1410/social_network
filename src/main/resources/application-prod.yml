@@ -10,7 +10,7 @@ spring:
       ddl-auto: none
     generate-ddl: false
   liquibase:
-    change-log: classpath:db.changelog/db.changelog-master.yaml
+    change-log: classpath:db.changelog/db.changelog.xml
     url: jdbc:postgresql://31.40.251.201:5432/javapro
     user: javapro
     password: iddqd

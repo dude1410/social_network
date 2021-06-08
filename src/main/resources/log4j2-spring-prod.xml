@@ -10,12 +10,6 @@
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
-            <Policies>
-                <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy
-                        size="5 MB"/>
-                <TimeBasedTriggeringPolicy/>
-            </Policies>
         </File>
     </Appenders>
 
