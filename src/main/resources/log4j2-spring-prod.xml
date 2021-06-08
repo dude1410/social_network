@@ -6,7 +6,7 @@
                     pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable"/>
         </Console>
         <File name="File"
-              fileName="./logs/logger.log">
+              fileName="/home/javapro/javapro-socialnetwork-studygroup-12/logs/logger.log">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
