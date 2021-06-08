@@ -16,8 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Profile("dev")
 @Configuration
@@ -40,10 +44,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
         http
                 .csrf().disable()
+                .headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(new WhiteListedAllowFromStrategy(Arrays
+                        .asList("http://localhost:8086/policy.html",
+                                "http://localhost:8086/personal-data.html")))).disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
                 .antMatchers("/logs").permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/**").permitAll()
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
