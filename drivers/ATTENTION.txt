@@ -1,0 +1,5 @@
+Хром драйвер нужно использовать в соответствии с версией вашего Google Chrome
+Ссылка на драйвер:
+https://sites.google.com/a/chromium.org/chromedriver/downloads
+
+Сейчас стоит 91.0.4472.19 для Windows :)

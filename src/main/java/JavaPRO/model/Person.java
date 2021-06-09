@@ -63,6 +63,7 @@ public class Person implements Serializable {
     private boolean isApproved;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "messages_permission")
     @JoinColumn(name = "messages_permission", nullable = false)
     private MessagesPermission messagesPermission;
 
