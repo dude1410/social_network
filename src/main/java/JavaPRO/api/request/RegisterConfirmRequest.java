@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterConfirmRequest {
 
-    private Integer userId;
-
     private String token;
 
 }

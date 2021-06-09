@@ -32,17 +32,13 @@ public class RegisterController {
 
     @PostMapping(value = "/account/register/confirm", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Response> registrationConfirm(@RequestBody RegisterConfirmRequest registerConfirmRequest) {
+        System.out.println("get request");
         return registerService.confirmRegistration(registerConfirmRequest);
     }
 
     @PostMapping("/support")
     public ResponseEntity<Response> mailSupport (@RequestBody MailSupportRequest request){
         return emailService.sendMailToSupport(request);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpStatus> handleException(Exception e) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

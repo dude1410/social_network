@@ -9,7 +9,6 @@ import JavaPRO.api.response.ResponseData;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,45 +21,46 @@ import java.util.Date;
 @Service
 public class RegisterService {
 
-    @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final PersonRepository personRepository;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Value("${spring.mail.address}")
     private String address;
+
+    public RegisterService(PersonRepository personRepository,
+                           EmailService emailService,
+                           PasswordEncoder passwordEncoder,
+                           TokenService tokenService) {
+        this.personRepository = personRepository;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
+    }
 
     public ResponseEntity<Response> registerNewUser(RegisterRequest userInfo){
         if (userFindInDB(userInfo.getEmail())){
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "user previously registered"), HttpStatus.BAD_REQUEST);
         }
         else {
-            String token = getToken();
-            int newUserId = addUserInDB(userInfo, token);
-            String messageBody = "Hello, to complete the registration follow to link " +
-                                "<a href=\"" + address + "/registration/complete?userId=" +
-                                newUserId + "&token=" + token + "\">Confirm registration</a>";
-            emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
+            String token = tokenService.getToken();
+            if (addUserInDB(userInfo, token) != null) {
+                emailService.sendMail("Registration in social network", getConfirmMessage(token), userInfo.getEmail());
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(new ErrorResponse("invalid_request", "user not add"), HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
-    public ResponseEntity<Response> confirmRegistration(RegisterConfirmRequest registerConfirmRequest){
-        Integer userId = registerConfirmRequest.getUserId();
+    public ResponseEntity<Response> confirmRegistration(RegisterConfirmRequest registerConfirmRequest) {
         String token = registerConfirmRequest.getToken();
-        Person person = personRepository.findByIdAndCode(userId, token);
-        if (personRepository.findByIdAndCode(userId, token) != null && !person.isApproved()) {
-            if (personRepository.setIsApprovedTrue(userId) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
-            }
-            else {
-                return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
-
-            }
+        Person person = personRepository.findByConfirmationCode(token);
+        if (person != null && !person.isApproved() && tokenService.checkToken(token)) {
+            person.setApproved(true);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
@@ -71,7 +71,7 @@ public class RegisterService {
         return personRepository.findByEmail(email) != null;
     }
 
-    private int addUserInDB(RegisterRequest userInfo, String token){
+    private Integer addUserInDB(RegisterRequest userInfo, String token){
         Person person = new Person();
         person.setFirstName(userInfo.getFirstName());
         person.setLastName(userInfo.getLastName());
@@ -91,12 +91,10 @@ public class RegisterService {
         return (new Date().getTime() / 1000);
     }
 
-    private String getToken(){
-        StringBuilder token = new StringBuilder();
-        String strMass = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-        for (int i = 0; i < 10; i++){
-            token.append(strMass.charAt((int) (Math.random() * (strMass.length()))));
-        }
-        return passwordEncoder.encode(token.toString());
+    private String getConfirmMessage(String token){
+        return  "Hello, to complete the registration follow to link " +
+                "<a href=\"" + address +
+                "/registration/complete?token=" +
+                token + "\">Confirm registration</a>";
     }
 }

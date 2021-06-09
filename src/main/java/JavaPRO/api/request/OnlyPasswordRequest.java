@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class OnlyMailRequest {
+public class OnlyPasswordRequest {
 
-    private String email;
-
+    String password;
 }

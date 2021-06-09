@@ -4,13 +4,11 @@ import JavaPRO.api.request.MailSupportRequest;
 import JavaPRO.api.response.MailSupportResponse;
 import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.regex.Pattern;
@@ -19,8 +17,11 @@ import java.util.regex.Pattern;
 @Service
 public class EmailService {
 
-    @Autowired
-    JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
+
+    public EmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     @Value("${spring.mail.username}")
     private String username;
@@ -65,7 +66,6 @@ public class EmailService {
                     .badRequest()
                     .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
         }
-        System.out.println(mailSupportRequest.getText());
         sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()),
                 mailSupportRequest.getText(),
                 username);

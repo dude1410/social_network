@@ -14,7 +14,7 @@ spring:
     url: jdbc:postgresql://31.40.251.201:5432/javapro
     user: javapro
     password: iddqd
-    enabled: false
+    enabled: true
   mail:
     address: http://localhost:8080
     host: smtp.gmail.com
@@ -30,10 +30,9 @@ spring:
           auth: true
           starttls:
             enable: true
-
+    default-encoding: UTF-8
 server:
-  port: 8086
-
+  port: 8085
 
 
 

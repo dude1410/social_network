@@ -29,11 +29,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "AND p.confirmationCode = :code")
     Person findByIdAndCode(@Param("id") int id, @Param("code") String code);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Transactional
-    @Query("UPDATE Person p SET p.isApproved = true WHERE p.id = :id")
-    Integer setIsApprovedTrue(@Param("id") int id);
-
     Person findByConfirmationCode(String confirmationCode);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
@@ -43,6 +38,11 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
-    @Query("UPDATE Person p SET p.email = :newMail WHERE p.id = :id")
-    Integer setNewMail(@Param("newMail") String newMail, @Param("id") int id);
+    @Query("UPDATE Person p SET p.email = :newMail WHERE p.email = :oldEmail")
+    Integer setNewMail(@Param("newMail") String newMail, @Param("oldEmail") String oldEmail);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Person p SET p.password = :newPassword WHERE p.email = :email")
+    Integer setNewPasswordByEmail(@Param("newPassword") String newPassword, @Param("email") String email);
 }

@@ -7,30 +7,29 @@ import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Service
 public class PassRecoveryService {
 
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final PersonRepository personRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${spring.mail.address}")
     private String address;
+
+    public PassRecoveryService(EmailService emailService, PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+        this.emailService = emailService;
+        this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public ResponseEntity<Response> passRecovery(String email){
         Person person = personRepository.findByEmail(email);
@@ -39,7 +38,7 @@ public class PassRecoveryService {
                                 "<a href=\"" + address + "/change-password?token=" +
                                 person.getConfirmationCode() + "\">Password recovery</a>";
             emailService.sendMail("Recovery password in social network", messageBody, email);
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
@@ -55,7 +54,7 @@ public class PassRecoveryService {
         }
         else {
             if (personRepository.setNewPassword(passwordEncoder.encode(password), token) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>(new ErrorResponse("invalid_request", "password recovery error"), HttpStatus.BAD_REQUEST);
