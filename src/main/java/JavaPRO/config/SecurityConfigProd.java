@@ -16,8 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Profile("prod")
 @Configuration
@@ -40,6 +44,11 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements 
 
         http
                 .csrf().disable()
+                .headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(new WhiteListedAllowFromStrategy(Arrays
+                        .asList("http://31.40.251.201:8086/policy.html",
+                                "http://31.40.251.201:8086/personal-data.html"))))
+                .disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
                 .antMatchers("/logs").permitAll()
