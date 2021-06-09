@@ -26,6 +26,7 @@ public class DefaultController {
     }
 
 
+
     @RequestMapping(
             method = {RequestMethod.OPTIONS, RequestMethod.GET},
             value = "/*/{path:[^\\.]}")
