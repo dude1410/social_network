@@ -60,7 +60,7 @@ public class AuthService {
                     .badRequest()
                     .body(new ErrorResponse("invalid_request", Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD));
 
-        logger.info(String.format("Trying to authenticate user with email '%s' ", email));
+
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
@@ -72,7 +72,7 @@ public class AuthService {
                     .badRequest()
                     .body(new ErrorResponse("e-mail not found", Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
         }
-        logger.info(String.format("User with email '%s' found: '%s'", email, userFromDB.getEmail()));
+
 
         if (!passwordEncoder.matches(password, userFromDB.getPassword())) {
             log.info(String.format("Wrong password for user with email '%s'!", email));
@@ -80,7 +80,15 @@ public class AuthService {
                     .badRequest()
                     .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
         }
-        logger.info(String.format("Correct password for user with email '%s'!", email));
+
+        if(!userFromDB.isApproved() || userFromDB.isBlocked()){
+            log.info(String.format("User with email '%s' , not approved or is blocked!", email));
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("not approved or is blocked", Config.STRING_USER_NOTAPPRUVED_OR_BLOCKED));
+        }
+
+
 
         var authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
