@@ -158,5 +158,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.2.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:jakarta.mail:1.6.5" level="project" />
     <orderEntry type="library" name="Maven: com.sun.activation:jakarta.activation:1.2.2" level="project" />
+    <orderEntry type="library" name="springfox-swagger-ui-3.0.0" level="project" />
   </component>
 </module>

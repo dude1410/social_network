@@ -1,6 +1,7 @@
 package JavaPRO.services;
 
 import JavaPRO.api.request.MailSupportRequest;
+import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.MailSupportResponse;
 import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
@@ -49,22 +50,22 @@ public class EmailService {
         if (mailSupportRequest.getEmail() == null) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
+                    .body(new ErrorResponse("error", Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
         }
         if (!VALID_EMAIL_ADDRESS_REGEX.matcher(mailSupportRequest.getEmail()).matches()){
             return ResponseEntity
                     .badRequest()
-                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
+                    .body(new ErrorResponse("error", Config.STRING_MAIL_TO_SUPPORT_NO_EMAIL));
         }
         if (mailSupportRequest.getText() == null) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
+                    .body(new ErrorResponse("error", Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
         }
         if (mailSupportRequest.getText().length() < 20) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MailSupportResponse(false, Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
+                    .body(new ErrorResponse("error", Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
         }
         sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()),
                 mailSupportRequest.getText(),
