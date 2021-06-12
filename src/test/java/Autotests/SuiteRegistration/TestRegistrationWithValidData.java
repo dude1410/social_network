@@ -1,45 +1,40 @@
 package Autotests.SuiteRegistration;
 
+import static Autotests.Settings.SetUpTests.*;
+import static Autotests.SuiteRegistration.Locators.*;
+import static Autotests.SuiteRegistration.StringData.*;
+
 import Autotests.Settings.SetUpTests;
+import Autotests.util.EmailCounter;
 import Autotests.util.HibernateUtil;
-import JavaPRO.repository.PersonRepository;
-import org.openqa.selenium.By;
+import JavaPRO.config.Config;
+import JavaPRO.model.Person;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@SpringBootTest
 public class TestRegistrationWithValidData {
-
-    @Autowired
-    private PersonRepository repo;
 
     private ChromeDriver driver;
     private WebDriverWait wait;
     private Actions actions;
     private JavascriptExecutor js;
 
-    //Locators
-    public final By pageLocator = By.xpath("//div[@class = 'registration']");
-    public final By emailFieldLocator = By.xpath("//input[@id = 'register-email']");
-    public final By passwordFieldLocator = By.xpath("//input[@id = 'register-password']");
-    public final By repeatPasswordFieldLocator = By.xpath("//input[@id = 'register-repeat-password']");
-    public final By nameFieldLocator = By.xpath("//input[@id = 'register-firstName']");
-    public final By surnameFieldLocator = By.xpath("//input[@id = 'register-lastName']");
-    public final By codeFieldLocator = By.xpath("//input[@id = 'register-number']");
-    public final By codeLocator = By.xpath("//span[@class = 'form__code']");
-    public final By checkboxLocator = By.xpath("//input[@id = 'register-confirm']");
-    public final By submitRegistrationButtonLocator = By.xpath("//button[@type = 'submit']");
-    public final By successRegistrationElementLocator = By.xpath("//div[@class = 'success-register']");
+    //Strings
+    private String email;
+    private String name = CORRECT_NAME;
+    private String password = CORRECT_PASSWORD;
 
+
+    private Person person;
+    private BCryptPasswordEncoder bCrypt;
 
     @BeforeTest
     public void setUpTest() {
@@ -47,56 +42,74 @@ public class TestRegistrationWithValidData {
         wait = SetUpTests.wait;
         actions = SetUpTests.actions;
         js = driver;
-        driver.navigate().to(SetUpTests.REGISTRATION_PAGE);
+        driver.navigate().to(REGISTRATION_PAGE);
+        bCrypt = new BCryptPasswordEncoder(Config.INT_AUTH_BCRYPT_STRENGTH);
+
+        email = CORRECT_NOT_IN_BASE_EMAIL = EmailCounter.nextEmail(CORRECT_NOT_IN_BASE_EMAIL);
     }
 
     @Test
     public void RegistrationPage_GoToPage_PageOpens() {
-        Assert.assertEquals(driver.getTitle(), StringData.REGISTRATION_PAGE_TITLE,
-            "Тайтл страницы не соотвествует ожидаемому: " + StringData.REGISTRATION_PAGE_TITLE +
+        Assert.assertEquals(driver.getTitle(), REGISTRATION_PAGE_TITLE,
+            "Тайтл страницы не соотвествует ожидаемому: " + REGISTRATION_PAGE_TITLE +
                 "\nТекущий тайтл: " + driver.getTitle());
         Assert.assertFalse(ExpectedConditions.invisibilityOfElementLocated(pageLocator)
             .apply(driver),
             "На странице отсутствует ожидаемый элемент по локатору: " + pageLocator);
     }
 
-    @Test
+    @Test(dependsOnMethods = "RegistrationPage_GoToPage_PageOpens")
     public void RegistrationPage_CheckDatabase_DatabaseNotContainCurrentEmail() {
-        Assert.assertNull(HibernateUtil.getPersonByEmail(StringData.CORRECT_NOT_IN_BASE_EMAIL),
-            "Введный email (" + StringData.CORRECT_NOT_IN_BASE_EMAIL + ") уже есть в базе");
+        Assert.assertNull(HibernateUtil.getPersonByEmail(email),
+            "Введный email (" + email + ") уже есть в базе");
     }
 
-    @Test(dependsOnMethods = "RegistrationPage_GoToPage_PageOpens")
+    @Test(dependsOnMethods = "RegistrationPage_CheckDatabase_DatabaseNotContainCurrentEmail")
     public void RegistrationPage_FillingInAllFieldsValidDataAndRegistration_GoToSuccessfulRegistrationPage() {
         //arrange
-        driver.findElement(emailFieldLocator).sendKeys(StringData.CORRECT_NOT_IN_BASE_EMAIL);
-        driver.findElement(passwordFieldLocator).sendKeys(StringData.CORRECT_PASSWORD);
-        driver.findElement(repeatPasswordFieldLocator).sendKeys(StringData.CORRECT_PASSWORD);
-        driver.findElement(nameFieldLocator).sendKeys(StringData.CORRECT_NAME);
-        driver.findElement(surnameFieldLocator).sendKeys(StringData.CORRECT_NAME);
+        driver.findElement(emailFieldLocator).sendKeys(email);
+        driver.findElement(passwordFieldLocator).sendKeys(password);
+        driver.findElement(repeatPasswordFieldLocator).sendKeys(password);
+        driver.findElement(nameFieldLocator).sendKeys(name);
+        driver.findElement(surnameFieldLocator).sendKeys(name);
         driver.findElement(codeFieldLocator)
             .sendKeys(driver.findElement(codeLocator).getText());
 
-        WebElement element = driver.findElement(checkboxLocator);
-        driver.executeScript("arguments[0].style.width = '20px';", element);
-        driver.executeScript("arguments[0].style.height = '20px';", element);
-        driver.executeScript("arguments[0].style.opacity = '1';", element);
-        driver.executeScript("arguments[0].style.visibility = 'visible';", element);
+        WebElement checkboxElement = driver.findElement(checkboxLocator);
+        driver.executeScript("arguments[0].style.width = '20px';", checkboxElement);
+        driver.executeScript("arguments[0].style.height = '20px';", checkboxElement);
+        driver.executeScript("arguments[0].style.opacity = '1';", checkboxElement);
+        driver.executeScript("arguments[0].style.visibility = 'visible';", checkboxElement);
         driver.findElement(checkboxLocator).click();
 
+        //act
         WebElement submitButton = driver.findElement(submitRegistrationButtonLocator);
         actions.moveToElement(submitButton).click(submitButton).build().perform();
 
+        //assert
         wait.until(ExpectedConditions.presenceOfElementLocated(successRegistrationElementLocator));
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, SetUpTests.SUCCESSFUL_REGISTRATION_PAGE,
+        Assert.assertEquals(driver.getCurrentUrl(), SUCCESSFUL_REGISTRATION_PAGE,
             "Не произошел переход на страницу с подтверждением почты");
     }
 
     @Test(dependsOnMethods = "RegistrationPage_FillingInAllFieldsValidDataAndRegistration_GoToSuccessfulRegistrationPage")
     public void RegistrationPage_CheckDatabase_DatabaseContainCurrentEmail() {
-        Assert.assertNotNull(HibernateUtil.getPersonByEmail(StringData.CORRECT_NOT_IN_BASE_EMAIL),
-            "Зарегистрированного email (" + StringData.CORRECT_NOT_IN_BASE_EMAIL + ") нет в базе");
+        Assert.assertNotNull(person = HibernateUtil.getPersonByEmail(email),
+            "Зарегистрированного email (" + email + ") нет в базе");
+    }
+
+    @Test(dependsOnMethods = "RegistrationPage_CheckDatabase_DatabaseContainCurrentEmail")
+    public void RegistrationPage_CheckDatabase_EnteredDataCorrespondsToDataInDatabase() {
+        String inDatabaseName = person.getFirstName();
+        String inDatabaseSurname = person.getLastName();
+        String inDatabasePassword = person.getPassword();
+
+        Assert.assertTrue(bCrypt.matches(CORRECT_PASSWORD, inDatabasePassword),
+            "Введенный пользователем пароль не совпадает с сохраненным в базе");
+        Assert.assertEquals(inDatabaseName, name, "Ввведеное имя: " + name
+            + ", не соответсвует записаному в базе: " + inDatabaseName);
+        Assert.assertEquals(inDatabaseSurname, name, "Ввведеная фамилия: " + name
+            + ", не соответсвует записаной в базе: " + inDatabaseSurname);
     }
 
 
