@@ -60,7 +60,7 @@ public class AuthorizedPerson {
     private boolean isBlocked;
 
     @JsonProperty(value = "token")
-    private String token = "3453wjwerkkjk";
+    private String token = "fakeTOKEN";
 
 
 }
