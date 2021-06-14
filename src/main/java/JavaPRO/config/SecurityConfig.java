@@ -74,8 +74,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
+<<<<<<< HEAD
 //                .allowedOrigins("http://localhost:8080")
                 .allowedOrigins("http://31.40.251.201:80")
+=======
+                .allowedOrigins("http://localhost:8080")
+>>>>>>> 1c10703 (login second iteration 29.05.2021)
                 .allowCredentials(true)
                 .allowedMethods("*");
     }
