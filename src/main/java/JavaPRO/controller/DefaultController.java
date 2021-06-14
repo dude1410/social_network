@@ -15,6 +15,18 @@ public class DefaultController {
     }
 
 
+    @GetMapping(value = "policy.html")
+    public String policy(){
+        return "policy";
+    }
+
+    @GetMapping(value = "personal-data.html")
+    public String personalData(){
+        return "policy";
+    }
+
+
+
     @RequestMapping(
             method = {RequestMethod.OPTIONS, RequestMethod.GET},
             value = "/*/{path:[^\\.]}")
