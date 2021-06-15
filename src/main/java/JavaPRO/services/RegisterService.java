@@ -42,8 +42,8 @@ public class RegisterService {
             String token = getToken();
             int newUserId = addUserInDB(userInfo, token);
             String messageBody = "Hello, to complete the registration follow to link " +
-                                "<a href=\"" + address + "/registration/complete?userId=" +
-                                newUserId + "&token=" + token + "\">Confirm registration</a>";
+                    "<a href=\"" + address + "/registration/complete?userId=" +
+                    newUserId + "&token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
         }

@@ -1,12 +1,14 @@
 package JavaPRO.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -35,5 +37,13 @@ public class Post implements Serializable {
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "post")
+    private List<PostComment> postCommentList;
+
 
 }

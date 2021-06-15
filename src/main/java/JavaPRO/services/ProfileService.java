@@ -6,6 +6,7 @@ import JavaPRO.api.response.LoginResponce;
 import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
 import JavaPRO.repository.PersonRepository;
+import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,14 @@ import java.sql.Timestamp;
 public class ProfileService {
 
     private final PersonRepository personRepository;
+    private final PostRepository postRepository;
     private final PersonToDtoMapper personToDtoMapper;
 
     public ProfileService(PersonRepository personRepository,
+                          PostRepository postRepository,
                           PersonToDtoMapper personToDtoMapper) {
         this.personRepository = personRepository;
+        this.postRepository = postRepository;
         this.personToDtoMapper = personToDtoMapper;
     }
 
@@ -56,5 +60,7 @@ public class ProfileService {
         return ResponseEntity
                 .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
+
+
 }
 

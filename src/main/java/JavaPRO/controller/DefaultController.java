@@ -11,7 +11,7 @@ public class DefaultController {
     @ApiOperation(value = "Получение настроек")
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:/swagger-ui.html";
     }
 
 
