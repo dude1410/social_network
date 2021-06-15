@@ -66,7 +66,6 @@ public class EmailService {
                     .badRequest()
                     .body(new ErrorResponse("error", Config.STRING_MAIL_TO_SUPPORT_NO_TEXT));
         }
-        System.out.println(mailSupportRequest.getText());
         sendMail((Config.STRING_MAIL_TO_SUPPORT_SUBJECT + mailSupportRequest.getEmail()),
                 mailSupportRequest.getText(),
                 username);

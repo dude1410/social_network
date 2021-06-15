@@ -2,11 +2,14 @@ package JavaPRO.controller;
 
 import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.services.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Tag(name = "/api/v1/post", description = "Операции с постами")
 public class PostController {
     private final PostService postService;
 
@@ -15,26 +18,32 @@ public class PostController {
     }
 
     @GetMapping(value = "/api/v1/post")
+    @Operation(description = "Поиск постов по тексту")
     public ResponseEntity getPost(@RequestParam("text") String searchText) {
         return postService.searchPostsByText(searchText);
     }
 
     @GetMapping(value = "/api/v1/feeds")
+    @Operation(description = "Получить все посты")
     public ResponseEntity getAllPosts(){
         return postService.getAllPosts();
     }
 
     @PutMapping("/api/v1/post/{id}")
-    public ResponseEntity updatePostByID(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest){
+    @Operation(description = "Редактирование поста")
+    public ResponseEntity updatePostByID(@PathVariable int id,
+                                         @RequestBody PostUpdateRequest postUpdateRequest){
         return postService.updatePostByID(id, postUpdateRequest.getTitle(), postUpdateRequest.getPost_text());
     }
 
     @DeleteMapping("/api/v1/post/{id}")
+    @Operation(description = "Удаление поста")
     public ResponseEntity deletePostByID(@PathVariable int id) {
         return postService.deletePostByID(id);
     }
 
     @GetMapping("/api/v1/post/{id}")
+    @Operation(description = "Поиск поста по id")
     public ResponseEntity getPostByID(@PathVariable int id) {
         return postService.getPostByID(id);
     }
