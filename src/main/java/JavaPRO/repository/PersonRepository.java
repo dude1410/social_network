@@ -8,7 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+
 @Repository
+@Transactional
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     @Query("SELECT p " +
@@ -40,4 +43,12 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     @Transactional
     @Query("UPDATE Person p SET p.password = :newPassword WHERE p.confirmationCode = :code")
     Integer setNewPassword(@Param("newPassword") String newPassword, @Param("code") String code);
+
+    @Modifying
+    @Query("DELETE " +
+            "from Person p " +
+            "WHERE p.isApproved = false " +
+            "AND p.regDate < :timestamp")
+    void deleteAllByRegDateBefore(Timestamp timestamp);
+
 }
