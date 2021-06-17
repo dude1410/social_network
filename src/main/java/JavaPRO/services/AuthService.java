@@ -6,22 +6,21 @@ import JavaPRO.config.Config;
 import JavaPRO.controller.LoggingController;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
-
 import java.sql.Timestamp;
 
-
-@Slf4j
 @Service
+@EnableScheduling
 public class AuthService {
     private final Logger logger = LogManager.getLogger(LoggingController.class);
 
@@ -43,6 +42,8 @@ public class AuthService {
 
 
     public ResponseEntity<Response> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
+
+
 
         logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
 
@@ -75,14 +76,14 @@ public class AuthService {
 
 
         if (!passwordEncoder.matches(password, userFromDB.getPassword())) {
-            log.info(String.format("Wrong password for user with email '%s'!", email));
+            logger.info(String.format("Wrong password for user with email '%s'!", email));
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
         }
 
         if(!userFromDB.isApproved() || userFromDB.isBlocked()){
-            log.info(String.format("User with email '%s' , not approved or is blocked!", email));
+            logger.info(String.format("User with email '%s' , not approved or is blocked!", email));
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("not approved or is blocked", Config.STRING_USER_NOTAPPRUVED_OR_BLOCKED));
@@ -110,5 +111,11 @@ public class AuthService {
                     .body(new ErrorResponse("invalid_request", "unsuccessfully"));
         }
         return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), new ResponseData("ok")));
+    }
+
+    @Scheduled(cron = "0 0 12 * * ?")
+    private void deleteAllNotApprovedPerson(){
+        var time = new Timestamp(new Timestamp(System.currentTimeMillis()).getTime() - 86400000);
+        personRepository.deleteAllByRegDateBefore(time);
     }
 }
