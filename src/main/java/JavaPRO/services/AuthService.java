@@ -3,6 +3,7 @@ package JavaPRO.services;
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
+import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.controller.LoggingController;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
@@ -40,56 +41,40 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
-    public ResponseEntity<Response> loginUser(UnauthorizedPersonDTO user, Errors validationErrors) {
+    public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
+                                              Errors validationErrors) throws BadRequestException {
 
 
 
         logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
 
         if (validationErrors.hasErrors()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("invalid_request", Config.STRING_AUTH_WRONG_FORMAT));
+            throw new BadRequestException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
 
         final String email = user.getEmail();
         final CharSequence password = user.getPassword();
 
-        if (email.isBlank() || password.length() == 0)
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("invalid_request", Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD));
-
-
+        if (email.isBlank() || password.length() == 0) {
+            throw new BadRequestException(Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD);
+        }
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
-
         if (userFromDB == null) {
-
             logger.info(String.format("User with email '%s' is not found!", email));
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("e-mail not found", Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
+            throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
-
 
         if (!passwordEncoder.matches(password, userFromDB.getPassword())) {
             logger.info(String.format("Wrong password for user with email '%s'!", email));
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("password error", Config.STRING_AUTH_WRONG_PASSWORD));
+            throw new BadRequestException(Config.STRING_AUTH_WRONG_PASSWORD);
         }
 
         if(!userFromDB.isApproved() || userFromDB.isBlocked()){
             logger.info(String.format("User with email '%s' , not approved or is blocked!", email));
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("not approved or is blocked", Config.STRING_USER_NOTAPPRUVED_OR_BLOCKED));
+            throw new BadRequestException(Config.STRING_USER_NOTAPPRUVED_OR_BLOCKED);
         }
-
-
 
         var authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -98,19 +83,19 @@ public class AuthService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         return ResponseEntity
-                .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
+                .ok(new LoginResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
 
-
-    public ResponseEntity<Response> logout() {
+    public ResponseEntity<OkResponse> logout() throws BadRequestException {
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-        logger.info(String.format("Result of logout: Is Authenticated? '%s'", SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
+        logger.info(String.format("Result of logout: Is Authenticated? '%s'",
+                SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("invalid_request", "unsuccessfully"));
+            throw new BadRequestException(Config.STRING_LOGOUT_UNSUCCESSFUL);
         }
-        return ResponseEntity.ok(new OkResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), new ResponseData("ok")));
+        return ResponseEntity.ok(new OkResponse("successfully",
+                new Timestamp(System.currentTimeMillis()).getTime(),
+                new ResponseData("ok")));
     }
 
     @Scheduled(cron = "0 0 12 * * ?")

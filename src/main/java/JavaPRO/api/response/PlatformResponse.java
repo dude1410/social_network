@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlatformResponse implements Response{
+public class PlatformResponse {
 
   private String error;
   private Long timestamp;
@@ -16,6 +16,5 @@ public class PlatformResponse implements Response{
   private int offset;
   private int perPage;
   private LanguageDTO data;
-
 
 }

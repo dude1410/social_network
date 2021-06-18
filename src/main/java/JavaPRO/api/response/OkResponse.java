@@ -7,8 +7,7 @@ import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
-public class OkResponse implements Response{
-
+public class OkResponse extends Response {
 
     private String error;
 
