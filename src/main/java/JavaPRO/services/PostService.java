@@ -9,18 +9,18 @@ import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.model.DTO.PostDTO;
 import JavaPRO.model.DTO.PostDeleteDTO;
-import JavaPRO.model.Person;
 import JavaPRO.model.Post;
 import JavaPRO.repository.PersonRepository;
 import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,7 +58,7 @@ public class PostService {
         List<PostDTO> postDTOList = new ArrayList();
 
         if (postList.size() == 0) {
-            postList = postRepository.findAllPosts(new Date());
+            postList = postRepository.findAllPosts();
         }
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
@@ -106,7 +106,7 @@ public class PostService {
 
     public ResponseEntity<PostResponse> getAllPosts() throws NotFoundException {
 
-        List<Post> postList = postRepository.findAllPosts(new Date());
+        List<Post> postList = postRepository.findAllPosts();
 
         if (postList.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
@@ -157,9 +157,9 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<PostShortResponse> updatePostByID(Integer id,
-                                                            String newTitle,
-                                                            String newPostText) throws NotFoundException,
+    public ResponseEntity<PostUpdateResponse> updatePostByID(Integer id,
+                                                             String newTitle,
+                                                             String newPostText) throws NotFoundException,
             BadRequestException {
 
         Post post = postRepository.findPostByID(id);
@@ -179,13 +179,13 @@ public class PostService {
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostUpdateResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         postDTO
                 ));
     }
 
-    public ResponseEntity<PostShortResponse> getPostByID(Integer id) throws NotFoundException, BadRequestException {
+    public ResponseEntity<PostUpdateResponse> getPostByID(Integer id) throws NotFoundException, BadRequestException {
 
         if (id == null) {
             throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
@@ -199,15 +199,15 @@ public class PostService {
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostUpdateResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         postDTO
                 ));
     }
 
-    public ResponseEntity<PostShortResponse> publishPost(Integer userID,
-                                                         Long publishDate,
-                                                         PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
+    public ResponseEntity<PostUpdateResponse> publishPost(Integer userID,
+                                                          Long publishDate,
+                                                          PostUpdateRequest postUpdateRequest) throws BadRequestException {
 
         if (userID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
@@ -225,20 +225,14 @@ public class PostService {
         post.setTitle(postUpdateRequest.getTitle());
         post.setBlocked(false);
 
-        Person person = personRepository.findById(userID).get();
-
-        if (person == null) {
-            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
-        }
-
-        post.setAuthor(person);
+        post.setAuthor(personRepository.findById(userID).get()); // todo: возможен exception
 
         Post postSaved = postRepository.save(post);
 
         PostDTO postDTO = postToDTOMapper.convertToDTO(postSaved);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostUpdateResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         postDTO
                 ));
