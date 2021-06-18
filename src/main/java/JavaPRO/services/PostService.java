@@ -3,6 +3,10 @@ package JavaPRO.services;
 import JavaPRO.Util.PostToDTOMapper;
 import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.api.response.*;
+import JavaPRO.config.Config;
+import JavaPRO.config.exception.AuthenticationException;
+import JavaPRO.config.exception.BadRequestException;
+import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.model.DTO.PostDTO;
 import JavaPRO.model.DTO.PostDeleteDTO;
 import JavaPRO.model.Post;
@@ -13,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,25 +32,24 @@ public class PostService {
     private final PostToDTOMapper postToDTOMapper;
 
 
-    public PostService(PersonRepository personRepository, PostRepository postRepository, PostToDTOMapper postToDTOMapper) {
+    public PostService(PersonRepository personRepository,
+                       PostRepository postRepository,
+                       PostToDTOMapper postToDTOMapper) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
         this.postToDTOMapper = postToDTOMapper;
     }
 
-    public ResponseEntity<Response> searchPostsByText(String searchText) {
+    public ResponseEntity<PostResponse> searchPostsByText(String searchText) throws BadRequestException,
+            AuthenticationException {
 
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("invalid_request", "UNAUTHORISED"));
+            throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
 
         if (searchText == null || searchText.length() == 0) {
             log.info(String.format("Input text is incorrect"));
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse("invalid_request", "BAD_REQUEST"));
+            throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
         }
         searchText = searchText.toLowerCase(Locale.ROOT);
 
@@ -68,14 +72,21 @@ public class PostService {
                         postDTOList));
     }
 
-    public ResponseEntity<Response> getPostsByUser(int userID) {
+    public ResponseEntity<MyWallResponse> getPostsByUser(Integer userID) throws AuthenticationException,
+            NotFoundException,
+            BadRequestException {
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("invalid_request", "UNAUTHORISED"));
+            throw new AuthenticationException(Config.STRING_AUTH_ERROR);
+        }
+        if (userID == null) {
+            throw new BadRequestException(Config.STRING_NO_USER_ID);
         }
 
         List<Post> postList = postRepository.findPostsByAuthorID(userID);
+
+        if (postList.isEmpty()) {
+            throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
+        }
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
@@ -93,9 +104,13 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<Response> getAllPosts() {
+    public ResponseEntity<PostResponse> getAllPosts() throws NotFoundException {
 
         List<Post> postList = postRepository.findAllPosts();
+
+        if (postList.isEmpty()) {
+            throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
+        }
 
         List<PostDTO> postDTOList = new ArrayList();
 
@@ -111,21 +126,22 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<Response> deletePostByID(int postID) {
+    public ResponseEntity<DeletePostByIDResponse> deletePostByID(Integer postID) throws AuthenticationException,
+            NotFoundException, BadRequestException {
 
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("invalid_request", "UNAUTHORISED"));
+            throw new AuthenticationException(Config.STRING_AUTH_ERROR);
+        }
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
         Post post = postRepository.findPostByID(postID);
 
         if (post == null) {
             log.info(String.format("ID doesn't exist"));
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse("invalid_request", "BAD_REQUEST"));
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
         int id = postRepository.deletePostByID(postID);
@@ -141,9 +157,20 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<Response> updatePostByID(int id, String newTitle, String newPostText) {
+    public ResponseEntity<PostUpdateResponse> updatePostByID(Integer id,
+                                                             String newTitle,
+                                                             String newPostText) throws NotFoundException,
+            BadRequestException {
 
         Post post = postRepository.findPostByID(id);
+
+        if (id == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        if (post == null) {
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        }
 
         post.setPostText(newPostText);
         post.setTitle(newTitle);
@@ -158,9 +185,16 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<Response> getPostByID(int id) {
+    public ResponseEntity<PostUpdateResponse> getPostByID(Integer id) throws NotFoundException, BadRequestException {
 
+        if (id == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
+        }
         Post post = postRepository.findPostByID(id);
+
+        if (post == null) {
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        }
 
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
 
@@ -171,7 +205,13 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<Response> publishPost(int userID, Long publishDate, PostUpdateRequest postUpdateRequest) {
+    public ResponseEntity<PostUpdateResponse> publishPost(Integer userID,
+                                                          Long publishDate,
+                                                          PostUpdateRequest postUpdateRequest) throws BadRequestException {
+
+        if (userID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
+        }
 
         Post post = new Post();
 
@@ -184,7 +224,8 @@ public class PostService {
         post.setPostText(postUpdateRequest.getPost_text());
         post.setTitle(postUpdateRequest.getTitle());
         post.setBlocked(false);
-        post.setAuthor(personRepository.findById(userID).get());
+
+        post.setAuthor(personRepository.findById(userID).get()); // todo: возможен exception
 
         Post postSaved = postRepository.save(post);
 
@@ -196,5 +237,4 @@ public class PostService {
                         postDTO
                 ));
     }
-
 }

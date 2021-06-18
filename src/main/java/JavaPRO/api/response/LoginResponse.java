@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponce implements Response{
+public class LoginResponse extends Response {
 
     @Schema(description = "ошибка", example = "invalid password")
     private String error;

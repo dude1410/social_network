@@ -2,9 +2,14 @@ package JavaPRO.controller;
 
 import JavaPRO.api.request.OnlyMailRequest;
 import JavaPRO.api.request.SetPasswordRequest;
+import JavaPRO.api.response.OkResponse;
 import JavaPRO.api.response.Response;
+import JavaPRO.config.exception.BadRequestException;
+import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.services.PassRecoveryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +32,11 @@ public class PassRecoveryController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Запрос на восстановление пароля")
-    public ResponseEntity<Response> passwordRecovery(@RequestBody OnlyMailRequest onlyMailRequest) {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Получена ссылка на восстановление пароля"),
+            @ApiResponse(responseCode = "400", description = "Почтовый ящик не передан или передан неверно"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден в БД")})
+    public ResponseEntity<OkResponse> passwordRecovery(@RequestBody OnlyMailRequest onlyMailRequest) throws BadRequestException,
+            NotFoundException {
         return passRecoveryService.passRecovery(onlyMailRequest.getEmail());
     }
 
@@ -35,7 +44,10 @@ public class PassRecoveryController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Установаить новый пароль")
-    public ResponseEntity<?> passwordSet(@RequestBody SetPasswordRequest setPasswordRequest) {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Пароль изменен"),
+            @ApiResponse(responseCode = "400", description = "Неверный запрос, пароль не изменен"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден в БД")})
+    public ResponseEntity<?> passwordSet(@RequestBody SetPasswordRequest setPasswordRequest) throws BadRequestException, NotFoundException {
         System.out.println("start recovery");
         return passRecoveryService.setNewPassword(setPasswordRequest);
     }

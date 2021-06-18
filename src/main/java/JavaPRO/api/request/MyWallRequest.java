@@ -12,5 +12,4 @@ public class MyWallRequest {
     private Long offset;
 
     private Long itemPerPage;
-
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostCommentResponse implements Response  {
+public class PostCommentResponse {
 
     private String error;
 
