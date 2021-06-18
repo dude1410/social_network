@@ -1,9 +1,7 @@
 package JavaPRO.services;
 
 import JavaPRO.api.request.SetPasswordRequest;
-import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
-import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;

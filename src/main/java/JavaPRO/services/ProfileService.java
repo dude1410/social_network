@@ -1,17 +1,13 @@
 package JavaPRO.services;
 
 import JavaPRO.Util.PersonToDtoMapper;
-import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.LoginResponse;
-import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
-import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.repository.PersonRepository;
 import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

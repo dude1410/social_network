@@ -1,7 +1,6 @@
 package JavaPRO.controller;
 
 import JavaPRO.api.response.PlatformResponse;
-import JavaPRO.api.response.Response;
 import JavaPRO.services.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

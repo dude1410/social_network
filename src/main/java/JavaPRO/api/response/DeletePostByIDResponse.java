@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeletePostByIDResponse extends Response {
+public class DeletePostByIDResponse {
 
     @Schema(description = "ошибка", example = "invalid_request")
     private String error;
@@ -17,6 +17,6 @@ public class DeletePostByIDResponse extends Response {
     @Schema(description = "метка времени в формате long", example = "2147483648L")
     private Long timestamp;
 
-    @Schema(description = "данные об удаленном посте")
+    @Schema(description = "объект PostDeleteDTO")
     private PostDeleteDTO data;
 }

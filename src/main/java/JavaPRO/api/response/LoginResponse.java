@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponse extends Response {
+public class LoginResponse {
 
     @Schema(description = "ошибка", example = "invalid password")
     private String error;
@@ -15,6 +15,6 @@ public class LoginResponse extends Response {
     @Schema(description = "время", example = "2147483648L")
     private Long timestamp;
 
-    @Schema(description = "Данные об авторизованном пользователе")
+    @Schema(description = "объект AuthorizedPerson")
     private AuthorizedPerson data;
 }
