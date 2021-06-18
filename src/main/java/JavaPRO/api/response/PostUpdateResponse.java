@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostShortResponse extends Response{
+public class PostUpdateResponse extends Response{
 
     private String error;
 
