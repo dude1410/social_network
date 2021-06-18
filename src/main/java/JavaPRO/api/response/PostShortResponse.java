@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostUpdateResponse {
+public class PostShortResponse {
 
     @Schema(description = "ошибка", example = "success")
     private String error;

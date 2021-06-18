@@ -3,7 +3,7 @@ package JavaPRO.controller;
 import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.MyWallResponse;
-import JavaPRO.api.response.PostUpdateResponse;
+import JavaPRO.api.response.PostShortResponse;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
@@ -54,9 +54,9 @@ public class ProfileController {
     @Operation(description = "Создать пост на страничке пользователя") // todo
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка создать страничку пользователя"), // todo
             @ApiResponse(responseCode = "400", description = "id пользователя не задан")})
-    public ResponseEntity<PostUpdateResponse> publishPost(@PathVariable Integer id,
-                                                          @RequestParam(name = "publish_date", required = false) Long publishDate,
-                                                          @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException {
+    public ResponseEntity<PostShortResponse> publishPost(@PathVariable Integer id,
+                                                         @RequestParam(name = "publish_date", required = false) Long publishDate,
+                                                         @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
         return postService.publishPost(id,
                 publishDate,
                 postUpdateRequest);
