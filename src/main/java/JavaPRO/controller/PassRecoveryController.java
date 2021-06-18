@@ -3,7 +3,6 @@ package JavaPRO.controller;
 import JavaPRO.api.request.OnlyMailRequest;
 import JavaPRO.api.request.SetPasswordRequest;
 import JavaPRO.api.response.OkResponse;
-import JavaPRO.api.response.Response;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.services.PassRecoveryService;

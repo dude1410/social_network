@@ -1,9 +1,7 @@
 package JavaPRO.services;
 
 import JavaPRO.api.request.MailSupportRequest;
-import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.MailSupportResponse;
-import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
