@@ -6,6 +6,8 @@ import JavaPRO.api.response.ErrorResponse;
 import JavaPRO.api.response.OkResponse;
 import JavaPRO.api.response.Response;
 import JavaPRO.api.response.ResponseData;
+import JavaPRO.config.Config;
+import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
@@ -34,9 +36,9 @@ public class RegisterService {
     @Value("${spring.mail.address}")
     private String address;
 
-    public ResponseEntity<Response> registerNewUser(RegisterRequest userInfo){
+    public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo) throws BadRequestException {
         if (userFindInDB(userInfo.getEmail())){
-            return new ResponseEntity<>(new ErrorResponse("invalid_request", "user previously registered"), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
         }
         else {
             String token = getToken();
@@ -45,25 +47,24 @@ public class RegisterService {
                     "<a href=\"" + address + "/registration/complete?userId=" +
                     newUserId + "&token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
     }
 
-    public ResponseEntity<Response> confirmRegistration(RegisterConfirmRequest registerConfirmRequest){
+    public ResponseEntity<OkResponse> confirmRegistration(RegisterConfirmRequest registerConfirmRequest) throws BadRequestException {
         Integer userId = registerConfirmRequest.getUserId();
         String token = registerConfirmRequest.getToken();
         Person person = personRepository.findByIdAndCode(userId, token);
         if (personRepository.findByIdAndCode(userId, token) != null && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(userId) != null) {
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp().longValue(), new ResponseData("OK")), HttpStatus.OK);
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
-                return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
-
+                throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
             }
         }
         else {
-            return new ResponseEntity<>(new ErrorResponse("invalid_request", "confirm registration error"), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
         }
     }
 

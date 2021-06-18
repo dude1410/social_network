@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 
 @Service
-public class PlatformServise {
+public class PlatformService {
 
     private final CountryRepository countryRepository;
 
-    public PlatformServise(CountryRepository countryRepository) {
+    public PlatformService(CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
     }
 
 
-    public ResponseEntity<Response> getLanguages() {
+    public ResponseEntity<PlatformResponse> getLanguages() {
 
 //todo заглушка на 1 язык
         return ResponseEntity.ok(new PlatformResponse("ok",

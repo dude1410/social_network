@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PostResponse implements Response {
+public class PostResponse {
 
     private String error;
 

@@ -2,9 +2,12 @@ package JavaPRO.services;
 
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.api.response.ErrorResponse;
-import JavaPRO.api.response.LoginResponce;
+import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
+import JavaPRO.config.exception.AuthenticationException;
+import JavaPRO.config.exception.BadRequestException;
+import JavaPRO.config.exception.NotFoundException;
 import JavaPRO.repository.PersonRepository;
 import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +34,10 @@ public class ProfileService {
         this.personToDtoMapper = personToDtoMapper;
     }
 
-
-    public ResponseEntity<Response> getMyProfile() {
+    public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
+            NotFoundException {
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("invalid_request", "UNAUTHORISED"));
+            throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
 
         String personEmail = SecurityContextHolder
@@ -46,21 +47,16 @@ public class ProfileService {
         var userFromDB = personRepository.findByEmailForLogin(personEmail);
 
         if (userFromDB == null) {
-            log.info(String.format("User with email '%s' is not found!", userFromDB));
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse("e-mail not found", Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
+            log.info(String.format("User with email '%s' is not found!", userFromDB)); // todo: что передается?
+            throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
         log.info(String.format("User with email '%s' found: %s", userFromDB, userFromDB));
 
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
-
         authorizedPerson.setToken(null);
         return ResponseEntity
-                .ok(new LoginResponce("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
+                .ok(new LoginResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
-
-
 }
 

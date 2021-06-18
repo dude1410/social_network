@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MyWallResponse implements Response {
+public class MyWallResponse {
 
     private String error;
 
