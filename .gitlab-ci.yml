@@ -1,0 +1,18 @@
+stages:
+  - build
+  - deploy
+
+build site:
+  stage: build
+  script:
+    - mvn clean
+    - git pull origin master
+    - mvn package -Dmaven.test.skip=true
+
+deploy site:
+  stage: deploy
+  script:
+    - sudo systemctl restart socnet.service
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+  only:
+    - master
