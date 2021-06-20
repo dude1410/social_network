@@ -8,8 +8,8 @@ import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,18 +25,20 @@ import java.sql.Timestamp;
 @Service
 @EnableScheduling
 public class AuthService {
-    private final Logger logger = LogManager.getLogger(AuthService.class);
 
+    private final Logger logger;
     private final PersonRepository personRepository;
     private final AuthenticationManager authenticationManager;
     private final PersonToDtoMapper personToDtoMapper;
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthService(PersonRepository personRepository,
+    public AuthService(@Qualifier("authorizationLogger") Logger logger,
+                       PersonRepository personRepository,
                        AuthenticationManager authenticationManager,
                        PersonToDtoMapper personToDtoMapper,
                        PasswordEncoder passwordEncoder) {
+        this.logger = logger;
         this.personRepository = personRepository;
         this.authenticationManager = authenticationManager;
         this.personToDtoMapper = personToDtoMapper;
@@ -46,11 +48,8 @@ public class AuthService {
     public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
                                               Errors validationErrors) throws BadRequestException {
 
-
-
-        logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
-
         if (validationErrors.hasErrors()) {
+            logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
             throw new BadRequestException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
 
@@ -58,6 +57,7 @@ public class AuthService {
         final CharSequence password = user.getPassword();
 
         if (email.isBlank() || password.length() == 0) {
+            logger.error("Ошибка предоставленных в запросе данных. Поля Email (и)или Password пустые");
             throw new BadRequestException(Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD);
         }
 
@@ -84,6 +84,7 @@ public class AuthService {
 
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
+        logger.info("Успешная авторизация пользователя. Email: " + email);
         return ResponseEntity
                 .ok(new LoginResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
     }
@@ -93,8 +94,10 @@ public class AuthService {
         logger.info(String.format("Result of logout: Is Authenticated? '%s'",
                 SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            logger.error("Ошибка при выходе из сети. Email: " + SecurityContextHolder.getContext().getAuthentication().getName());
             throw new BadRequestException(Config.STRING_LOGOUT_UNSUCCESSFUL);
         }
+        logger.info("Успешный выход пользователя из сети. Email: " + SecurityContextHolder.getContext().getAuthentication().getName());
         return ResponseEntity.ok(new OkResponse("successfully",
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));

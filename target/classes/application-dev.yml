@@ -1,0 +1,43 @@
+
+spring:
+  datasource:
+    url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL92Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+  liquibase:
+    url: jdbc:postgresql://31.40.251.201:5432/javapro
+    user: javapro
+    password: iddqd
+    enabled: true
+    contexts: dev
+    change-log: classpath:db.changelog/db.changelog-master.yml
+  mail:
+    address: http://localhost:8080
+    host: smtp.gmail.com
+    port: 587
+    username: devSocialLine@gmail.com
+    password: ntcngjxnf12
+    properties:
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+server:
+  port: 8086
+logging:
+  config: classpath:log4j2-spring-dev.xml
+# У каждого на своем компе будет своя переменная. Меняйте раскоменчивайте нужную, а не нужные в коммент
+# под MacOS
+javapro.storagepath: /Users/olegprokhorov/IdeaProjects/group/study
+# под win каждый пишет свою строчку, в зависимости от нахождения папки с хранилищем.
+#javapro.storagepath: d:/group/study
