@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
-public class PostCommentResponse {
+public class CommentsResponse {
 
     @Schema(description = "ошибка", example = "success")
     private String error;
@@ -15,15 +17,15 @@ public class PostCommentResponse {
     @Schema(description = "метка времени", example = "2147483648L")
     private Long timestamp;
 
-    @Schema(description = "общее количество постов", example = "45l")
-    private Long total;
+    @Schema(description = "общее количество комментов", example = "45l")
+    private int total;
 
     @Schema(description = "сдвиг для постраничного вывода", example = "0l")
-    private Long offset;
+    private int offset;
 
-    @Schema(description = "количество постов на страницу", example = "20l")
-    private Long perPage;
+    @Schema(description = "количество комментов на страницу", example = "20l")
+    private int perPage;
 
-    @Schema(description = "объект CommentDTO")
-    private CommentDTO data;
+    List<CommentDTO> data;
+
 }

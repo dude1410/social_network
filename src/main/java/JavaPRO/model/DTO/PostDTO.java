@@ -32,7 +32,7 @@ public class PostDTO {
     private Long likes;
 
     @JsonProperty(value = "comments")
-    private List<PostCommentDTO> postComment;
+    private List<CommentDTO> postComment;
 
     @JsonProperty(value = "type")
     private String postStatus;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class PostCommentDTO {
+public class CommentDTO {
 
     @JsonProperty(value = "parent_id")
     private Long parentComment;

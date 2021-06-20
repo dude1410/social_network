@@ -1,6 +1,6 @@
 package JavaPRO.Util;
 
-import JavaPRO.model.DTO.PostCommentDTO;
+import JavaPRO.model.DTO.CommentDTO;
 import JavaPRO.model.DTO.PostDTO;
 import JavaPRO.model.DTO.PersonDTO;
 import JavaPRO.model.Person;
@@ -18,7 +18,7 @@ public class PostToDTOMapper {
         this.modelMapper = new ModelMapper();
 
         modelMapper.createTypeMap(Post.class, PostDTO.class);
-        modelMapper.createTypeMap(PostComment.class, PostCommentDTO.class);
+        modelMapper.createTypeMap(PostComment.class, CommentDTO.class);
         modelMapper.createTypeMap(Person.class, PersonDTO.class);
     }
 

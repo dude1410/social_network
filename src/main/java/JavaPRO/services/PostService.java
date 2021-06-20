@@ -1,24 +1,27 @@
 package JavaPRO.services;
 
+import JavaPRO.Util.CommentToDTOMapper;
 import JavaPRO.Util.PostToDTOMapper;
+import JavaPRO.api.request.CommentBodyRequest;
 import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
+import JavaPRO.model.DTO.CommentDTO;
 import JavaPRO.model.DTO.PostDTO;
 import JavaPRO.model.DTO.PostDeleteDTO;
 import JavaPRO.model.Person;
 import JavaPRO.model.Post;
+import JavaPRO.model.PostComment;
+import JavaPRO.repository.CommentRepository;
 import JavaPRO.repository.PersonRepository;
 import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -31,15 +34,18 @@ import java.util.Locale;
 public class PostService {
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final PostToDTOMapper postToDTOMapper;
-
+    private final CommentToDTOMapper commentToDTOMapper;
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
-                       PostToDTOMapper postToDTOMapper) {
+                       CommentRepository commentRepository, PostToDTOMapper postToDTOMapper, CommentToDTOMapper commentToDTOMapper) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.postToDTOMapper = postToDTOMapper;
+        this.commentToDTOMapper = commentToDTOMapper;
     }
 
     public ResponseEntity<PostResponse> searchPostsByText(String searchText) throws BadRequestException,
@@ -190,7 +196,7 @@ public class PostService {
     public ResponseEntity<PostShortResponse> getPostByID(Integer id) throws NotFoundException, BadRequestException {
 
         if (id == null) {
-            throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
         Post post = postRepository.findPostByID(id);
 
@@ -212,7 +218,7 @@ public class PostService {
                                                          PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
 
         if (userID == null) {
-            throw new BadRequestException(Config.STRING_NO_POST_IN_DB);
+            throw new BadRequestException(Config.STRING_NO_USER_ID);
         }
 
         Post post = new Post();
@@ -230,7 +236,7 @@ public class PostService {
         Person person = personRepository.findById(userID).get();
 
         if (person == null) {
-            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+            throw new NotFoundException(Config.STRING_NO_PERSON_IN_DB);
         }
 
         post.setAuthor(person);
@@ -243,6 +249,75 @@ public class PostService {
                 .ok(new PostShortResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         postDTO
+                ));
+    }
+
+
+    public ResponseEntity<CommentResponse> addComment(Integer postID, CommentBodyRequest commentRequest) throws NotFoundException, BadRequestException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        Post post = postRepository.findPostByID(postID);
+
+        if (post == null) {
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        }
+
+        PostComment comment = new PostComment();
+
+        comment.setTime(new Date());
+        comment.setPost(post);
+
+        if (commentRequest.getParent_id() != null) {
+            PostComment parentComment = commentRepository.findCommentByID(commentRequest.getParent_id());
+            comment.setParentComment(parentComment);
+        } else {
+            comment.setParentComment(null);
+        }
+
+        comment.setCommentText(commentRequest.getComment_text());
+        comment.setDeleted(false);
+        comment.setBlocked(false);
+
+        Person person = personRepository.findById(4).get();
+        comment.setAuthor(person);//TODO нужен норм автор, задача на фронте
+
+        commentRepository.save(comment);
+
+        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+
+        return ResponseEntity
+                .ok(new CommentResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        commentDTO
+                ));
+    }
+
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException, NotFoundException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
+
+        if (comments.isEmpty()) {
+            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
+        }
+
+        List<CommentDTO> commentDTOs = new ArrayList();
+
+        comments.forEach(comment -> commentDTOs.add(commentToDTOMapper.convertToDTO(comment)));
+
+        return ResponseEntity
+                .ok(new CommentsResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        0,
+                        0,
+                        20,
+                        commentDTOs
                 ));
     }
 }

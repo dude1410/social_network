@@ -8,19 +8,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostCommentRepository extends JpaRepository<PostComment, Integer> {
-    /*
+public interface CommentRepository extends JpaRepository<PostComment, Integer> {
+
     @Query("SELECT " +
-            "pc.parentComment.id AS parent_id, " +
-            "pc.commentText AS comment_text, " +
-            "pc.id AS id, " +
-            "pc.post.id AS post_id, " +
-            "0 AS time, " +
-            "pc.author.id AS author_id, " +
-            "pc.isBlocked AS is_blocked " +
+            "pc " +
             "FROM Post p " +
             "LEFT JOIN PostComment pc ON p.id = pc.post.id " +
             "WHERE p.id = :postID")
     List<PostComment> findCommentsByPostID(int postID);
-    */
+
+    @Query("SELECT " +
+            "pc " +
+            "FROM PostComment pc " +
+            "WHERE pc.id = :id")
+    PostComment findCommentByID(int id);
 }

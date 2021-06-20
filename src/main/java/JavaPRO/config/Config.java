@@ -18,6 +18,8 @@ public class Config {
     public static final String STRING_NO_SEARCH_TEXT = "Не введен запрос для поиска";
     public static final String STRING_NO_POSTS_IN_DB = "В базе данных не найдено постов";
     public static final String STRING_NO_POST_IN_DB = "В базе данных не найден пост";
+    public static final String STRING_NO_COMMENT_IN_DB = "В базе данных не найден комментарий";
+    public static final String STRING_NO_PERSON_IN_DB = "В базе данных не найден пользователь";
     public static final String STRING_NO_USER_ID = "Не передан id пользователя";
     public static final String STRING_NO_POST_ID = "Не передан id поста";
     public static final String STRING_FRONT_DATA_NOT_VALID = "Данные с фронта не прошли валидацию";

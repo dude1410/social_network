@@ -1,5 +1,6 @@
 package JavaPRO.controller;
 
+import JavaPRO.api.request.CommentBodyRequest;
 import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
@@ -75,59 +76,17 @@ public class PostController {
         return postService.getPostByID(id);
     }
 
-
-
-/*
-    @PutMapping("/api/v1/post/{id}")
-    public ResponseEntity editPostText(@PathVariable int id, Post newPostText) {
-        Post post = postRepository.findById(id).get();
-
-        if (post != null) {
-            post.setPostText(newPostText.getPostText());
-            postRepository.save(post);
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    @PostMapping("/api/v1/post/{id}/comments")
+    @Operation(description = "Создание комментария")
+    public ResponseEntity addComment(@PathVariable Integer id,
+                                     @RequestBody CommentBodyRequest commentBody) throws NotFoundException, BadRequestException {
+        return postService.addComment(id, commentBody);
     }
-
-    @DeleteMapping("/api/v1/post/{id}")
-    public ResponseEntity deletePostByID(@PathVariable int id) {
-
-        Optional<Post> post = postRepository.findById(id);
-
-        if (post.isPresent()) {
-            postRepository.deleteById(id);
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    //PUT /api/v1/post/{id}/recover
 
     @GetMapping("/api/v1/post/{id}/comments")
-    public ResponseEntity getCommentsByPostID(@PathVariable int id) {
-
-        List<PostComment> postCommentsList = postRepository.findPostComments(id);
-
-        if (!postCommentsList.isEmpty()) {
-            return new ResponseEntity(postCommentsList, HttpStatus.OK);
-        }
-        return new ResponseEntity(postCommentsList, HttpStatus.OK);
+    public ResponseEntity getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+        return postService.getCommentsByPostID(id);
     }
 
-    //POST /api/v1/post/{id}/comments
 
-    //PUT /api/v1/post/{id}/comments/{comment_id}
-
-    //DELETE /api/v1/post/{id}/comments/{comment_id}
-
-    //PUT /api/v1/post/{id}/comments/{comment_id}/recover
-
-    //POST /api/v1/post/{id}/report
-
-    //POST /api/v1/post/{id}/comments/{comment_id}/report
-
- */
 }
