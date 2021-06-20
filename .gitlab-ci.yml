@@ -8,6 +8,8 @@ build site:
     - mvn clean
     - git pull origin master
     - mvn package -Dmaven.test.skip=true
+  only:
+    - master
 
 deploy site:
   stage: deploy
