@@ -12,6 +12,8 @@ public class PassEncoder {
     @Bean
     private PasswordEncoder BCryptEncoder() {
         return new BCryptPasswordEncoder(Config.INT_AUTH_BCRYPT_STRENGTH);
+
+
     }
 
 }
