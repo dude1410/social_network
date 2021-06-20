@@ -4,6 +4,7 @@ package JavaPRO.config;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
@@ -30,7 +32,8 @@ import java.util.Arrays;
 public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-
+    @Value("${javapro.storagepath}")
+    private String uploadPath;
     private final UserDetailsService userDetailsService;
 
     @Autowired
@@ -87,5 +90,12 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements 
                 .allowedOrigins("http://31.40.251.201")
                 .allowCredentials(true)
                 .allowedMethods("*");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/storage/**")
+                .addResourceLocations( uploadPath + "/storage/**");
+
     }
 }

@@ -14,8 +14,8 @@ public class PersonToDtoMapper {
 
 
     public PersonToDtoMapper() {
-        this.modelMapper = new ModelMapper();
 
+        this.modelMapper = new ModelMapper();
         modelMapper.createTypeMap(Person.class, AuthorizedPerson.class);
         modelMapper.createTypeMap(JavaPRO.model.Town.class, TownDTO.class);
         modelMapper.createTypeMap(Country.class, JavaPRO.model.DTO.CountryDTO.class);

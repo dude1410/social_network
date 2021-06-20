@@ -9,7 +9,7 @@ spring:
       ddl-auto: none
     generate-ddl: false
   liquibase:
-    change-log: classpath:db.changelog/db.changelog.xml
+    change-log: classpath:db.changelog/changes/db.changelog.xml
     url: jdbc:postgresql://31.40.251.201:5432/javapro
     user: javapro
     password: iddqd
@@ -35,6 +35,9 @@ server:
   port: 8086
 logging:
   config: classpath:log4j2-spring-prod.xml
+
+# тут не трогать. это путь до хранилища на prod
+javapro.storagepath: /home/javapro/javapro-socialnetwork-studygroup-12
 
 
 
