@@ -1,5 +1,5 @@
 databaseChangeLog:
   - include:
       file: db.changelog/changes/db.changelog.xml
-#  - include:
-#      file: db/changelog/changes/add_tables_storage.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_storage.xml
