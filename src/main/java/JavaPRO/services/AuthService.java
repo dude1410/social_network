@@ -1,10 +1,11 @@
 package JavaPRO.services;
 
 import JavaPRO.Util.PersonToDtoMapper;
-import JavaPRO.api.response.*;
+import JavaPRO.api.response.LoginResponse;
+import JavaPRO.api.response.OkResponse;
+import JavaPRO.api.response.ResponseData;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
-import JavaPRO.controller.LoggingController;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.repository.PersonRepository;
 import org.apache.logging.log4j.LogManager;
@@ -18,12 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
+
 import java.sql.Timestamp;
 
 @Service
 @EnableScheduling
 public class AuthService {
-    private final Logger logger = LogManager.getLogger(LoggingController.class);
+    private final Logger logger = LogManager.getLogger(AuthService.class);
 
     private final PersonRepository personRepository;
     private final AuthenticationManager authenticationManager;
