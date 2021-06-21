@@ -2,6 +2,7 @@
 <Configuration level="info">
     <Properties>
         <Property name="pattern-file">%d{yyyy-MM-dd HH:mm.SSS} [%t] %-5level %logger{5} - %msg%n</Property>
+        <Property name="file-path">/home/javapro/javapro-socialnetwork-studygroup-12/logs</Property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -10,9 +11,9 @@
         </Console>
 
         <RollingFile name="rootFileAppender"
-                     filePattern="logs/rootLogs.log"
+                     filePattern="${file-path}/rootLogs.log"
                      append="true"
-                     filename="logs/rootLogs.log">
+                     filename="${file-path}/rootLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -20,9 +21,9 @@
         </RollingFile>
 
         <RollingFile name="registerLogAppender"
-                     filePattern="logs/registerLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     filePattern="${file-path}/registerLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
-                     filename="logs/registerLogs.log">
+                     filename="${file-path}/registerLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -31,9 +32,9 @@
         </RollingFile>
 
         <RollingFile name="passRecoveryLogAppender"
-                     filePattern="logs/passRecoveryLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     filePattern="${file-path}/passRecoveryLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
-                     filename="logs/passRecoveryLogs.log">
+                     filename="${file-path}/passRecoveryLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -42,9 +43,9 @@
         </RollingFile>
 
         <RollingFile name="authorizationLogAppender"
-                     filePattern="logs/authorizationLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     filePattern="${file-path}/authorizationLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
-                     filename="logs/authorizationLogs.log">
+                     filename="${file-path}/authorizationLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -53,9 +54,9 @@
         </RollingFile>
 
         <RollingFile name="mailSenderLogAppender"
-                     filePattern="logs/mailSenderLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     filePattern="${file-path}/mailSenderLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
-                     filename="logs/mailSenderLogs.log">
+                     filename="${file-path}/mailSenderLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>

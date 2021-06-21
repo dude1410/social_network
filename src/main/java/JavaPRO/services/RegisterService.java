@@ -9,7 +9,8 @@ import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.model.ENUM.MessagesPermission;
 import JavaPRO.model.Person;
 import JavaPRO.repository.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,20 +23,26 @@ import java.util.Date;
 @Service
 public class RegisterService {
 
-    @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
+    private final PersonRepository personRepository;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final Logger logger;
     @Value("${spring.mail.address}")
     private String address;
 
+    public RegisterService(PersonRepository personRepository,
+                           EmailService emailService,
+                           PasswordEncoder passwordEncoder,
+                           @Qualifier("registerLogger") Logger logger) {
+        this.personRepository = personRepository;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.logger = logger;
+    }
+
     public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo) throws BadRequestException {
         if (userFindInDB(userInfo.getEmail())){
+            logger.warn("Запрос на регистрацию существующего пользователя. Email: " + userInfo.getEmail());
             throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
         }
         else {
@@ -45,6 +52,7 @@ public class RegisterService {
                     "<a href=\"" + address + "/registration/complete?userId=" +
                     newUserId + "&token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
+            logger.info("Успешная регистрация нового пользователя. Email: " + userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
         }
     }
@@ -55,13 +63,16 @@ public class RegisterService {
         Person person = personRepository.findByIdAndCode(userId, token);
         if (personRepository.findByIdAndCode(userId, token) != null && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(userId) != null) {
+                logger.info("Подтверждение регистрации нового пользователя. Email: " + person.getEmail());
                 return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
+                logger.error("Ошибка при подтверждении регистрации. Ошибка при обработке запроса в БД. UserId: " + registerConfirmRequest.getUserId());
                 throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
             }
         }
         else {
+            logger.warn("Ошибка при подтверждении регистрации. Пользователь не найден или регистрация была подтверждена ранее. UserId: " + registerConfirmRequest.getUserId());
             throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
         }
     }

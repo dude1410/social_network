@@ -21,7 +21,7 @@ public class LoggingController {
     @Profile("dev")
     @GetMapping("/app/devlogs")
     public String logginDev(Model model) throws IOException{
-        File file = new File("logs/logger.log");
+        File file = new File("logs/rootLogs.log");
         model.addAttribute("logsList", getListLog(file));
         return "logs";
     }
@@ -29,7 +29,7 @@ public class LoggingController {
     @Profile("prod")
     @GetMapping("/app/prodlogs")
     public String logginProd(Model model) throws IOException {
-        File file = new File("/home/javapro/javapro-socialnetwork-studygroup-12/logs/logger.log");
+        File file = new File("/home/javapro/javapro-socialnetwork-studygroup-12/logs/rootLogs.log");
         model.addAttribute("logsList", getListLog(file));
         return "logs";
     }
