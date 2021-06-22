@@ -1,7 +1,15 @@
+
 build project:
   stage: build
   script:
     - sudo mvn compile
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist
+  only:
+    - master
+    
 
 deploy site:
   stage: deploy
