@@ -6,10 +6,9 @@ build site:
   stage: build
   script:
     - mvn clean
-    - git pull origin master
-    - mvn package  -Dmaven.test.skip=true
-#   only:
-#     - master
+    # - git pull origin master
+    - mvn package -Dmaven.test.skip=true
+
 
 deploy site:
   stage: deploy
