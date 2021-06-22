@@ -3,7 +3,13 @@ image: maven:latest
 build project:
   stage: build
   script:
-    - mvn package 
+    - mvn clear
+    - mvn package
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - prg
+
     
 deploy site:
   stage: deploy
