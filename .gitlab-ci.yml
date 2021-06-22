@@ -2,7 +2,8 @@ build project:
   stage: build
   script:
 #   / - mvn clean
-    - sudo rm -R /home/gitlab-runner/builds/RHW1AaE8/0/javapro12/javapro-socialnetwork-studygroup-12/target
+    - export HISTIGNORE='*sudo -S*'
+    - echo "iddqd" |sudo rm -R /home/gitlab-runner/builds/RHW1AaE8/0/javapro12/javapro-socialnetwork-studygroup-12/target
     - sudo mvn package  -Dmaven.test.skip=true
 #   artifacts:
 #     expire_in: 1 week
