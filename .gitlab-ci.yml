@@ -1,9 +1,8 @@
-
 build project:
   stage: build
   script:
     - mvn clear
-    - mvn package
+    - mvn compile
   artifacts:
     expire_in: 1 week
     paths:
