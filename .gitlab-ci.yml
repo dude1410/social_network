@@ -1,9 +1,8 @@
 build project:
   stage: build
   script:
-    - mvn clean
-    - mvn package
-
+    - sudo mvn clean
+    - sudo mvn package
   artifacts:
     expire_in: 1 week
     paths:
