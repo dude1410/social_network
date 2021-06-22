@@ -1,12 +1,12 @@
 build project:
   stage: build
   script:
-    - sudo mvn clean
+    # - mvn clean
     - sudo mvn package
   artifacts:
     expire_in: 1 week
     paths:
-      - dist
+      - distr
     
 
 deploy site:
