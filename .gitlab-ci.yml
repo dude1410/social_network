@@ -1,8 +1,7 @@
 build project:
   stage: build
   script:
-    # - sudo mvn clear
-    - sudo mvn compile
+    - sudo mvn package -Dmaven.test.skip=true
   artifacts:
     expire_in: 1 week
     paths:
