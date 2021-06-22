@@ -1,6 +1,7 @@
 build project:
   stage: build
   script:
+    - sudo git pull origin master
     - sudo mvn clean
     - sudo mvn package -Dmaven.test.skip=true
   artifacts:
