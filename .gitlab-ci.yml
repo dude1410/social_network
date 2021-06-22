@@ -1,7 +1,7 @@
 build project:
   stage: build
   script:
-    - sudo git pull origin master
+    # - sudo git pull origin master
     - sudo mvn package
   artifacts:
     expire_in: 1 week
