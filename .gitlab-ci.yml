@@ -2,12 +2,12 @@ build project:
   stage: build
   script:
     # - sudo mvn clean
-    # # - sudo git pull origin master
+    - sudo git pull origin master
     - sudo mvn compile
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - prg
+#   artifacts:
+#     expire_in: 1 week
+#     paths:
+#       - prg
 
     
 deploy site:
