@@ -1,6 +1,7 @@
 build project:
   stage: build
   script:
+    - mvn clean
     - sudo mvn compile
 
   artifacts:
