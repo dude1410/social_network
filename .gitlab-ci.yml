@@ -3,11 +3,8 @@ image: maven:latest
 build project:
   stage: build
   script:
-    - mvn compile
-    # - git pull origin master
-    - mvn package -Dmaven.test.skip=true
-
-
+    - mvn package 
+    
 deploy site:
   stage: deploy
   script:
