@@ -3,10 +3,10 @@ build project:
   script:
     - sudo mvn clean
     - sudo mvn package  -Dmaven.test.skip=true
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - distr
+#   artifacts:
+#     expire_in: 1 week
+#     paths:
+#       - distr
     
 
 deploy site:
