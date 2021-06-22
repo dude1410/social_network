@@ -1,6 +1,7 @@
 build project:
   stage: build
   script:
+    - sudo mvn clean
     # - sudo git pull origin master
     - sudo mvn package
   artifacts:
