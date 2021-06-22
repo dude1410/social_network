@@ -2,13 +2,14 @@
 build project:
   stage: build
   script:
+    - sudo mvn clear
+    # - sudo mvn clear
     - sudo mvn compile
+
   artifacts:
     expire_in: 1 week
     paths:
       - dist
-  only:
-    - master
     
 
 deploy site:
