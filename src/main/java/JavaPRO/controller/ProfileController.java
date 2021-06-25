@@ -44,10 +44,8 @@ public class ProfileController {
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "id пользователя не задан"),
             @ApiResponse(responseCode = "404", description = "Посты не найдены в БД")})
-    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id) throws BadRequestException,
-            AuthenticationException,
-            NotFoundException {
-        return postService.getPostsByUser(id);
+    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id) throws NotFoundException {
+        return postService.getPostsByUser();
     }
 
     @PostMapping("/api/v1/users/{id}/wall")
@@ -57,8 +55,7 @@ public class ProfileController {
     public ResponseEntity<PostShortResponse> publishPost(@PathVariable Integer id,
                                                          @RequestParam(name = "publish_date", required = false) Long publishDate,
                                                          @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
-        return postService.publishPost(id,
-                publishDate,
+        return postService.publishPost(publishDate,
                 postUpdateRequest);
     }
 }

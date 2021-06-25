@@ -28,8 +28,10 @@ public class PostLike implements Serializable {
     private Person person;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
     private Post post;
 
-
+    @ManyToOne
+    @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "FK_comment_id"))
+    private PostComment comment;
 }
