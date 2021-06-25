@@ -22,6 +22,7 @@ public class Config {
     public static final String STRING_NO_PERSON_IN_DB = "В базе данных не найден пользователь";
     public static final String STRING_NO_USER_ID = "Не передан id пользователя";
     public static final String STRING_NO_POST_ID = "Не передан id поста";
+    public static final String STRING_NO_CONTENT_TYPE = "Не передан тип контента";
     public static final String STRING_FRONT_DATA_NOT_VALID = "Данные с фронта не прошли валидацию";
     public static final String STRING_LOGOUT_UNSUCCESSFUL = "Неудачная попытка разлогиниться";
     public static final String STRING_BAD_REQUEST = "Неверный запрос";
