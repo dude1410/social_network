@@ -1,16 +1,19 @@
 package JavaPRO.controller;
 
 import JavaPRO.api.request.CommentBodyRequest;
+import JavaPRO.api.request.LikeRequest;
 import JavaPRO.api.request.PostUpdateRequest;
+import JavaPRO.api.request.TagRequest;
+import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
+import JavaPRO.services.PostCommentService;
 import JavaPRO.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "/api/v1/post", description = "Операции с постами")
 public class PostController {
     private final PostService postService;
+    private final PostCommentService postCommentService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostCommentService postCommentService) {
         this.postService = postService;
+        this.postCommentService = postCommentService;
     }
 
     @GetMapping(value = "/api/v1/post")
@@ -49,6 +54,7 @@ public class PostController {
     public ResponseEntity updatePostByID(@PathVariable Integer id,
                                          @RequestBody PostUpdateRequest postUpdateRequest) throws NotFoundException,
             BadRequestException {
+
         return postService.updatePostByID(id,
                 postUpdateRequest.getTitle(),
                 postUpdateRequest.getPost_text());
@@ -80,13 +86,83 @@ public class PostController {
     @Operation(description = "Создание комментария")
     public ResponseEntity addComment(@PathVariable Integer id,
                                      @RequestBody CommentBodyRequest commentBody) throws NotFoundException, BadRequestException {
-        return postService.addComment(id, commentBody);
+        return postCommentService.addComment(id, commentBody);
     }
 
     @GetMapping("/api/v1/post/{id}/comments")
     public ResponseEntity getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
-        return postService.getCommentsByPostID(id);
+        return postCommentService.getCommentsByPostID(id);
     }
 
+    //TODO этот метод фронтом не вызывается
+    @GetMapping("/api/v1/liked")
+    public ResponseEntity getLike(@PathVariable Integer user_id,
+                                  @PathVariable("item_id") Integer itemID,
+                                  @PathVariable String type) throws BadRequestException, NotFoundException {
+        if (type.equals("Post")) {
+            return postService.isLiked(itemID);
+        }
+        if (type.equals("Comment")) {
+            return postCommentService.isLiked(itemID);
+        }
+        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+    }
 
+    //TODO этот метод фронтом не вызывается
+    @GetMapping("/api/v1/likes")
+    public ResponseEntity getLikes(@PathVariable("item_id") Integer itemID,
+                                   @PathVariable String type) {
+        if (type.equals("Post")) {
+            return postService.getAllLikes(itemID);
+        }
+
+        if (type.equals("Comment")) {
+            return postCommentService.getAllLikes(itemID);
+        }
+
+        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+    }
+
+    //поставить лайк
+    @PutMapping("/api/v1/likes")
+    public ResponseEntity addLike(@RequestBody LikeRequest likeBody) throws NotFoundException {
+
+        if (likeBody.getType().equals("Post")) {
+            return postService.addLike(likeBody.getItem_id());
+        }
+        if (likeBody.getType().equals("Comment")) {
+            return postCommentService.addLike(likeBody.getItem_id());
+        }
+        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+    }
+
+    //убрать лайк
+    @DeleteMapping("/api/v1/likes")
+    public ResponseEntity deleteLike(@RequestBody LikeRequest likeBody) throws NotFoundException {
+        if (likeBody.getType().equals("Post")) {
+            return postService.deleteLike(likeBody.getItem_id());
+        }
+
+        if (likeBody.getType().equals("Comment")) {
+            return postCommentService.deleteLike(likeBody.getItem_id());
+        }
+        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+    }
+
+    @PostMapping("/api/v1/tags/")
+    public ResponseEntity addTag(@RequestBody TagRequest tagRequest) {
+        return postService.addTag(tagRequest);
+    }
+
+    @GetMapping("/api/v1/tags/")
+    public ResponseEntity getTags(@RequestParam String tag,
+                                  @RequestParam(defaultValue = "0l") Long offset,
+                                  @RequestParam(defaultValue = "20l") Long itemPerPage) {
+        return postService.getTags(tag);
+    }
+
+    @DeleteMapping("/api/v1/tags/")
+    public ResponseEntity deleteTag(@RequestParam Integer id) {
+        return postService.deleteTag(id);
+    }
 }
