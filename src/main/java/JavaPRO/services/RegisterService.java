@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -26,6 +25,7 @@ public class RegisterService {
     private final PersonRepository personRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
     private final Logger logger;
     @Value("${spring.mail.address}")
     private String address;
@@ -33,24 +33,24 @@ public class RegisterService {
     public RegisterService(PersonRepository personRepository,
                            EmailService emailService,
                            PasswordEncoder passwordEncoder,
-                           @Qualifier("registerLogger") Logger logger) {
+                           TokenService tokenService, @Qualifier("registerLogger") Logger logger) {
         this.personRepository = personRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
         this.logger = logger;
     }
 
-    public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo) throws BadRequestException {
+    public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo) throws BadRequestException, InterruptedException {
         if (userFindInDB(userInfo.getEmail())){
             logger.warn("Запрос на регистрацию существующего пользователя. Email: " + userInfo.getEmail());
             throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
         }
         else {
-            String token = getToken();
+            String token = tokenService.getToken();
             int newUserId = addUserInDB(userInfo, token);
             String messageBody = "Hello, to complete the registration follow to link " +
-                    "<a href=\"" + address + "/registration/complete?userId=" +
-                    newUserId + "&token=" + token + "\">Confirm registration</a>";
+                    "<a href=\"" + address + "/registration/complete?token=" + token + "\">Confirm registration</a>";
             emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
             logger.info("Успешная регистрация нового пользователя. Email: " + userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
@@ -58,21 +58,20 @@ public class RegisterService {
     }
 
     public ResponseEntity<OkResponse> confirmRegistration(RegisterConfirmRequest registerConfirmRequest) throws BadRequestException {
-        Integer userId = registerConfirmRequest.getUserId();
         String token = registerConfirmRequest.getToken();
-        Person person = personRepository.findByIdAndCode(userId, token);
-        if (personRepository.findByIdAndCode(userId, token) != null && !person.isApproved()) {
-            if (personRepository.setIsApprovedTrue(userId) != null) {
+        Person person = personRepository.findByCode(token);
+        if (tokenService.checkToken(token) && !person.isApproved()) {
+            if (personRepository.setIsApprovedTrue(registerConfirmRequest.getToken()) == 1) {
                 logger.info("Подтверждение регистрации нового пользователя. Email: " + person.getEmail());
                 return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
             }
             else {
-                logger.error("Ошибка при подтверждении регистрации. Ошибка при обработке запроса в БД. UserId: " + registerConfirmRequest.getUserId());
+                logger.error("Ошибка при подтверждении регистрации. Ошибка при обработке запроса в БД. Email: " + person.getEmail());
                 throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
             }
         }
         else {
-            logger.warn("Ошибка при подтверждении регистрации. Пользователь не найден или регистрация была подтверждена ранее. UserId: " + registerConfirmRequest.getUserId());
+            logger.warn("Ошибка при подтверждении регистрации. Истек срок действия токена или регистрация была подтверждена ранее. Email: " + person.getEmail());
             throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
         }
     }

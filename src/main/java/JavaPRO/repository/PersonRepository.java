@@ -28,21 +28,38 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     @Query("SELECT p " +
             "FROM Person p " +
-            "WHERE p.id = :id " +
-            "AND p.confirmationCode = :code")
-    Person findByIdAndCode(@Param("id") int id, @Param("code") String code);
+            "WHERE p.confirmationCode = :code")
+    Person findByCode(@Param("code") String code);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
-    @Query("UPDATE Person p SET p.isApproved = true WHERE p.id = :id")
-    Integer setIsApprovedTrue(@Param("id") int id);
+    @Query("UPDATE Person p " +
+            "SET p.isApproved = true " +
+            "WHERE p.confirmationCode = :token")
+    Integer setIsApprovedTrue(@Param("token") String token);
 
     Person findByConfirmationCode(String confirmationCode);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
-    @Query("UPDATE Person p SET p.password = :newPassword WHERE p.confirmationCode = :code")
+    @Query("UPDATE Person p " +
+            "SET p.password = :newPassword " +
+            "WHERE p.confirmationCode = :code")
     Integer setNewPassword(@Param("newPassword") String newPassword, @Param("code") String code);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Person p " +
+            "SET p.password = :newPassword " +
+            "WHERE p.email = :email")
+    Integer changePassword(@Param("newPassword") String newPassword, @Param("email") String email);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Person p " +
+            "SET p.email = :newEmail " +
+            "WHERE p.email = :oldEmail")
+    Integer changeEmail(@Param("oldEmail") String oldEmail, @Param("newEmail") String newEmail);
 
     @Modifying
     @Query("DELETE " +
