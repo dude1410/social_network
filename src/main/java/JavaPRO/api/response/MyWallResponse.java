@@ -18,13 +18,13 @@ public class MyWallResponse {
     private Long timestamp;
 
     @Schema(description = "общее количество постов", example = "45l")
-    private Long total;
+    private Integer total;
 
     @Schema(description = "сдвиг для постраничного вывода", example = "0l")
-    private Long offset;
+    private Integer offset;
 
     @Schema(description = "количество постов на страницу", example = "20l")
-    private Long perPage;
+    private Integer perPage;
 
     @Schema(description = "модель для вывода поста")
     private List<PostDTO> data;

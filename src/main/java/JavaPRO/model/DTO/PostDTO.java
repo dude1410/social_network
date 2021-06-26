@@ -1,8 +1,10 @@
 package JavaPRO.model.DTO;
 
 import JavaPRO.model.ENUM.PostStatus;
+import JavaPRO.repository.PostRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 public class PostDTO {
 
     @JsonProperty(value = "id")
-    private Long id;
+    private Integer id;
 
     @JsonProperty(value = "time")
     private Long time;
@@ -29,7 +31,7 @@ public class PostDTO {
     private Boolean isBlocked = false;
 
     @JsonProperty(value = "likes")
-    private Long likes;
+    private Integer likes ;
 
     @JsonProperty(value = "comments")
     private List<CommentDTO> postComment;
@@ -39,5 +41,9 @@ public class PostDTO {
 
     public void setPostStatus() {
         postStatus = (time > new Timestamp(System.currentTimeMillis()).getTime() ? PostStatus.QUEUED : PostStatus.POSTED).toString();
+    }
+
+    public void setLikes(PostRepository postRepository) {
+        likes = postRepository.getLikes(id);
     }
 }

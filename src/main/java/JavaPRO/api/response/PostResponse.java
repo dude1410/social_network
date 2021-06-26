@@ -18,13 +18,13 @@ public class PostResponse {
     private Long timestamp;
 
     @Schema(description = "общее количество постов", example = "45l")
-    private Long total;
+    private Integer total;
 
     @Schema(description = "сдвиг для постраничного вывода", example = "0l")
-    private Long offset;
+    private Integer offset;
 
     @Schema(description = "количество постов на страницу", example = "20l")
-    private Long itemPerPage;
+    private Integer itemPerPage;
 
     @Schema(description = "список объектов PostCommentDTO")
     private List<PostDTO> data;

@@ -7,24 +7,26 @@ import lombok.Data;
 public class CommentDTO {
 
     @JsonProperty(value = "parent_id")
-    private Long parentComment;
+    private Integer parentComment;
 
     @JsonProperty(value = "comment_text")
     private String commentText;
 
     @JsonProperty(value = "id")
-    private Long id;
+    private Integer id;
 
     @JsonProperty(value = "post_id")
-    private Long postID;
+    private Integer postID;
 
     @JsonProperty(value = "time")
     private Long time;
 
-    @JsonProperty(value = "author_id")
-    private Long authorID;
+    @JsonProperty(value = "author")
+    private PersonDTO author;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
+    @JsonProperty(value = "likes")
+    private Integer likes;
 }
