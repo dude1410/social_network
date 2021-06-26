@@ -1,0 +1,316 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="eyese (generated)" id="1623738794378-1">
+        <createTable tableName="notification_entity">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="notification_entity_pkey"/>
+            </column>
+            <column name="message_id" type="INTEGER"/>
+            <column name="person_id" type="INTEGER"/>
+            <column name="post_id" type="INTEGER"/>
+            <column name="post_comment_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-2">
+        <createTable tableName="post_comment">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="post_comment_pkey"/>
+            </column>
+            <column name="comment_text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="INTEGER"/>
+            <column name="post_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-3">
+        <createTable tableName="town">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="town_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-4">
+        <createTable tableName="person">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="person_pkey"/>
+            </column>
+            <column name="about" type="VARCHAR(1000)"/>
+            <column name="birth_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="confirmation_code" type="VARCHAR(255)"/>
+            <column name="e_mail" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_approved" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_online_time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="messages_permission" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="photo" type="VARCHAR(1000)"/>
+            <column name="reg_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_id" type="INTEGER"/>
+            <column name="town_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-5">
+        <createTable tableName="message">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="message_pkey"/>
+            </column>
+            <column name="message_text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <!--
+    <changeSet author="eyese (generated)" id="1623738794378-6">
+        <addPrimaryKey columnNames="id" constraintName="post_pkey" tableName="post"/>
+    </changeSet>
+    -->
+    <changeSet author="eyese (generated)" id="1623738794378-7">
+        <createTable tableName="country">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="country_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-8">
+        <createTable tableName="post">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="post_pkey"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-9">
+        <createTable tableName="post_like">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="post_like_pkey"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <!--
+    <changeSet author="eyese (generated)" id="1623738794378-10">
+        <addPrimaryKey columnNames="id" constraintName="tag_pkey" tableName="tag"/>
+    </changeSet>
+    -->
+    <changeSet author="eyese (generated)" id="1623738794378-11">
+        <createTable tableName="block_history">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="block_history_pkey"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="INTEGER"/>
+            <column name="person_id" type="INTEGER"/>
+            <column name="post_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-12">
+        <createTable tableName="friendship">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="friendship_pkey"/>
+            </column>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="dst_person_id" type="INTEGER"/>
+            <column name="src_person_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-13">
+        <createTable tableName="tag">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tag_pkey"/>
+            </column>
+            <column name="tag" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-14">
+        <createTable tableName="post_file">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="post_file_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="path" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-15">
+        <createTable tableName="notification">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="notification_pkey"/>
+            </column>
+            <column name="sent_time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notification_type" type="CHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-16">
+        <createTable tableName="post2tag">
+            <column name="tag_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-17">
+        <addForeignKeyConstraint baseColumnNames="entity_id" baseTableName="notification" constraintName="fk_entity_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="notification_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-18">
+        <addForeignKeyConstraint baseColumnNames="post_comment_id" baseTableName="notification_entity" constraintName="fk_post_comment_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="post_comment" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-19">
+        <addForeignKeyConstraint baseColumnNames="message_id" baseTableName="notification_entity" constraintName="fk_message_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="message" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-20">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="notification_entity" constraintName="fk_post_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="post" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-21">
+        <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="notification_entity" constraintName="fk_person_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="person" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-22">
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="post" constraintName="fk_author_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="person" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-23">
+        <createIndex indexName="fki_parent_id" tableName="post_comment">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-24">
+        <createIndex indexName="fki_post_id" tableName="post_comment">
+            <column name="post_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-25">
+        <createIndex indexName="fki_author_id" tableName="post_comment">
+            <column name="author_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-26">
+        <addForeignKeyConstraint baseColumnNames="comment_id" baseTableName="block_history" constraintName="fk_comment_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="post_comment" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-27">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="post_comment" constraintName="fk_parent_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="post_comment" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-28">
+        <addForeignKeyConstraint baseColumnNames="town_id" baseTableName="person" constraintName="fk_town_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="town" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-29">
+        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="person" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-30">
+        <addForeignKeyConstraint baseColumnNames="recipient_id" baseTableName="message" constraintName="fk_recipient_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="person" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-31">
+        <addUniqueConstraint columnNames="e_mail" constraintName="uq_email" tableName="person"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-32">
+        <addForeignKeyConstraint baseColumnNames="dst_person_id" baseTableName="friendship" constraintName="fk_dst_person_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="person" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-33">
+        <addForeignKeyConstraint baseColumnNames="src_person_id" baseTableName="friendship" constraintName="fk_src_person_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="person" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-34">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="post2tag" constraintName="fk_tag_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tag" validate="true"/>
+    </changeSet>
+    <changeSet author="eyese (generated)" id="1623738794378-35">
+        <addPrimaryKey columnNames="post_id, tag_id" constraintName="post2tag_pkey" tableName="post2tag"/>
+    </changeSet>
+</databaseChangeLog>
