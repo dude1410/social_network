@@ -23,7 +23,7 @@ public class PersonDTO {
     private String photo;
     @JsonProperty(value = "about")
     private String about;
-    @JsonProperty(value = "city")
+    @JsonProperty(value = "town")
     private TownDTO town;
     @JsonProperty(value = "country")
     private CountryDTO country;
