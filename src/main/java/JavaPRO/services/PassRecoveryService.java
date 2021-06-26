@@ -1,5 +1,6 @@
 package JavaPRO.services;
 
+import JavaPRO.api.request.PasswordChangeRequest;
 import JavaPRO.api.request.SetPasswordRequest;
 import JavaPRO.api.response.OkResponse;
 import JavaPRO.api.response.ResponseData;
@@ -38,9 +39,6 @@ public class PassRecoveryService {
     }
 
     public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException {
-        if (email == null) {
-            throw new BadRequestException(Config.STRING_AUTH_INVALID_EMAIL);
-        }
         Person person = personRepository.findByEmail(email);
         if (person == null) {
             logger.error("Ошибка при восстановлении пароля. Пользователь с введенным email не найден. Email: " + email);
@@ -54,10 +52,18 @@ public class PassRecoveryService {
         return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
     }
 
-    public ResponseEntity<OkResponse> setNewPassword(SetPasswordRequest setPasswordRequest) throws BadRequestException {
-        if (setPasswordRequest.getPassword() == null || setPasswordRequest.getToken() == null) {
-            throw new BadRequestException(Config.STRING_BAD_REQUEST);
+    public ResponseEntity<OkResponse> changePassword(PasswordChangeRequest passwordChangeRequest, String userEmail) throws BadRequestException {
+        String newPassword = passwordChangeRequest.getNewPassword();
+        if (personRepository.changePassword(passwordEncoder.encode(newPassword), userEmail) == 1) {
+            logger.info("Успешная смена пароля (Настройки пользователя). Email: " + userEmail);
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+        } else {
+            logger.error("Ошибка при смене пароля (Настройки пользователя). Ошибка при обработке запроса в БД. Email: " + userEmail);
+            throw new BadRequestException(Config.STRING_INVALID_SET_PASSWORD);
         }
+    }
+
+    public ResponseEntity<OkResponse> setNewPassword(SetPasswordRequest setPasswordRequest) throws BadRequestException {
         String token = setPasswordRequest.getToken();
         String password = setPasswordRequest.getPassword();
         Person person = personRepository.findByConfirmationCode(token);

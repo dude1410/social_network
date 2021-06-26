@@ -37,7 +37,7 @@ public class RegisterController {
     @Operation(description = "Регистрация нового пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Ссылка на подтверждение регистрации направлена"),
             @ApiResponse(responseCode = "404", description = "На этот почтовый ящик уже зарегестрирован другой аккаунт")})
-    public ResponseEntity<OkResponse> registration(@RequestBody RegisterRequest registerRequest) throws BadRequestException {
+    public ResponseEntity<OkResponse> registration(@RequestBody RegisterRequest registerRequest) throws BadRequestException, InterruptedException {
         return registerService.registerNewUser(registerRequest);
     }
 

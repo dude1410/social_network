@@ -28,4 +28,9 @@ public class AppLogger {
     public Logger getMailSenderLogger(){
         return LogManager.getLogger("mailSenderLogger");
     }
+
+    @Bean(name = "mailChangeLogger")
+    public Logger getMailChangeLogger(){
+        return LogManager.getLogger("mailChangeLogger");
+    }
 }
