@@ -3,17 +3,13 @@ package JavaPRO.services;
 import JavaPRO.Util.CommentToDTOMapper;
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.api.request.CommentBodyRequest;
-import JavaPRO.api.response.CommentResponse;
-import JavaPRO.api.response.CommentsResponse;
-import JavaPRO.api.response.IsLikedResponse;
-import JavaPRO.api.response.LikeResponse;
+import JavaPRO.api.request.EditCommentRequest;
+import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
+import JavaPRO.model.DTO.*;
 import JavaPRO.model.DTO.Auth.AuthorizedPerson;
-import JavaPRO.model.DTO.CommentDTO;
-import JavaPRO.model.DTO.IsLikedDTO;
-import JavaPRO.model.DTO.LikeDTO;
 import JavaPRO.model.Person;
 import JavaPRO.model.Post;
 import JavaPRO.model.PostComment;
@@ -27,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.xml.stream.events.Comment;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -116,6 +113,101 @@ public class PostCommentService {
                         0,
                         20,
                         commentDTOs
+                ));
+    }
+
+    public ResponseEntity<CommentResponse> editComment(Integer commentID, EditCommentRequest editCommentBody) throws BadRequestException, NotFoundException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
+
+        PostComment comment = commentRepository.findCommentByID(commentID);
+
+        if (comment == null) {
+            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
+        }
+
+        comment.setCommentText(editCommentBody.getComment_text());
+
+        commentRepository.save(comment);
+
+        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+        commentDTO.setLikes(commentRepository.getLikes(commentID));
+
+        return ResponseEntity
+                .ok(new CommentResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        commentDTO
+                ));
+    }
+
+    public ResponseEntity<DeletePostByIDResponse> deleteComment(Integer commentID) throws BadRequestException, NotFoundException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
+
+        PostComment comment = commentRepository.findCommentByID(commentID);
+
+        if (comment == null) {
+            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
+        }
+
+        comment.setDeleted(true);
+        commentRepository.save(comment);
+
+        PostDeleteDTO deleteDTO = new PostDeleteDTO();
+        deleteDTO.setId(commentID);
+
+        return ResponseEntity
+                .ok(new DeletePostByIDResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        deleteDTO
+                ));
+    }
+
+    public ResponseEntity<CommentResponse> recoverComment(Integer commentID) throws BadRequestException, NotFoundException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
+
+        PostComment comment = commentRepository.findCommentByID(commentID);
+
+        if (comment == null) {
+            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
+        }
+
+        comment.setDeleted(false);
+
+        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+
+        return ResponseEntity
+                .ok(new CommentResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        commentDTO
+                ));
+    }
+
+    public ResponseEntity<ReportCommentResponse> reportComment(Integer commentID) throws BadRequestException, NotFoundException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
+
+        PostComment comment = commentRepository.findCommentByID(commentID);
+
+        if (comment == null) {
+            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
+        }
+
+        //TODO отправляем id коммента куда-то
+
+        return ResponseEntity
+                .ok(new ReportCommentResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        new MessageDTO()
                 ));
     }
 
