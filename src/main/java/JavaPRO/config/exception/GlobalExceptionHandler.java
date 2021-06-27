@@ -32,4 +32,12 @@ public class GlobalExceptionHandler {
                         exception.getErrorDescription()),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<ErrorResponse> interruptedHandler(NotFoundException exception) {
+        return new ResponseEntity<>(
+                new ErrorResponse(exception.getError(),
+                        exception.getErrorDescription()),
+                HttpStatus.BAD_REQUEST);
+    }
 }

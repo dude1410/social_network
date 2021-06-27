@@ -81,7 +81,6 @@ public class AuthService {
         var authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         logger.info("Успешная авторизация пользователя. Email: " + email);
