@@ -50,12 +50,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "ORDER BY p.time DESC ")
     List<Post> findPostsByAuthorID(int authorID);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Transactional
-    @Query("UPDATE Post p " +
-            "SET p.isDeleted = true " +
-            "WHERE p.id = :postID ")
-    Integer deletePostByID(int postID);
 
     @Query("SELECT " +
             "COUNT(pl.id) " +
