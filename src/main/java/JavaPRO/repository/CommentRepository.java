@@ -17,14 +17,19 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
             "pc " +
             "FROM Post p " +
             "LEFT JOIN PostComment pc ON p.id = pc.post.id " +
-            "WHERE p.id = :postID")
+            "WHERE p.id = :postID " +
+            "AND pc.isDeleted = false " +
+            "AND pc.isBlocked = false ")
     List<PostComment> findCommentsByPostID(int postID);
 
     @Query("SELECT " +
             "pc " +
             "FROM PostComment pc " +
-            "WHERE pc.id = :commentID")
+            "WHERE pc.id = :commentID " +
+            "AND pc.isDeleted = false " +
+            "AND pc.isBlocked = false ")
     PostComment findCommentByID(int commentID);
+
 
     @Query("SELECT " +
             "COUNT(pl.id) " +

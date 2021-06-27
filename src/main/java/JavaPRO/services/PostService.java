@@ -153,10 +153,11 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        int id = postRepository.deletePostByID(postID);
+        post.setDeleted(true);
+        postRepository.save(post);
 
         PostDeleteDTO postDeleteDTO = new PostDeleteDTO();
-        postDeleteDTO.setId(id);
+        postDeleteDTO.setId(postID);
 
         return ResponseEntity
                 .ok(new DeletePostByIDResponse(
@@ -240,6 +241,52 @@ public class PostService {
                 .ok(new PostShortResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         postDTO
+                ));
+    }
+
+    public ResponseEntity<PostShortResponse> recoverPost(Integer postID) throws BadRequestException, NotFoundException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        Post post = postRepository.findPostByID(postID);
+
+        if (post == null) {
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        }
+
+        post.setDeleted(false);
+
+        postRepository.save(post);
+
+        PostDTO postDTO = postToDTOMapper.convertToDTO(post);
+
+        return ResponseEntity
+                .ok(new PostShortResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        postDTO
+                ));
+    }
+
+    public ResponseEntity<ReportCommentResponse> reportPost(Integer postID) throws BadRequestException, NotFoundException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        Post post = postRepository.findPostByID(postID);
+
+        if (post == null) {
+            throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        }
+
+        //TODO отправляем id поста куда-то
+
+        return ResponseEntity
+                .ok(new ReportCommentResponse("successfully",
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        new MessageDTO()
                 ));
     }
 

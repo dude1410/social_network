@@ -1,9 +1,6 @@
 package JavaPRO.controller;
 
-import JavaPRO.api.request.CommentBodyRequest;
-import JavaPRO.api.request.LikeRequest;
-import JavaPRO.api.request.PostUpdateRequest;
-import JavaPRO.api.request.TagRequest;
+import JavaPRO.api.request.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
@@ -82,6 +79,19 @@ public class PostController {
         return postService.getPostByID(id);
     }
 
+    @PutMapping("/api/v1/post/{id}/recover")
+    @Operation(description = "Восстановление публикации по ID ")
+    public ResponseEntity recoverPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+        return postService.recoverPost(id);
+    }
+
+    //TODO этот метод фронтом не вызывается
+    @PostMapping("/api/v1/post/{id}/report")
+    @Operation(description = "Подать жалобу на публикацию")
+    public ResponseEntity reportPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+        return postService.reportPost(id);
+    }
+
     @PostMapping("/api/v1/post/{id}/comments")
     @Operation(description = "Создание комментария")
     public ResponseEntity addComment(@PathVariable Integer id,
@@ -90,15 +100,49 @@ public class PostController {
     }
 
     @GetMapping("/api/v1/post/{id}/comments")
+    @Operation(description = "Получить комментарии к посту")
     public ResponseEntity getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
         return postCommentService.getCommentsByPostID(id);
+    }
+
+
+    //TODO этот метод фронтом не вызывается
+    @PutMapping("/api/v1/post/{id}/comments/{comment_id}")
+    @Operation(description = "Редактирование комментария к публикации")
+    public ResponseEntity editComment(@PathVariable Integer id,
+                                      @PathVariable Integer comment_id,
+                                      @RequestBody EditCommentRequest editComment) throws BadRequestException, NotFoundException {
+        return postCommentService.editComment(comment_id, editComment);
+    }
+
+
+    //TODO этот метод фронтом не вызывается
+    @DeleteMapping("/api/v1/post/{id}/comments/{comment_id}")
+    public ResponseEntity deleteComment(@PathVariable Integer id,
+                                        @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
+
+        return postCommentService.deleteComment(comment_id);
+    }
+
+    //TODO этот метод фронтом не вызывается
+    @PutMapping("/api/v1/post/{id}/comments/{comment_id}/recover")
+    public ResponseEntity recoverComment(@PathVariable Integer id,
+                                         @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
+        return postCommentService.recoverComment(comment_id);
+    }
+
+    //TODO этот метод фронтом не вызывается
+    @PostMapping("/api/v1/post/{id}/comments/{comment_id}/report")
+    public ResponseEntity reportComment(@PathVariable Integer id,
+                                        @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
+        return postCommentService.reportComment(comment_id);
     }
 
     //TODO этот метод фронтом не вызывается
     @GetMapping("/api/v1/liked")
     public ResponseEntity getLike(@PathVariable Integer user_id,
                                   @PathVariable("item_id") Integer itemID,
-                                  @PathVariable String type) throws BadRequestException, NotFoundException {
+                                  @PathVariable String type) throws NotFoundException {
         if (type.equals("Post")) {
             return postService.isLiked(itemID);
         }
