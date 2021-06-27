@@ -4,6 +4,8 @@ import JavaPRO.api.request.PostUpdateRequest;
 import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.MyWallResponse;
 import JavaPRO.api.response.PostShortResponse;
+import JavaPRO.api.response.ProfileByIdResponse;
+import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
@@ -15,6 +17,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @Tag(name = "/api/v1/users", description = "Операции с профилем")
@@ -57,5 +61,19 @@ public class ProfileController {
                                                          @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
         return postService.publishPost(publishDate,
                 postUpdateRequest);
+    }
+
+    /**===================
+     * by karachun_maskim
+     * ==================*/
+    @GetMapping("/api/v1/users/{id}")
+    @Operation(description = "Создать пост на страничке пользователя")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешное получение данных пользователя"),
+            @ApiResponse(responseCode = "400", description = "Не удалось получить данные пользователя")})
+    public ResponseEntity<ProfileByIdResponse> getUserById(@PathVariable Integer id, Principal principal) throws BadRequestException {
+        if (principal == null) {
+            throw new BadRequestException(Config.STRING_AUTH_ERROR);
+        }
+        return profileService.getProfileById(id);
     }
 }

@@ -89,5 +89,4 @@ public class Person implements Serializable {
     public void setRole(Integer role) {
         this.role = role;
     }
-
 }
