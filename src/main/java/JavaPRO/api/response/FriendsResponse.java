@@ -1,16 +1,15 @@
 package JavaPRO.api.response;
 
-import JavaPRO.model.DTO.PostDTO;
+import JavaPRO.model.DTO.PersonDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MyWallResponse {
+public class FriendsResponse {
 
     @Schema(description = "ошибка", example = "invalid_request")
     private String error;
@@ -19,14 +18,14 @@ public class MyWallResponse {
     private Long timestamp;
 
     @Schema(description = "общее количество постов", example = "45l")
-    private Integer total;
+    private Long total;
 
     @Schema(description = "сдвиг для постраничного вывода", example = "0l")
-    private Integer offset;
+    private Long offset;
 
     @Schema(description = "количество постов на страницу", example = "20l")
-    private Integer perPage;
+    private Long perPage;
 
-    @Schema(description = "список объектов PostDTO")
-    private List<PostDTO> data;
+    @Schema(description = "модель для вывода друзей")
+    private List<PersonDTO> data;
 }
