@@ -30,6 +30,12 @@ public class Config {
     public static final String STRING_INVALID_SET_PASSWORD = "Не удалось сменить пароль";
     public static final String STRING_REPEAT_EMAIL = "На этот почтовый ящик уже зарегестрирован другой аккаунт";
     public static final String STRING_INVALID_CONFIRM = "Неудачная попытка подтверждения регистрации";
+    public static final String STRING_NO_FRIENDS_FOUND = "Друзей по запросу не найдено";
+    public static final String STRING_USER_IS_ALREADY_YOUR_FRIEND = "Этот пользователь уже в списке ваших друзей";
+    public static final String STRING_NO_FRIENDSHIP_REQUEST = "Заявка на добавление в друзья не найдена";
+    public static final String STRING_NO_DATA_FOUND = "Запись не найдена";
+    public static final String STRING_NO_RECOMMENDATIONS = "Список рекомендаций не удалось составить";
+    public static final String STRING_REQUEST_REPEATED = "Запрос на добавление в друзья уже существует";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }
