@@ -10,6 +10,4 @@ public class Response<T> {
     private Long timestamp;
     private T data;
 
-    public Response(String ok, long time, FileStorageResponse fileStorageResponse) {
-    }
 }

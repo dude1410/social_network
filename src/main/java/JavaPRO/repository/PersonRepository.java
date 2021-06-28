@@ -62,6 +62,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     Integer changeEmail(@Param("oldEmail") String oldEmail, @Param("newEmail") String newEmail);
 
     @Modifying
+    @Transactional
     @Query("DELETE " +
             "from Person p " +
             "WHERE p.isApproved = false " +

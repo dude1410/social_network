@@ -1,10 +1,11 @@
 package JavaPRO.controller;
 
+import JavaPRO.api.request.EditMyProfileRequest;
 import JavaPRO.api.request.PostUpdateRequest;
-import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.MyWallResponse;
 import JavaPRO.api.response.PostShortResponse;
 import JavaPRO.api.response.ProfileByIdResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
@@ -37,7 +38,7 @@ public class ProfileController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Профиль пользователя открыт"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден в БД")})
-    public ResponseEntity<LoginResponse> me() throws AuthenticationException,
+    public ResponseEntity<Response> me() throws AuthenticationException,
             NotFoundException {
         return profileService.getMyProfile();
     }
@@ -61,6 +62,11 @@ public class ProfileController {
                                                          @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
         return postService.publishPost(publishDate,
                 postUpdateRequest);
+    }
+
+    @PutMapping("/api/v1/users/me")
+    public ResponseEntity<Response> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException {
+        return profileService.editMyProfile(editMyProfileRequest);
     }
 
     /**===================

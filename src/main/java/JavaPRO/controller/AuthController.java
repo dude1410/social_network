@@ -1,7 +1,7 @@
 package JavaPRO.controller;
 
-import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.OkResponse;
+import JavaPRO.api.response.Response;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.model.DTO.Auth.UnauthorizedPersonDTO;
 import JavaPRO.services.AuthService;
@@ -32,8 +32,8 @@ public class AuthController {
     @Operation(description = "Вход в учетную запись")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка зайти в учетную запись"),
             @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")})
-    public ResponseEntity<LoginResponse> login(@RequestBody UnauthorizedPersonDTO user,
-                                               Errors error) throws BadRequestException {
+    public ResponseEntity<Response> login(@RequestBody UnauthorizedPersonDTO user,
+                                          Errors error) throws BadRequestException {
         return authService.loginUser(user, error);
     }
 

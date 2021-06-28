@@ -28,16 +28,14 @@ public class FileStorage {
             thumbImage = Scalr.resize(originalImage,
                     Scalr.Method.QUALITY,
                     Scalr.Mode.FIT_TO_WIDTH,
-                    128,
+                    256,
                     Scalr.OP_ANTIALIAS);
-            var thumbImg = new File(thumbImagePath);
+            var thumbImg = new File(thumbImagePath + "thumb" + file.getOriginalFilename());
             ImageIO.write(thumbImage, extension, thumbImg);
-            var originalImg = new File(originalImagePath);
+            var originalImg = new File(originalImagePath + file.getOriginalFilename());
             ImageIO.write(originalImage, extension, originalImg);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }
