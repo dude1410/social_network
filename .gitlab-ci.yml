@@ -13,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - sleep 25
+    - sudo mvn clean
   cache:
     paths:
       - ./target
