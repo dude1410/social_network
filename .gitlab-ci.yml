@@ -19,7 +19,7 @@ test:
     - mvn clean
   cache:
     paths:
-      - ./target/*
+      - ./target/
       - ./.m2
 
 package:
@@ -36,8 +36,8 @@ package:
   cache:
     policy: pull
     paths:
-      - ./target/*
-      - /.m2
+      - ./target/
+      - ./.m2
       
 deploy_to_server:
   stage: deploy
