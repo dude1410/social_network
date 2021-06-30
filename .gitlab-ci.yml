@@ -61,7 +61,7 @@ deploy_to_server:
     
 update_sonar_report:
   services:
-    name: systemctl
+    - name: systemctl
   stage: sonar
   only:
     - master
