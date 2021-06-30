@@ -19,11 +19,7 @@ test:
   script:
     - echo 'test are running i swaer'
     - sudo mvn clean
-  cache:
-    paths:
-      - ./target/
-      - ./.m2
-
+  
 package:
   stage: package
   only:
@@ -35,11 +31,6 @@ package:
   artifacts:
     paths:
       - ./target/*.jar
-  cache:
-    policy: pull
-    paths:
-      - ./target/
-      - ./.m2
       
 deploy_to_server:
   stage: deploy
