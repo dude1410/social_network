@@ -13,7 +13,7 @@ test:
     - tags
 
   before_script:
-    - echo 'before_scripto'
+    - echo 'before_scriptor'
     # - sudo systemctl stop socnet.service
     # - sleep 50
 
