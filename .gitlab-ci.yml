@@ -19,6 +19,7 @@ test:
 
   script:
     # - sudo mvn clean
+    - echo 'test'
   cache:
     paths:
       - ./target/
