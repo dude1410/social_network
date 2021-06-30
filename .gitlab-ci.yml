@@ -2,8 +2,8 @@ stages:
     - test
     - build
     - package
-    - deploy
-    - sonar
+    #- deploy
+    #- sonar
 
 test:
   stage: test
@@ -50,23 +50,21 @@ package:
       - ./target
       - ./.m2
       
-deploy_to_server:
-  image: ubuntu:16.04
-  services:
-    - name: socnet
-  stage: deploy
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - systemctl restart socnet.service
+#deploy_to_server:
+  #image: ubuntu:16.04
+  #stage: deploy
+  #only:
+    #- master
+  #except:
+    #- tags
+  #script:
+    #- systemctl restart socnet.service
     
-update_sonar_report:
-  stage: sonar
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+#update_sonar_report:
+  #stage: sonar
+  #only:
+    #- master
+  #except:
+    #- tags
+  #script:
+    #- mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
