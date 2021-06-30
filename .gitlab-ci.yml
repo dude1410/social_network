@@ -1,8 +1,8 @@
 stages:
     - test
-    # - package
-    # - deploy
-    # - sonar
+    - package
+    - deploy
+    - sonar
 
 test:
   stage: test
@@ -13,49 +13,48 @@ test:
     - tags
 
   before_script:
-    - echo 'before_scriptor'
-    # - sudo systemctl stop socnet.service
-    # - sleep 50
+    - sudo systemctl stop socnet.service
+    - sleep 25
 
   script:
-    - echo 'scriptsz'
-  # - sudo mvn clean
-  # cache:
-  #   paths:
-  #     - ./target/
-  #     - ./.m2
+    - echo 'test are running i swaer'
+    - sudo mvn clean
+  cache:
+    paths:
+      - ./target/
+      - ./.m2
 
-# package:
-#   stage: package
-#   only:
-#     - master
-#   except:
-#     - tags
-#   script:
-#     - mvn package -Dmaven.test.skip=true
-#   artifacts:
-#     paths:
-#       - ./target/*.jar
-#   cache:
-#     policy: pull
-#     paths:
-#       - ./target/
-#       - ./.m2
+package:
+  stage: package
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn package -Dmaven.test.skip=true
+  artifacts:
+    paths:
+      - ./target/*.jar
+  cache:
+    policy: pull
+    paths:
+      - ./target/
+      - ./.m2
       
-# deploy_to_server:
-#   stage: deploy
-#   only:
-#     - master
-#   except:
-#     - tags
-#   script:
-#     - sudo systemctl restart socnet.service
+deploy_to_server:
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - sudo systemctl restart socnet.service
     
-# update_sonar_report:
-#   stage: sonar
-#   only:
-#     - master
-#   except:
-#     - tags
-#   script:
-#     - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+update_sonar_report:
+  stage: sonar
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
