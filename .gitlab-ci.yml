@@ -12,6 +12,7 @@ test:
   except:
     - tags
   script:
+    - sudo systemctl stop socnet.service
     - mvn clean
   cache:
     paths:
