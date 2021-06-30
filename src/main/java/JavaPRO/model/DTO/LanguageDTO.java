@@ -15,5 +15,5 @@ public class LanguageDTO {
     private int id;
 
     @Schema(description = "язык", example = "русский")
-    private JavaPRO.model.ENUM.Language title;
+    private String title;
 }
