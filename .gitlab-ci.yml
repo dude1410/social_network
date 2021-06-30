@@ -51,7 +51,7 @@ package:
       - ./.m2
       
 deploy_to_server:
-  image: docker
+  image: ubuntu:16.04
   stage: deploy
   only:
     - master
@@ -61,7 +61,6 @@ deploy_to_server:
     - systemctl restart socnet.service
     
 update_sonar_report:
-  image: docker
   stage: sonar
   only:
     - master
