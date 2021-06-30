@@ -51,7 +51,7 @@ package:
       - ./.m2
       
 deploy_to_server:
-image:docker
+  image: docker
   stage: deploy
   only:
     - master
