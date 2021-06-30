@@ -1,6 +1,5 @@
 stages:
     - test
-    - build
     - package
     - deploy
     - sonar
@@ -16,23 +15,9 @@ test:
     - mvn clean
   cache:
     paths:
-      - /target
-      - /.m2
+      - ./target
+      - ./.m2
 
-build:
-  stage: build
-  only:
-    - master
-    - merge_requests
-  except:
-    - tags
-  script:
-    - mvn compile
-  cache:
-    paths:
-      - /target
-      - /.m2
-      
 package:
   stage: package
   only:
@@ -43,12 +28,12 @@ package:
     - mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
-      - target/*.jar
+      - ./target/*.jar
   cache:
     policy: pull
     paths:
-      - /target
-      - /.m2
+      - ./target
+      - ./.m2
       
 deploy_to_server:
   stage: deploy
