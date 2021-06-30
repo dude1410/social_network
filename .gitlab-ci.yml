@@ -18,8 +18,8 @@ test:
     # - sleep 50
 
   script:
-    - bash
-    - sudo mvn clean
+    - echo 'script'
+  # - sudo mvn clean
   # cache:
   #   paths:
   #     - ./target/
