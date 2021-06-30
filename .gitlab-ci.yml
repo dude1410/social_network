@@ -13,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - mvn clean
+    - sudo mvn clean
   cache:
     paths:
       - ./target
@@ -27,7 +27,7 @@ build:
   except:
     - tags
   script:
-    - mvn compile
+    - sudo mvn compile
   cache:
     paths:
       - ./target
@@ -40,7 +40,7 @@ package:
   except:
     - tags
   script:
-    - mvn package -Dmaven.test.skip=true
+    - sudo mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
       - target/*.jar
@@ -66,4 +66,4 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+    - sudo mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
