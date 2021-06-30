@@ -11,11 +11,11 @@ test:
     - merge_requests
   except:
     - tags
-  script:
-    - echo 'stop socnet back'
+
+  before_script:
     - sudo systemctl stop socnet.service
-    - sleep 25
-    - echo 'socnet stopped -> begin clean'
+
+  script:
     - mvn clean
   cache:
     paths:
