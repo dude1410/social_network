@@ -13,8 +13,8 @@ test:
     - tags
 
   before_script:
+    - sudo rm -rf /home/gitlab-runner/builds
     - sudo systemctl stop socnet.service
-    - sleep 25
 
   script:
     - echo 'test are running i swaer'
@@ -41,7 +41,6 @@ deploy_to_server:
 
   before_script:
     - sudo rm -rf /home/gitlab-runner/builds
-    - sleep 2
 
   script:
     - sudo systemctl restart socnet.service
