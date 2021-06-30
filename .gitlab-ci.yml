@@ -13,17 +13,16 @@ test:
     - tags
 
   before_script:
-    - mvn verify
+    - echo 'before_script'
     # - sudo systemctl stop socnet.service
     # - sleep 50
 
   script:
-    # - sudo mvn clean
-    - echo 'test'
-  cache:
-    paths:
-      - ./target/
-      - ./.m2
+    - sudo mvn clean
+  # cache:
+  #   paths:
+  #     - ./target/
+  #     - ./.m2
 
 # package:
 #   stage: package
