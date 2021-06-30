@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +29,6 @@ public class PlatformResponse {
   private int perPage;
 
   @Schema(description = "объект LanguageDTO")
-  private LanguageDTO data;
+  private List<LanguageDTO> data;
 
 }
