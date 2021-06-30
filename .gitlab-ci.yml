@@ -18,7 +18,7 @@ test:
     # - sleep 50
 
   script:
-    - echo 'scripts'
+    - echo 'scriptsz'
   # - sudo mvn clean
   # cache:
   #   paths:
