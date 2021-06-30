@@ -1,9 +1,5 @@
 stages:
     - test
-    - build
-    - package
-    - deploy
-    - sonar
 
 test:
   stage: test
@@ -13,7 +9,7 @@ test:
   except:
     - tags
   script:
-    - sudo mvn clean
+    - echo 'okay'
   cache:
     paths:
       - ./target
