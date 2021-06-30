@@ -13,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - mvn clean
+    - sudo mvn clean
   cache:
     paths:
       - ./target
@@ -27,7 +27,7 @@ build:
   except:
     - tags
   script:
-    - mvn compile
+    - sudo mvn compile
   cache:
     paths:
       - ./target
@@ -40,7 +40,7 @@ package:
   except:
     - tags
   script:
-    - mvn package
+    - sudo mvn package
   artifacts:
     paths:
       - target/*.jar
