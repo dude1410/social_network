@@ -13,8 +13,7 @@ test:
     - tags
 
   before_script:
-    - sudo git pull origin master
-    - echo 'before_script'
+    - echo 'before_scripto'
     # - sudo systemctl stop socnet.service
     # - sleep 50
 
