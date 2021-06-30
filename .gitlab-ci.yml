@@ -13,11 +13,11 @@ test:
     - tags
   script:
     - sudo systemctl stop socnet.service
-    - mvn clean
+    - sudo mvn clean
   cache:
     paths:
-      - ./target
-      - ./.m2
+      - /target
+      - /.m2
 
 package:
   stage: package
@@ -29,12 +29,12 @@ package:
     - mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
-      - ./target/*.jar
+      - /target/*.jar
   cache:
     policy: pull
     paths:
-      - ./target
-      - ./.m2
+      - /target
+      - /.m2
       
 deploy_to_server:
   stage: deploy
