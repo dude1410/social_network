@@ -29,18 +29,6 @@ public class PlatformService {
 
         List<LanguageDTO> data = new ArrayList<>();
 
-//        int[] codepoints1 = {0x1F1F7, 0x1F1FA};
-//        String s1 = new String(codepoints1, 0, codepoints1.length);
-//
-//        int[] codepoints2 = {0x1F1EC, 0x1F1E7};
-//        String s2 = new String(codepoints2, 0, codepoints1.length);
-//
-//        StringBuffer sb = new StringBuffer();
-//        sb.append(Character.toChars(127467));
-//        sb.append(Character.toChars(127479));
-//
-//        Emoji emoji = EmojiManager.getForAlias("ru");
-
         data.add(new LanguageDTO(1, Language.Русский.toString()));
         data.add(new LanguageDTO(2, Language.English.toString()));
 
