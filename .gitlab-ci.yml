@@ -17,7 +17,7 @@ test:
     - sleep 50
 
   script:
-    - mvn clean
+    - sudo mvn clean
   cache:
     paths:
       - ./target/
