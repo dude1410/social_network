@@ -12,6 +12,10 @@ test:
   except:
     - tags
   script:
+    - echo 'stop socnet back'
+    - sudo systemctl stop socnet.service
+    - sleep 25
+    - echo 'socnet stopped -> begin clean'
     - mvn clean
   cache:
     paths:
