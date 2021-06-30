@@ -1,5 +1,9 @@
 stages:
     - test
+    - build
+    - package
+    - deploy
+    - sonar
 
 test:
   stage: test
@@ -9,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - echo 'okay'
+    - sleep 25
   cache:
     paths:
       - ./target
