@@ -52,6 +52,8 @@ package:
       
 deploy_to_server:
   image: ubuntu:16.04
+  services:
+    name: socnet
   stage: deploy
   only:
     - master
