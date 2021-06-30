@@ -1,5 +1,3 @@
-image: docker:latest
-
 stages:
     - test
     - build
@@ -8,6 +6,7 @@ stages:
     - sonar
 
 test:
+  image: maven:latest
   stage: test
   only:
     - master
@@ -22,6 +21,7 @@ test:
       - ./.m2
 
 build:
+  image: maven:latest
   stage: build
   only:
     - master
@@ -36,6 +36,7 @@ build:
       - ./.m2
       
 package:
+  image: maven:latest
   stage: package
   only:
     - master
@@ -53,6 +54,7 @@ package:
       - ./.m2
       
 deploy_to_server:
+  image: ubuntu:latest
   stage: deploy
   only:
     - master
@@ -62,6 +64,7 @@ deploy_to_server:
     - systemctl restart socnet.service
     
 update_sonar_report:
+  image: ubuntu:latest
   stage: sonar
   only:
     - master
