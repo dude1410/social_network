@@ -1,20 +1,69 @@
-# build project:
-#   stage: build
-#   script:
-#     - mvn clean
-#     - sudo rm -R /home/gitlab-runner/builds/RHW1AaE8/0/javapro12/javapro-socialnetwork-studygroup-12/target
-#     - sudo mvn package  -Dmaven.test.skip=true
-#     - mvn clean
-# #   artifacts:
-# #     expire_in: 1 week
-# #     paths:
-# #       - distr
-    
+stages:
+    - test
+    - build
+    - package
+    - deploy
+    - sonar
 
-# deploy site:
-#   stage: deploy
-#   script:
-#     - sudo systemctl restart socnet.service
-#     - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
-#   only:
-#     - master
+test:
+  stage: test
+  only:
+    - master
+    - merge_requests
+  except:
+    - tags
+  script:
+    - mvn clean test
+  cache:
+    paths:
+      - ./target
+      - ./.m2
+
+build:
+  stage: build
+  only:
+    - master
+    - merge_requests
+  except:
+    - tags
+  script:
+    - mvn compile
+  cache:
+    paths:
+      - ./target
+      - ./.m2
+      
+package:
+  stage: package
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn package
+  artifacts:
+    paths:
+      - target/*.jar
+  cache:
+    policy: pull
+    paths:
+      - ./target
+      - ./.m2
+      
+deploy_to_server:
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - sudo systemctl restart socnet.service
+    
+update_sonar_report:
+  stage: sonar
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
