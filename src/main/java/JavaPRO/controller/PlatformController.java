@@ -24,11 +24,15 @@ public class PlatformController {
     @GetMapping(value = "/api/v1/platform/languages")
     @Operation(description = "Вывод всех доступный языков для выбора")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Язык для сайта выбран")})
-    public ResponseEntity<PlatformResponse> languages(@RequestParam(value = "language", required = false) String language,
-                                                      @RequestParam(value = "offset", required = false) Integer offset,
-                                                      @RequestParam(value = "itemPerPage", required = false) Integer itemPerPage) {
-        itemPerPage = 20;
-        return platformService.getLanguages();
+    public ResponseEntity<PlatformResponse> languages(@RequestParam(value = "language",
+                                                                required = false) String language,
+                                                      @RequestParam(value = "offset",
+                                                              required = false,
+                                                              defaultValue = "0") Integer offset,
+                                                      @RequestParam(value = "itemPerPage",
+                                                              required = false,
+                                                              defaultValue = "20") Integer itemPerPage) {
+        return platformService.getLanguages(language, offset, itemPerPage);
 
     }
 }
