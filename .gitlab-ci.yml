@@ -40,7 +40,7 @@ package:
   except:
     - tags
   script:
-    - mvn package
+    - mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
       - target/*.jar
