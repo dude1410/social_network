@@ -13,7 +13,7 @@ test:
     - tags
 
   before_script:
-    mvn verify
+    - mvn verify
     # - sudo systemctl stop socnet.service
     # - sleep 50
 
