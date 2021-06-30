@@ -13,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - mvn clean test
+    - mvn clean
   cache:
     paths:
       - ./target
