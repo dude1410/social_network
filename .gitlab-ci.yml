@@ -13,7 +13,7 @@ test:
   except:
     - tags
   script:
-    - sudo mvn clean
+    - mvn clean
   cache:
     paths:
       - ./target
@@ -27,7 +27,7 @@ build:
   except:
     - tags
   script:
-    - sudo mvn compile
+    - mvn compile
   cache:
     paths:
       - ./target
@@ -40,7 +40,7 @@ package:
   except:
     - tags
   script:
-    - sudo mvn package
+    - mvn package
   artifacts:
     paths:
       - target/*.jar
@@ -57,7 +57,7 @@ deploy_to_server:
   except:
     - tags
   script:
-    - sudo systemctl restart socnet.service
+    - systemctl restart socnet.service
     
 update_sonar_report:
   stage: sonar
