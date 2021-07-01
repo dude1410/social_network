@@ -12,7 +12,7 @@ test:
   except:
     - tags
   script:
-    - echo 'test are running i swear!!'
+    - echo 'test are running i swear!!!'
     - sudo mvn clean
     - sudo systemctl stop socnet.service
   
