@@ -1,6 +1,7 @@
 package JavaPRO.controller;
 
 import JavaPRO.api.request.*;
+import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
@@ -25,137 +26,155 @@ public class PostController {
         this.postCommentService = postCommentService;
     }
 
-    @GetMapping(value = "/api/v1/post")
-    @Operation(description = "Поиск постов по тексту")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для посика")})
-    public ResponseEntity getPost(@RequestParam("text") String searchText) throws BadRequestException,
-            AuthenticationException {
-        return postService.searchPostsByText(searchText);
-    }
-
     @GetMapping(value = "/api/v1/feeds")
     @Operation(description = "Получить все посты")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить все посты"),
             @ApiResponse(responseCode = "404", description = "Посты не найдены в БД")})
-    public ResponseEntity getAllPosts() throws NotFoundException {
+    public ResponseEntity<PostResponse> getAllPosts() throws NotFoundException {
         return postService.getAllPosts();
     }
 
-    @PutMapping("/api/v1/post/{id}")
+    @PutMapping(value = "/api/v1/post/{id}")
     @Operation(description = "Редактирование поста")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка отредактировать пост по id"),
             @ApiResponse(responseCode = "400", description = "id поста не задан"),
             @ApiResponse(responseCode = "404", description = "Пост не найден в БД")})
-    public ResponseEntity updatePostByID(@PathVariable Integer id,
-                                         @RequestBody PostUpdateRequest postUpdateRequest) throws NotFoundException,
+    public ResponseEntity<PostShortResponse> updatePostByID(@PathVariable Integer id,
+                                                            @RequestBody PostDataRequest postDataRequest) throws NotFoundException,
             BadRequestException {
 
-        return postService.updatePostByID(id,
-                postUpdateRequest.getTitle(),
-                postUpdateRequest.getPost_text());
+        return postService.updatePostByID(id, postDataRequest);
     }
 
-    @DeleteMapping("/api/v1/post/{id}")
+    @DeleteMapping(value = "/api/v1/post/{id}")
     @Operation(description = "Удаление поста")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка удалить пост"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "id поста не задан"),
             @ApiResponse(responseCode = "404", description = "Пост не найден в БД")})
-    public ResponseEntity deletePostByID(@PathVariable Integer id) throws AuthenticationException,
+    public ResponseEntity<DeletePostByIDResponse> deletePostByID(@PathVariable Integer id) throws AuthenticationException,
             NotFoundException,
             BadRequestException {
         return postService.deletePostByID(id);
     }
 
-    @GetMapping("/api/v1/post/{id}")
+    @GetMapping(value = "/api/v1/post/{id}")
     @Operation(description = "Получения поста по id")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить пост"),
             @ApiResponse(responseCode = "400", description = "id поста не задан"),
             @ApiResponse(responseCode = "404", description = "Пост не найден в БД")})
-    public ResponseEntity getPostByID(@PathVariable Integer id) throws NotFoundException,
+    public ResponseEntity<PostShortResponse> getPostByID(@PathVariable Integer id) throws NotFoundException,
             BadRequestException {
         return postService.getPostByID(id);
     }
 
-    @PutMapping("/api/v1/post/{id}/recover")
+    @PutMapping(value = "/api/v1/post/{id}/recover")
     @Operation(description = "Восстановление публикации по ID ")
-    public ResponseEntity recoverPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешное восстановление публикации"),
+            @ApiResponse(responseCode = "400", description = "id поста не задан"),
+            @ApiResponse(responseCode = "404", description = "Пост не найден в БД")})
+    public ResponseEntity<PostShortResponse> recoverPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
         return postService.recoverPost(id);
     }
 
     //TODO этот метод фронтом не вызывается
-    @PostMapping("/api/v1/post/{id}/report")
+    @PostMapping(value = "/api/v1/post/{id}/report")
     @Operation(description = "Подать жалобу на публикацию")
-    public ResponseEntity reportPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Жалоба подана успешно"),
+            @ApiResponse(responseCode = "400", description = "id поста не задан"),
+            @ApiResponse(responseCode = "404", description = "Пост не найден в БД")})
+    public ResponseEntity<ReportCommentResponse> reportPost(@PathVariable Integer id) throws BadRequestException, NotFoundException {
         return postService.reportPost(id);
     }
 
-    @PostMapping("/api/v1/post/{id}/comments")
+    @PostMapping(value = "/api/v1/post/{id}/comments")
     @Operation(description = "Создание комментария")
-    public ResponseEntity addComment(@PathVariable Integer id,
-                                     @RequestBody CommentBodyRequest commentBody) throws NotFoundException, BadRequestException {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Жалоба подана успешно"),
+            @ApiResponse(responseCode = "400", description = "id коммента не задан"),
+            @ApiResponse(responseCode = "404", description = "Коммент не найден в БД")})
+    public ResponseEntity<CommentResponse> addComment(@PathVariable Integer id,
+                                                      @RequestBody CommentBodyRequest commentBody) throws NotFoundException, BadRequestException {
         return postCommentService.addComment(id, commentBody);
     }
 
-    @GetMapping("/api/v1/post/{id}/comments")
+    @GetMapping(value = "/api/v1/post/{id}/comments")
     @Operation(description = "Получить комментарии к посту")
-    public ResponseEntity getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Комментарии получены успешно"),
+            @ApiResponse(responseCode = "400", description = "id поста не задан"),
+            @ApiResponse(responseCode = "404", description = "Комменты не найдены в БД")})
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
         return postCommentService.getCommentsByPostID(id);
     }
 
-
-    //TODO этот метод фронтом не вызывается
-    @PutMapping("/api/v1/post/{id}/comments/{comment_id}")
+    @PutMapping(value = "/api/v1/post/{id}/comments/{comment_id}")
     @Operation(description = "Редактирование комментария к публикации")
-    public ResponseEntity editComment(@PathVariable Integer id,
-                                      @PathVariable Integer comment_id,
-                                      @RequestBody EditCommentRequest editComment) throws BadRequestException, NotFoundException {
-        return postCommentService.editComment(comment_id, editComment);
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Редактирование комментария прошло успешно"),
+            @ApiResponse(responseCode = "400", description = "id коммента не задан"),
+            @ApiResponse(responseCode = "404", description = "Коммент не найден в БД")})
+    public ResponseEntity<CommentResponse> editComment(@PathVariable Integer id,
+                                      @PathVariable(name = "comment_id") Integer commentID,
+                                      @RequestBody CommentBodyRequest editComment) throws BadRequestException, NotFoundException {
+        return postCommentService.editComment(commentID, editComment);
     }
 
-
-    //TODO этот метод фронтом не вызывается
-    @DeleteMapping("/api/v1/post/{id}/comments/{comment_id}")
-    public ResponseEntity deleteComment(@PathVariable Integer id,
-                                        @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
-
-        return postCommentService.deleteComment(comment_id);
-    }
-
-    //TODO этот метод фронтом не вызывается
-    @PutMapping("/api/v1/post/{id}/comments/{comment_id}/recover")
-    public ResponseEntity recoverComment(@PathVariable Integer id,
-                                         @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
-        return postCommentService.recoverComment(comment_id);
+    @DeleteMapping(value = "/api/v1/post/{id}/comments/{comment_id}")
+    @Operation(description = "Удаление комментария к публикации")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Комментарий удален успешно"),
+            @ApiResponse(responseCode = "400", description = "id коммента не задан"),
+            @ApiResponse(responseCode = "404", description = "Коммент не найден в БД")})
+    public ResponseEntity<DeletePostByIDResponse> deleteComment(@PathVariable Integer id,
+                                        @PathVariable(name = "comment_id") Integer commentID) throws BadRequestException, NotFoundException {
+        return postCommentService.deleteComment(commentID);
     }
 
     //TODO этот метод фронтом не вызывается
-    @PostMapping("/api/v1/post/{id}/comments/{comment_id}/report")
-    public ResponseEntity reportComment(@PathVariable Integer id,
-                                        @PathVariable Integer comment_id) throws BadRequestException, NotFoundException {
-        return postCommentService.reportComment(comment_id);
+    @PutMapping(value = "/api/v1/post/{id}/comments/{comment_id}/recover")
+    @Operation(description = "Восстановление комментария к публикации")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Комментарий восстановлен успешно"),
+            @ApiResponse(responseCode = "400", description = "id коммента не задан"),
+            @ApiResponse(responseCode = "404", description = "Коммент не найден в БД")})
+    public ResponseEntity<CommentResponse> recoverComment(@PathVariable Integer id,
+                                         @PathVariable(name = "comment_id") Integer commentID) throws BadRequestException, NotFoundException {
+        return postCommentService.recoverComment(commentID);
     }
 
     //TODO этот метод фронтом не вызывается
-    @GetMapping("/api/v1/liked")
-    public ResponseEntity getLike(@PathVariable Integer user_id,
+    @PostMapping(value = "/api/v1/post/{id}/comments/{comment_id}/report")
+    @Operation(description = "Жалоба на комментарий")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Жалоба на комментарий подана успешно"),
+            @ApiResponse(responseCode = "400", description = "id коммента не задан"),
+            @ApiResponse(responseCode = "404", description = "Коммент не найден в БД")})
+    public ResponseEntity<ReportCommentResponse> reportComment(@PathVariable Integer id,
+                                        @PathVariable(name = "comment_id") Integer commentID) throws BadRequestException, NotFoundException {
+        return postCommentService.reportComment(commentID);
+    }
+
+    //TODO этот метод фронтом не вызывается
+    @GetMapping(value = "/api/v1/liked")
+    @Operation(description = "Ставим лайк на объект(коммент/пост)")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Лайк поставлен"),
+            @ApiResponse(responseCode = "400", description = "Тип объекта не задан"),
+            @ApiResponse(responseCode = "404", description = "id объекта не найден в базе")})
+    public ResponseEntity<IsLikedResponse> getLike(@PathVariable Integer user_id,
                                   @PathVariable("item_id") Integer itemID,
-                                  @PathVariable String type) throws NotFoundException {
+                                  @PathVariable String type) throws NotFoundException, BadRequestException {
         if (type.equals("Post")) {
             return postService.isLiked(itemID);
         }
         if (type.equals("Comment")) {
             return postCommentService.isLiked(itemID);
         }
-        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+        throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
 
     //TODO этот метод фронтом не вызывается
-    @GetMapping("/api/v1/likes")
-    public ResponseEntity getLikes(@PathVariable("item_id") Integer itemID,
-                                   @PathVariable String type) {
+    @GetMapping(value = "/api/v1/likes")
+    @Operation(description = "Получить лайки на объекте")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Лайки получены"),
+            @ApiResponse(responseCode = "400", description = "Тип объекта не задан"),
+            @ApiResponse(responseCode = "404", description = "id объекта не найден в базе")})
+    public ResponseEntity<LikeResponse> getLikes(@PathVariable("item_id") Integer itemID,
+                                   @PathVariable String type) throws BadRequestException {
         if (type.equals("Post")) {
             return postService.getAllLikes(itemID);
         }
@@ -164,12 +183,15 @@ public class PostController {
             return postCommentService.getAllLikes(itemID);
         }
 
-        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+        throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
 
-    //поставить лайк
-    @PutMapping("/api/v1/likes")
-    public ResponseEntity addLike(@RequestBody LikeRequest likeBody) throws NotFoundException {
+    @PutMapping(value = "/api/v1/likes")
+    @Operation(description = "Поставить лайк на объект(коммент/пост)")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Лайки поставлены"),
+            @ApiResponse(responseCode = "400", description = "Тип объекта не задан"),
+            @ApiResponse(responseCode = "404", description = "id объекта не найден в базе")})
+    public ResponseEntity<LikeResponse> addLike(@RequestBody LikeRequest likeBody) throws NotFoundException, BadRequestException {
 
         if (likeBody.getType().equals("Post")) {
             return postService.addLike(likeBody.getItem_id());
@@ -177,36 +199,48 @@ public class PostController {
         if (likeBody.getType().equals("Comment")) {
             return postCommentService.addLike(likeBody.getItem_id());
         }
-        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+        throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
 
-    //убрать лайк
-    @DeleteMapping("/api/v1/likes")
-    public ResponseEntity deleteLike(@RequestBody LikeRequest likeBody) throws NotFoundException {
+    @DeleteMapping(value = "/api/v1/likes")
+    @Operation(description = "Убрать лайк с объекта(коммент/пост)")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Лайк убран"),
+            @ApiResponse(responseCode = "400", description = "Тип объекта не задан"),
+            @ApiResponse(responseCode = "404", description = "id объекта не найден в базе")})
+    public ResponseEntity<LikeResponse> deleteLike(@RequestBody LikeRequest likeBody) throws NotFoundException, BadRequestException {
         if (likeBody.getType().equals("Post")) {
             return postService.deleteLike(likeBody.getItem_id());
         }
-
         if (likeBody.getType().equals("Comment")) {
             return postCommentService.deleteLike(likeBody.getItem_id());
         }
-        return ResponseEntity.badRequest().body(Config.STRING_NO_CONTENT_TYPE);
+        throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
 
-    @PostMapping("/api/v1/tags/")
-    public ResponseEntity addTag(@RequestBody TagRequest tagRequest) {
+    @PostMapping(value = "/api/v1/tags/")
+    @Operation(description = "Добавить тег")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Тег успешно создан"),
+            @ApiResponse(responseCode = "400", description = "Название тега не задано или задано некорректно")})
+    public ResponseEntity<TagResponse> addTag(@RequestBody TagRequest tagRequest) throws BadRequestException {
         return postService.addTag(tagRequest);
     }
 
-    @GetMapping("/api/v1/tags/")
-    public ResponseEntity getTags(@RequestParam String tag,
+    @GetMapping(value = "/api/v1/tags/")
+    @Operation(description = "Получение тегов для публикации")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Тег успешно удален"),
+            @ApiResponse(responseCode = "400", description = "Не передан тэг")})
+    public ResponseEntity<TagsResponse> getTags(@RequestParam String tag,
                                   @RequestParam(defaultValue = "0l") Long offset,
-                                  @RequestParam(defaultValue = "20l") Long itemPerPage) {
+                                  @RequestParam(defaultValue = "20l") Long itemPerPage) throws BadRequestException {
         return postService.getTags(tag);
     }
 
-    @DeleteMapping("/api/v1/tags/")
-    public ResponseEntity deleteTag(@RequestParam Integer id) {
+    @DeleteMapping(value = "/api/v1/tags/")
+    @Operation(description = "Удалить тег")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Тег успешно удален"),
+            @ApiResponse(responseCode = "400", description = "Не передан id тега"),
+            @ApiResponse(responseCode = "404", description = "Тег не найден в базе")})
+    public ResponseEntity<TagDeleteResponse> deleteTag(@RequestParam Integer id) throws BadRequestException, NotFoundException {
         return postService.deleteTag(id);
     }
 }

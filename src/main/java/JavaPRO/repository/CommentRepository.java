@@ -15,11 +15,11 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
 
     @Query("SELECT " +
             "pc " +
-            "FROM Post p " +
-            "LEFT JOIN PostComment pc ON p.id = pc.post.id " +
-            "WHERE p.id = :postID " +
+            "FROM PostComment pc " +
+            "WHERE pc.post.id = :postID " +
             "AND pc.isDeleted = false " +
-            "AND pc.isBlocked = false ")
+            "AND pc.isBlocked = false " +
+            "ORDER BY pc.time DESC")
     List<PostComment> findCommentsByPostID(int postID);
 
     @Query("SELECT " +
@@ -42,7 +42,7 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
             "COUNT(pl.id) " +
             "FROM PostLike pl " +
             "WHERE pl.comment.id = :commentID ")
-    Integer getLikes(Integer commentID);
+    Integer getLikesOnComment(Integer commentID);
 
     @Query("SELECT DISTINCT " +
             "prsn " +

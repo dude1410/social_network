@@ -1,8 +1,8 @@
-package JavaPRO.model;
+package JavaPRO.model.DTO;
 
 import lombok.Data;
 
 @Data
 public class TagDeleteDTO {
-    String message;
+    String message = "ok";
 }

@@ -14,5 +14,6 @@ public class LikeResponse {
     @Schema(description = "время", example = "2147483648L")
     private Long timestamp;
 
+    @Schema(description = "объект LikeDTO")
     private LikeDTO data;
 }

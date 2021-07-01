@@ -1,6 +1,6 @@
 package JavaPRO.api.response;
 
-import JavaPRO.model.DTO.PostDTO;
+import JavaPRO.model.DTO.Auth.AuthorizedPerson;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PostResponse {
+public class PersonsResponse {
 
     @Schema(description = "ошибка", example = "success")
     private String error;
@@ -17,16 +17,15 @@ public class PostResponse {
     @Schema(description = "метка времени", example = "2147483648L")
     private Long timestamp;
 
-    @Schema(description = "общее количество постов", example = "45l")
-    private Integer total;
+    @Schema(description = "общее количество комментов", example = "45l")
+    private int total;
 
     @Schema(description = "сдвиг для постраничного вывода", example = "0l")
-    private Integer offset;
+    private int offset;
 
-    @Schema(description = "количество постов на страницу", example = "20l")
-    private Integer itemPerPage;
+    @Schema(description = "количество комментов на страницу", example = "20l")
+    private int perPage;
 
-    @Schema(description = "список объектов PostDTO")
-    private List<PostDTO> data;
-
+    @Schema(description = "объект AuthorizedPerson")
+    private List<AuthorizedPerson> data;
 }

@@ -1,6 +1,6 @@
 package JavaPRO.controller;
 
-import JavaPRO.api.request.PostUpdateRequest;
+import JavaPRO.api.request.PostDataRequest;
 import JavaPRO.api.response.LoginResponse;
 import JavaPRO.api.response.MyWallResponse;
 import JavaPRO.api.response.PostShortResponse;
@@ -42,25 +42,27 @@ public class ProfileController {
         return profileService.getMyProfile();
     }
 
-    @GetMapping("/api/v1/users/{id}/wall")
-    @Operation(description = "Открыть страничку пользователя")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка открытьстраничку пользователя"),
+    @GetMapping(value = "/api/v1/users/{id}/wall")
+    @Operation(description = "Получение записей на стене пользователя")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка открыть стену пользователя"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "id пользователя не задан"),
             @ApiResponse(responseCode = "404", description = "Посты не найдены в БД")})
-    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id) throws NotFoundException {
+    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id,
+                                                 @RequestParam(name = "offset", defaultValue = "0") Integer offset,
+                                                 @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws NotFoundException {
         return postService.getPostsByUser();
     }
 
-    @PostMapping("/api/v1/users/{id}/wall")
-    @Operation(description = "Создать пост на страничке пользователя") // todo
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка создать страничку пользователя"), // todo
+    @PostMapping(value = "/api/v1/users/{id}/wall")
+    @Operation(description = "Создать пост на стене пользователя")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка создать пост"),
             @ApiResponse(responseCode = "400", description = "id пользователя не задан")})
     public ResponseEntity<PostShortResponse> publishPost(@PathVariable Integer id,
                                                          @RequestParam(name = "publish_date", required = false) Long publishDate,
-                                                         @RequestBody PostUpdateRequest postUpdateRequest) throws BadRequestException, NotFoundException {
+                                                         @RequestBody PostDataRequest postDataRequest) throws NotFoundException {
         return postService.publishPost(publishDate,
-                postUpdateRequest);
+                postDataRequest);
     }
 
     /**===================
