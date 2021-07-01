@@ -1,8 +1,8 @@
 stages:
     - test
-    # - package
-    # - deploy
-    # - sonar
+    - package
+    - deploy
+    - sonar
 
 test:
   stage: test
@@ -13,27 +13,28 @@ test:
     - tags
   script:
     - echo 'test are running i swear!!!!'
-    - pwd
-    # - sudo mvn clean
-    # - sudo systemctl stop socnet.service
+    - sudo rm -rf ./target/
+    - sudo mvn clean
+    - sudo systemctl stop socnet.service
   
-# package:
-#   stage: package
-#   only:
-#     - master
-#   except:
-#     - tags
-#   script:
-#     - sudo mvn package -Dmaven.test.skip=true
+package:
+  stage: package
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - sudo mvn package -Dmaven.test.skip=true
       
-# deploy_to_server:
-#   stage: deploy
-#   only:
-#     - master
-#   except:
-#     - tags
-#   script:
-#     - sudo systemctl restart socnet.service
+deploy_to_server:
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - sudo rm -rf ./target/
+    - sudo systemctl restart socnet.service
     
 # update_sonar_report:
 #   stage: sonar
