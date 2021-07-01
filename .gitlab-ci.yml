@@ -11,13 +11,10 @@ test:
     - merge_requests
   except:
     - tags
-
-  before_script:
-    - sudo systemctl stop socnet.service
-
   script:
     - echo 'test are running i swear'
     - sudo mvn clean
+    - sudo systemctl stop socnet.service
   
 package:
   stage: package
