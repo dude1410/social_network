@@ -32,6 +32,7 @@ deploy_to_server:
   except:
     - tags
   script:
+    - su gitlab-runner
     - sudo systemctl restart socnet.service
     
 update_sonar_report:
