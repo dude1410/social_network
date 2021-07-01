@@ -13,6 +13,8 @@ test:
     - tags
   script:
     - echo 'test are running i swear!!!'
+    - cd ~
+    - rm -rf ./builds
     - sudo mvn clean
     - sudo systemctl stop socnet.service
   
@@ -24,11 +26,6 @@ package:
     - tags
   script:
     - sudo mvn package -Dmaven.test.skip=true
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - /target/*.jar
-
       
 deploy_to_server:
   stage: deploy
