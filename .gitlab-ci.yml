@@ -2,7 +2,7 @@ stages:
     - test
     - package
     - deploy
-    - sonar
+    # - sonar
 
 test:
   stage: test
@@ -34,11 +34,11 @@ deploy_to_server:
   script:
     - sudo systemctl restart socnet.service
     
-update_sonar_report:
-  stage: sonar
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - sudo mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+# update_sonar_report:
+#   stage: sonar
+#   only:
+#     - master
+#   except:
+#     - tags
+#   script:
+#     - sudo mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
