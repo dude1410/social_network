@@ -13,6 +13,7 @@ test:
     - tags
   script:
     - echo 'test are running i swear!!!!'
+    - pwd
     # - sudo mvn clean
     # - sudo systemctl stop socnet.service
   
