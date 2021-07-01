@@ -14,5 +14,18 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
             "t " +
             "FROM Tag t " +
             "WHERE LOWER(t.tag) LIKE %:searchTag% ")
-    List<Tag> findTagByText(String searchTag);
+    List<Tag> findTagsByText(String searchTag);
+
+    @Query("SELECT " +
+            "t " +
+            "FROM Tag t " +
+            "WHERE t.tag = :searchTag ")
+    Tag findTagByName(String searchTag);
+
+
+    @Query("SELECT " +
+            "t " +
+            "FROM Tag t " +
+            "WHERE t.id = :tagID ")
+    Tag findTagByID(Integer tagID);
 }

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +45,4 @@ public class Post implements Serializable {
     @JsonManagedReference
     @OneToMany(mappedBy = "post")
     private List<PostComment> postCommentList;
-
-
 }

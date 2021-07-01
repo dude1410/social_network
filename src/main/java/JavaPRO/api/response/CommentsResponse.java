@@ -26,6 +26,7 @@ public class CommentsResponse {
     @Schema(description = "количество комментов на страницу", example = "20l")
     private int perPage;
 
+    @Schema(description = "объект CommentDTO")
     List<CommentDTO> data;
 
 }

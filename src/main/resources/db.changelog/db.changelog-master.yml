@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db.changelog/changes/db.changelog.xml
+  - include:
+      file: db.changelog/changes/db.view_persons.xml

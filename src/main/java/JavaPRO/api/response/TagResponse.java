@@ -15,5 +15,6 @@ public class TagResponse {
     @Schema(description = "метка времени", example = "2147483648L")
     private Long timestamp;
 
+    @Schema(description = "объект TagDTO")
     private TagDTO data;
 }

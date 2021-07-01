@@ -3,7 +3,7 @@ package JavaPRO.services;
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.Util.PostToDTOMapper;
 import JavaPRO.Util.TagToDTOMapper;
-import JavaPRO.api.request.PostUpdateRequest;
+import JavaPRO.api.request.PostDataRequest;
 import JavaPRO.api.request.TagRequest;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
@@ -23,10 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,7 +39,11 @@ public class PostService {
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
-                       LikeRepository likeRepository, TagRepository tagRepository, PostToDTOMapper postToDTOMapper, PersonToDtoMapper personToDtoMapper, TagToDTOMapper tagToDTOMapper) throws NotFoundException {
+                       LikeRepository likeRepository,
+                       TagRepository tagRepository,
+                       PostToDTOMapper postToDTOMapper,
+                       PersonToDtoMapper personToDtoMapper,
+                       TagToDTOMapper tagToDTOMapper) throws NotFoundException {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
@@ -50,39 +51,6 @@ public class PostService {
         this.postToDTOMapper = postToDTOMapper;
         this.personToDtoMapper = personToDtoMapper;
         this.tagToDTOMapper = tagToDTOMapper;
-    }
-
-    public ResponseEntity<PostResponse> searchPostsByText(String searchText) throws BadRequestException,
-            AuthenticationException {
-
-        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            throw new AuthenticationException(Config.STRING_AUTH_ERROR);
-        }
-
-        if (searchText == null || searchText.length() == 0) {
-            log.info(String.format("Input text is incorrect"));
-            throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
-        }
-        searchText = searchText.toLowerCase(Locale.ROOT);
-
-        List<Post> postList = postRepository.findPostsByText(searchText);
-
-        List<PostDTO> postDTOList = new ArrayList();
-
-        if (postList.size() == 0) {
-            postList = postRepository.findAllPosts(new Date());
-        }
-
-        postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository));
-
-        return ResponseEntity
-                .ok(new PostResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
-                        postDTOList));
     }
 
     public ResponseEntity<MyWallResponse> getPostsByUser() throws NotFoundException {
@@ -100,7 +68,8 @@ public class PostService {
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
 
         postDTOList.forEach(PostDTO::setPostStatus);
-        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository));
+        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository.getLikes(postDTO.getId())));
+
         return ResponseEntity
                 .ok(new MyWallResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -122,9 +91,7 @@ public class PostService {
         List<PostDTO> postDTOList = new ArrayList();
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-
-        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository));
-
+        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository.getLikes(postDTO.getId())));
         return ResponseEntity
                 .ok(new PostResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -168,8 +135,7 @@ public class PostService {
     }
 
     public ResponseEntity<PostShortResponse> updatePostByID(Integer postID,
-                                                            String newTitle,
-                                                            String newPostText) throws NotFoundException,
+                                                            PostDataRequest postDataRequest) throws NotFoundException,
             BadRequestException {
 
         if (postID == null) {
@@ -182,13 +148,14 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        post.setPostText(newPostText);
-        post.setTitle(newTitle);
+        post.setPostText(postDataRequest.getPost_text());
+        post.setTitle(postDataRequest.getTitle());
 
         postRepository.save(post);
 
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        postDTO.setLikes(postRepository);
+        postDTO.setLikes(postRepository.getLikes(postDTO.getId()));
+
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -209,7 +176,7 @@ public class PostService {
         }
 
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        postDTO.setLikes(postRepository);
+        postDTO.setLikes(postRepository.getLikes(postDTO.getId()));
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -218,7 +185,7 @@ public class PostService {
     }
 
     public ResponseEntity<PostShortResponse> publishPost(Long publishDate,
-                                                         PostUpdateRequest postUpdateRequest) throws NotFoundException {
+                                                         PostDataRequest postDataRequest) throws NotFoundException {
         Person currentUser = getCurrentUser();
 
         Post post = new Post();
@@ -228,8 +195,8 @@ public class PostService {
         } else {
             post.setTime(new Timestamp(publishDate));
         }
-        post.setPostText(postUpdateRequest.getPost_text());
-        post.setTitle(postUpdateRequest.getTitle());
+        post.setPostText(postDataRequest.getPost_text());
+        post.setTitle(postDataRequest.getTitle());
         post.setBlocked(false);
         post.setAuthor(currentUser);
 
@@ -261,7 +228,7 @@ public class PostService {
         postRepository.save(post);
 
         PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-
+        postDTO.setLikes(postRepository.getLikes(postDTO.getId()));
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -290,7 +257,11 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<IsLikedResponse> isLiked(Integer postID) throws NotFoundException {
+    public ResponseEntity<IsLikedResponse> isLiked(Integer postID) throws NotFoundException, BadRequestException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
 
         Integer personID = getCurrentUser().getId();
         boolean isLiked = false;
@@ -310,7 +281,12 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<LikeResponse> addLike(Integer postID) throws NotFoundException {
+    public ResponseEntity<LikeResponse> addLike(Integer postID) throws NotFoundException, BadRequestException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
         Person currentUser = getCurrentUser();
         //если самолайк
         if (postRepository.getAuthorIDByPostID(postID).equals(currentUser.getId())) {
@@ -362,7 +338,11 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<LikeResponse> deleteLike(Integer postID) throws NotFoundException {
+    public ResponseEntity<LikeResponse> deleteLike(Integer postID) throws NotFoundException, BadRequestException {
+
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
 
         Integer personID = getCurrentUser().getId();
 
@@ -379,10 +359,14 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<LikeResponse> getAllLikes(Integer objectID) {
+    public ResponseEntity<LikeResponse> getAllLikes(Integer postID) throws BadRequestException {
 
-        Integer likesCount = postRepository.getLikes(objectID);
-        List<Person> persons = postRepository.getUsersWhoLikedPost(objectID);
+        if (postID == null) {
+            throw new BadRequestException(Config.STRING_NO_POST_ID);
+        }
+
+        Integer likesCount = postRepository.getLikes(postID);
+        List<Person> persons = postRepository.getUsersWhoLikedPost(postID);
 
         LikeDTO likesDTO = new LikeDTO();
 
@@ -401,13 +385,20 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<TagResponse> addTag(TagRequest tagRequest){
+    public ResponseEntity<TagResponse> addTag(TagRequest tagRequest) throws BadRequestException {
+
+        String tagName = tagRequest.getTag();
+
+        if (tagName.isEmpty() || tagName.isBlank()){
+            throw new BadRequestException(Config.STRING_NO_TAG_NAME);
+        }
+
+        if (tagRepository.findTagByName(tagName) != null) {
+            throw new BadRequestException(Config.STRING_TAG_EXISTS_IN_DB);
+        }
 
         Tag newTag = new Tag();
-        newTag.setTag(tagRequest.getTag());
-
-        PostToTag postToTag = new PostToTag();
-        //postToTag.setId(new PostTagPK());
+        newTag.setTag(tagName);
 
         tagRepository.save(newTag);
 
@@ -420,9 +411,13 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<TagsResponse> getTags(String tagText) {
+    public ResponseEntity<TagsResponse> getTags(String tagText) throws BadRequestException {
 
-        List<Tag> tagsList = tagRepository.findTagByText(tagText);
+        if (tagText.isEmpty() || tagText.isBlank()){
+            throw new BadRequestException(Config.STRING_NO_TAG_NAME);
+        }
+
+        List<Tag> tagsList = tagRepository.findTagsByText(tagText.toLowerCase(Locale.ROOT));
 
         List<TagDTO> tagDTOs = new ArrayList<>();
 
@@ -438,19 +433,26 @@ public class PostService {
                 ));
     }
 
-    public ResponseEntity<TagDeleteResponse> deleteTag(Integer tagID){
+    public ResponseEntity<TagDeleteResponse> deleteTag(Integer tagID) throws BadRequestException, NotFoundException {
+
+        if (tagID == null) {
+            throw new BadRequestException(Config.STRING_NO_TAG_ID);
+        }
+
+        Tag tag = tagRepository.findTagByID(tagID);
+
+        if (tag == null) {
+            throw new NotFoundException(Config.STRING_NO_TAG_IN_DB);
+        }
 
         tagRepository.deleteById(tagID);
-        
-        TagDeleteDTO tagDeleteDTO = new TagDeleteDTO();
 
         return ResponseEntity
                 .ok(new TagDeleteResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        tagDeleteDTO
-                    ));
+                        new TagDeleteDTO()
+                ));
     }
-
 
     private Person getCurrentUser() throws NotFoundException {
         String personEmail = SecurityContextHolder

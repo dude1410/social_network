@@ -3,7 +3,6 @@ package JavaPRO.services;
 import JavaPRO.Util.CommentToDTOMapper;
 import JavaPRO.Util.PersonToDtoMapper;
 import JavaPRO.api.request.CommentBodyRequest;
-import JavaPRO.api.request.EditCommentRequest;
 import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
@@ -23,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.xml.stream.events.Comment;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,7 +103,7 @@ public class PostCommentService {
         List<CommentDTO> commentDTOs = new ArrayList();
 
         comments.forEach(comment -> commentDTOs.add(commentToDTOMapper.convertToDTO(comment)));
-
+        commentDTOs.forEach(commentDTO -> commentDTO.setLikes(commentRepository.getLikesOnComment(commentDTO.getId())));
         return ResponseEntity
                 .ok(new CommentsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -116,7 +114,7 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<CommentResponse> editComment(Integer commentID, EditCommentRequest editCommentBody) throws BadRequestException, NotFoundException {
+    public ResponseEntity<CommentResponse> editComment(Integer commentID, CommentBodyRequest editCommentBody) throws BadRequestException, NotFoundException {
 
         if (commentID == null) {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
@@ -133,7 +131,7 @@ public class PostCommentService {
         commentRepository.save(comment);
 
         CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-        commentDTO.setLikes(commentRepository.getLikes(commentID));
+        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
 
         return ResponseEntity
                 .ok(new CommentResponse("successfully",
@@ -211,12 +209,16 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<IsLikedResponse> isLiked(Integer postID) throws NotFoundException {
+    public ResponseEntity<IsLikedResponse> isLiked(Integer commentID) throws NotFoundException, BadRequestException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
 
         Integer personID = getCurrentUser().getId();
         boolean isLiked = false;
 
-        if (commentRepository.isUserLikedComment(personID, postID) > 0) {
+        if (commentRepository.isUserLikedComment(personID, commentID) > 0) {
             isLiked = true;
         }
 
@@ -232,7 +234,11 @@ public class PostCommentService {
     }
 
 
-    public ResponseEntity<LikeResponse> addLike(Integer commentID) throws NotFoundException {
+    public ResponseEntity<LikeResponse> addLike(Integer commentID) throws NotFoundException, BadRequestException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
 
         PostLike like = new PostLike();
 
@@ -243,21 +249,18 @@ public class PostCommentService {
         if (likedComment == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
-        Integer likesCount = commentRepository.getLikes(commentID);
-        List<Person> persons  = commentRepository.getUsersWhoLikedComment(commentID);
-
         like.setComment(likedComment);
         likeRepository.save(like);
 
         List<AuthorizedPerson> personDTOS = new ArrayList<>();
 
+        List<Person> persons = commentRepository.getUsersWhoLikedComment(commentID);
         if (!persons.isEmpty()) {
             persons.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
         }
 
         LikeDTO likesDTO = new LikeDTO();
-
-        likesDTO.setLikes(++likesCount);
+        likesDTO.setLikes(commentRepository.getLikesOnComment(commentID));
         likesDTO.setUsers(personDTOS);
 
         return ResponseEntity
@@ -267,12 +270,16 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<LikeResponse> deleteLike(Integer commentID) throws NotFoundException {
+    public ResponseEntity<LikeResponse> deleteLike(Integer commentID) throws NotFoundException, BadRequestException {
+
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
 
         Integer userID = getCurrentUser().getId();
 
         commentRepository.deleteLikeOnComment(userID, commentID);
-        Integer likesCount = commentRepository.getLikes(commentID);
+        Integer likesCount = commentRepository.getLikesOnComment(commentID);
 
         LikeDTO likesDTO = new LikeDTO();
         likesDTO.setLikes(likesCount);
@@ -284,9 +291,13 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<LikeResponse> getAllLikes(Integer commentID) {
+    public ResponseEntity<LikeResponse> getAllLikes(Integer commentID) throws BadRequestException {
 
-        Integer likesCount = commentRepository.getLikes(commentID);
+        if (commentID == null) {
+            throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
+        }
+
+        Integer likesCount = commentRepository.getLikesOnComment(commentID);
         List<Person> persons = commentRepository.getUsersWhoLikedComment(commentID);
 
         LikeDTO likesDTO = new LikeDTO();
