@@ -24,9 +24,6 @@ package:
     - tags
   script:
     - sudo mvn package -Dmaven.test.skip=true
-  artifacts:
-    paths:
-      - ./target/*.jar
       
 deploy_to_server:
   stage: deploy
