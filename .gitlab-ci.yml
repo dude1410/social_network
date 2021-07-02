@@ -1,23 +1,45 @@
+stages:
+    - build
+    - test
+    - deploy
+    - sonar
+
 build:
   stage: build
+  only:
+    - master
+  except:
+    - tags
   script:
     - echo "Do your build here"
     - mvn clean package -X -Dmaven.test.skip=true
 
 module_testing:
   stage: test
+  only:
+    - master
+  except:
+    - tags
   script:
     - echo "Do a test here"
     - echo "For example run a test suite"
 
 integrational_testing:
   stage: test
+  only:
+    - master
+  except:
+    - tags
   script:
     - echo "Do another parallel test here"
     - echo "For example run a lint test"
 
 deploy:
   stage: deploy
+  only:
+    - master
+  except:
+    - tags
   script:
     - echo "Do your deploy here"
     - sudo systemctl restart socnet.service
