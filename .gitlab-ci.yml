@@ -1,35 +1,35 @@
-before_script:
-  - echo "Before script section"
-  - echo "For example you might run an update here or install a build dependency"
-  - echo "Or perhaps you might print out some debugging details"
-
-after_script:
-  - echo "After script section"
-  - echo "For example you might do some cleanup here"
-
-build1:
+build:
   stage: build
   script:
     - echo "Do your build here"
     - mvn clean package -X -Dmaven.test.skip=true
 
-test1:
+module_testing:
   stage: test
   script:
     - echo "Do a test here"
     - echo "For example run a test suite"
 
-test2:
+integrational_testing:
   stage: test
   script:
     - echo "Do another parallel test here"
     - echo "For example run a lint test"
 
-deploy1:
+deploy:
   stage: deploy
   script:
     - echo "Do your deploy here"
     - sudo systemctl restart socnet.service
+
+update_sonar_report:
+  stage: sonar
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
 
 
 # stages:
