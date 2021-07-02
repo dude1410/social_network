@@ -5,16 +5,20 @@ import JavaPRO.Util.PostToDTOMapper;
 import JavaPRO.api.response.PersonsResponse;
 import JavaPRO.api.response.PostResponse;
 import JavaPRO.config.Config;
+import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
+import JavaPRO.config.exception.UnAuthorizedException;
 import JavaPRO.model.DTO.Auth.AuthorizedPerson;
 import JavaPRO.model.DTO.PostDTO;
 import JavaPRO.model.Person;
 import JavaPRO.model.PersonView;
 import JavaPRO.model.Post;
+import JavaPRO.repository.LikeRepository;
 import JavaPRO.repository.PersonRepository;
 import JavaPRO.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -29,15 +33,17 @@ public class SearchService {
 
     private final PostRepository postRepository;
     private final PersonRepository personRepository;
+    private final LikeRepository likeRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
     private final PostToDTOMapper postToDTOMapper;
 
     public SearchService(PostRepository postRepository,
-                         PersonRepository personRepository, PersonToDtoMapper personToDtoMapper,
+                         PersonRepository personRepository, LikeRepository likeRepository, PersonToDtoMapper personToDtoMapper,
                          PostToDTOMapper postToDTOMapper) {
         this.postRepository = postRepository;
         this.personRepository = personRepository;
+        this.likeRepository = likeRepository;
         this.personToDtoMapper = personToDtoMapper;
         this.postToDTOMapper = postToDTOMapper;
     }
@@ -49,7 +55,18 @@ public class SearchService {
             Integer ageTo,
             String country,
             String town
-    ) {
+    ) throws UnAuthorizedException, BadRequestException {
+        if (SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName() == null) {
+            throw new UnAuthorizedException(Config.STRING_AUTH_ERROR);
+        }
+
+        if (firstName.isBlank() || firstName.isEmpty()){
+            throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
+        }
+
         //Преобразуем пришедшее нечто к рабочему формату
         firstName = stringFix(firstName);
         lastName = stringFix(lastName);
@@ -86,7 +103,18 @@ public class SearchService {
     public ResponseEntity<PostResponse> searchPosts(String searchText,
                                                     Long dateFromLong,
                                                     Long dateToLong,
-                                                    String searchAuthor) {
+                                                    String searchAuthor) throws BadRequestException, UnAuthorizedException {
+
+        if (SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName() == null) {
+            throw new UnAuthorizedException(Config.STRING_AUTH_ERROR);
+        }
+
+        if (searchText.isBlank() || searchText.isEmpty()){
+            throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
+        }
 
         stringFix(searchText);
         stringFix(searchAuthor);
@@ -98,7 +126,7 @@ public class SearchService {
         List<PostDTO> postDTOList = new ArrayList();
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-        postDTOList.forEach(postDTO -> postDTO.setLikes(postRepository.getLikes(postDTO.getId())));
+        postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
 
         return ResponseEntity
                 .ok(new PostResponse("successfully",

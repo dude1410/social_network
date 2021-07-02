@@ -44,5 +44,5 @@ public class Post implements Serializable {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "post")
-    private List<PostComment> postCommentList;
+    private List<CommentsView> postCommentList;
 }

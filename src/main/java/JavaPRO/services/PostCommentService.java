@@ -7,12 +7,9 @@ import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.BadRequestException;
 import JavaPRO.config.exception.NotFoundException;
+import JavaPRO.model.*;
 import JavaPRO.model.DTO.*;
 import JavaPRO.model.DTO.Auth.AuthorizedPerson;
-import JavaPRO.model.Person;
-import JavaPRO.model.Post;
-import JavaPRO.model.PostComment;
-import JavaPRO.model.PostLike;
 import JavaPRO.repository.CommentRepository;
 import JavaPRO.repository.LikeRepository;
 import JavaPRO.repository.PersonRepository;
@@ -38,7 +35,12 @@ public class PostCommentService {
     private final PersonToDtoMapper personToDtoMapper;
     private final CommentToDTOMapper commentToDTOMapper;
 
-    public PostCommentService(PersonRepository personRepository, CommentRepository commentRepository, PostRepository postRepository, LikeRepository likeRepository, PersonToDtoMapper personToDtoMapper, CommentToDTOMapper commentToDTOMapper) {
+    public PostCommentService(PersonRepository personRepository,
+                              CommentRepository commentRepository,
+                              PostRepository postRepository,
+                              LikeRepository likeRepository,
+                              PersonToDtoMapper personToDtoMapper,
+                              CommentToDTOMapper commentToDTOMapper) {
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
@@ -103,7 +105,9 @@ public class PostCommentService {
         List<CommentDTO> commentDTOs = new ArrayList();
 
         comments.forEach(comment -> commentDTOs.add(commentToDTOMapper.convertToDTO(comment)));
+
         commentDTOs.forEach(commentDTO -> commentDTO.setLikes(commentRepository.getLikesOnComment(commentDTO.getId())));
+
         return ResponseEntity
                 .ok(new CommentsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -180,7 +184,7 @@ public class PostCommentService {
         comment.setDeleted(false);
 
         CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-
+        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
         return ResponseEntity
                 .ok(new CommentResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),

@@ -2,7 +2,7 @@ databaseChangeLog:
   - include:
       file: db.changelog/changes/db.changelog.xml
   - include:
-      file: db.changelog/changes/db.view_persons.xml
+      file: db.changelog/changes/db.changelog_views.xml
 #  - include:
 #      file: db.changelog/changes/db.changelog_add_person.sql
 #  - include:

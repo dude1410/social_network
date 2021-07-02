@@ -68,35 +68,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
 
     @Query("SELECT " +
-            "COUNT(pl.id) " +
-            "FROM PostLike pl " +
-            "WHERE pl.post.id = :postID " +
-            "AND pl.person.id = :userID ")
-    Integer isUserLikedPost(int userID, int postID);
-
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Transactional
-    @Query("DELETE " +
-            "FROM PostLike pl " +
-            "WHERE pl.post.id = :postID " +
-            "AND pl.person.id = :userID ")
-    void deleteLikeOnPost(int userID, int postID);
-
-    @Query("SELECT " +
-            "COUNT(pl.id) " +
-            "FROM PostLike pl " +
-            "WHERE pl.post.id = :postID ")
-    Integer getLikes(int postID);
-
-    @Query("SELECT DISTINCT " +
-            "prsn " +
-            "FROM PostLike pl " +
-            "LEFT JOIN Post p ON pl.post.id = p.id " +
-            "LEFT JOIN Person prsn ON pl.person.id = prsn.id " +
-            "WHERE pl.post.id = :postID ")
-    List<Person> getUsersWhoLikedPost(int postID);
-
-    @Query("SELECT " +
             "p.author.id " +
             "FROM Post p " +
             "WHERE p.id = :postID ")

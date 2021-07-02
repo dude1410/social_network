@@ -2,6 +2,7 @@ package JavaPRO.controller;
 
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
+import JavaPRO.config.exception.UnAuthorizedException;
 import JavaPRO.services.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,22 +24,26 @@ public class SearchController {
     @Operation(description = "Поиск постов по тексту")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для посика")})
+            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
     public ResponseEntity getPost(@RequestParam("text") String searchText,
                                   @RequestParam(value = "date_from", defaultValue = "") Long dateFrom,
                                   @RequestParam(value = "date_to", defaultValue = "") Long dateTo,
                                   @RequestParam(value = "author", defaultValue = "") String author) throws BadRequestException,
-            AuthenticationException {
+            UnAuthorizedException {
         return searchService.searchPosts(searchText, dateFrom, dateTo, author);
     }
 
     @GetMapping(value = "/api/v1/users/search")
+    @Operation(description = "Поиск пользователей")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
+            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
+            @ApiResponse(responseCode = "400", description = "Не задан текст для посика")})
     public ResponseEntity getPeople(@RequestParam(value = "first_name", defaultValue = "") String firstName,
                                     @RequestParam(value = "last_name", defaultValue = "") String lastName,
                                     @RequestParam(value = "age_from", defaultValue = "") Integer ageFrom,
                                     @RequestParam(value = "age_to", defaultValue = "") Integer ageTo,
                                     @RequestParam(value = "country", defaultValue = "") String country,
-                                    @RequestParam(value = "city", defaultValue = "") String town){
+                                    @RequestParam(value = "city", defaultValue = "") String town) throws BadRequestException, UnAuthorizedException {
 
         return searchService.searchPeopleByProperties(firstName, lastName, ageFrom, ageTo, country, town);
     }
