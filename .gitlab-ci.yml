@@ -11,7 +11,7 @@ build1:
   stage: build
   script:
     - echo "Do your build here"
-    - mvn clean package -Dmaven.test.skip=true
+    - mvn clean package -Dmaven.test.skip=true -Dsun.reflect.debugModuleAccessChecks=true
 
 test1:
   stage: test
