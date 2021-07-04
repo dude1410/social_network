@@ -69,7 +69,7 @@ public class ProfileController {
      * by karachun_maskim
      * ==================*/
     @GetMapping("/api/v1/users/{id}")
-    @Operation(description = "Создать пост на страничке пользователя")
+    @Operation(description = "Просмотр страницы пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешное получение данных пользователя"),
             @ApiResponse(responseCode = "400", description = "Не удалось получить данные пользователя")})
     public ResponseEntity<ProfileByIdResponse> getUserById(@PathVariable Integer id, Principal principal) throws BadRequestException {

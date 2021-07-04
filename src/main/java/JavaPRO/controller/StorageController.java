@@ -13,7 +13,6 @@ public class StorageController {
         this.storageService = storageService;
     }
 
-
     public Object storage(MultipartFile file) throws Exception {
         return storageService.fileStore(file);
     }
