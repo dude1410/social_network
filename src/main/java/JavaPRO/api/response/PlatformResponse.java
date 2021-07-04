@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlatformResponse {
+public class PlatformResponse<T> {
 
   @Schema(description = "ошибка", example = "success")
   private String error;
@@ -28,7 +28,7 @@ public class PlatformResponse {
   @Schema(description = "количество постов на страницу", example = "20l")
   private int perPage;
 
-  @Schema(description = "объект LanguageDTO")
-  private List<LanguageDTO> data;
+  @Schema(description = "объект data")
+  private T data;
 
 }

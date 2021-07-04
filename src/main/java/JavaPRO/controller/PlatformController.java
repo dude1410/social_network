@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "/api/v1/platform/languages", description = "Выбор языка интерфейса")
 public class PlatformController {
 
     private final PlatformService platformService;
@@ -25,7 +24,7 @@ public class PlatformController {
     @Operation(description = "Вывод всех доступный языков для выбора")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Язык для сайта выбран")})
     public ResponseEntity<PlatformResponse> languages(@RequestParam(value = "language",
-                                                                required = false) String language,
+            required = false) String language,
                                                       @RequestParam(value = "offset",
                                                               required = false,
                                                               defaultValue = "0") Integer offset,
@@ -35,4 +34,22 @@ public class PlatformController {
         return platformService.getLanguages(language, offset, itemPerPage);
 
     }
+
+    @GetMapping(value = "/api/v1/platform/countries")
+    public ResponseEntity<PlatformResponse> countries(@RequestParam(value = "country", required = false) String country,
+                                                      @RequestParam(value = "offset", required = false) Integer offset,
+                                                      @RequestParam(value = "itemPerPage", required = false) Integer itemPerPage) {
+
+        return platformService.getCountry(country, offset, itemPerPage);
+    }
+
+    @GetMapping(value = "/api/v1/platform/countries")
+    public ResponseEntity<PlatformResponse> towns(@RequestParam(value = "countryId", required = true) Integer countryid,
+                                                  @RequestParam(value = "town", required = false) Integer town,
+                                                  @RequestParam(value = "offset", required = false) Integer offset,
+                                                  @RequestParam(value = "itemPerPage", required = false) Integer itemPerPage) {
+
+        return platformService.getTown(countryid, town, offset, itemPerPage);
+    }
+
 }

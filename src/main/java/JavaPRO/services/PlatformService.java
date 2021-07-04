@@ -1,16 +1,17 @@
 package JavaPRO.services;
 
 import JavaPRO.api.response.PlatformResponse;
+import JavaPRO.model.Country;
 import JavaPRO.model.DTO.LanguageDTO;
 import JavaPRO.model.ENUM.Language;
+import JavaPRO.model.Town;
 import JavaPRO.repository.CountryRepository;
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
-import org.apache.commons.lang3.StringEscapeUtils;
+import JavaPRO.repository.TownRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,12 @@ import java.util.List;
 public class PlatformService {
 
     private final CountryRepository countryRepository;
+    private final TownRepository townRepository;
 
-    public PlatformService(CountryRepository countryRepository) {
+    public PlatformService(CountryRepository countryRepository,
+                           TownRepository townRepository) {
         this.countryRepository = countryRepository;
+        this.townRepository = townRepository;
     }
 
 
@@ -38,5 +42,46 @@ public class PlatformService {
                 offset,
                 itemPerPage,
                 data));
+    }
+
+    public ResponseEntity<PlatformResponse> getCountry(String country, Integer offset, Integer itemPerPage) {
+        itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
+        PlatformResponse platformResponse = new PlatformResponse();
+
+        Page<Country> countries;
+
+        if (country == null) {
+            countries = countryRepository.findAll(PageRequest.of(offset / itemPerPage, itemPerPage));
+        } else {
+            countries = countryRepository.findOne(PageRequest.of(offset / itemPerPage, itemPerPage), country);
+        }
+
+        platformResponse.setTotal(Math.toIntExact(countries.getTotalElements()));
+        platformResponse.setData(countries);
+        platformResponse.setError("ok");
+        platformResponse.setOffset((offset == null) ? 0 : offset);
+        platformResponse.setPerPage(itemPerPage);
+        platformResponse.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        return ResponseEntity.ok(platformResponse);
+    }
+
+    public ResponseEntity<PlatformResponse> getTown(Integer countryId, Integer town, Integer offset, Integer itemPerPage) {
+        PlatformResponse platformResponse = new PlatformResponse();
+        itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
+        Page<Town> towns;
+
+        if (town == null) {
+            towns = townRepository.findAll(PageRequest.of(offset / itemPerPage, itemPerPage), countryId);
+        } else {
+            towns = townRepository.findOne(PageRequest.of(offset / itemPerPage, itemPerPage), countryId, town);
+        }
+
+        platformResponse.setError("ok");
+        platformResponse.setTotal(Math.toIntExact(towns.getTotalElements()));
+        platformResponse.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        platformResponse.setOffset((offset == null) ? 0 : offset);
+        platformResponse.setData(towns);
+        platformResponse.setPerPage(itemPerPage);
+        return ResponseEntity.ok(platformResponse);
     }
 }
