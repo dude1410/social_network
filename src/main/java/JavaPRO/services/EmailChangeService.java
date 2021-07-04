@@ -26,10 +26,11 @@ public class EmailChangeService {
 
     public ResponseEntity<OkResponse> changeEmail(String oldEmail, String newEmail) throws BadRequestException {
         if (personRepository.changeEmail(oldEmail, newEmail) == 1) {
-            logger.info("Успешная смена email (Настройки пользователя). old Email: " + oldEmail + "new Email: " + newEmail);
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            logger.info(String.format("Успешная смена email (Настройки пользователя). old Email: %s. new Email: %s", oldEmail, newEmail));
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
+                                        HttpStatus.OK);
         } else {
-            logger.error("Ошибка при смене пароля (Настройки пользователя). Ошибка при обработке запроса в БД. Email: " + oldEmail);
+            logger.error(String.format("Ошибка при смене пароля (Настройки пользователя). Ошибка при обработке запроса в БД. Email: %s", oldEmail));
             throw new BadRequestException(Config.STRING_INVALID_SET_PASSWORD);
         }
     }
