@@ -27,6 +27,6 @@ public class MyWallResponse {
     @Schema(description = "количество постов на страницу", example = "20l")
     private Integer perPage;
 
-    @Schema(description = "модель для вывода поста")
+    @Schema(description = "список объектов PostDTO")
     private List<PostDTO> data;
 }

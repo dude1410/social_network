@@ -16,12 +16,16 @@ public class TagsResponse {
     @Schema(description = "метка времени", example = "2147483648L")
     private Long timestamp;
 
-    private Integer total;
+    @Schema(description = "общее количество комментов", example = "45l")
+    private int total;
 
-    private Integer offset;
+    @Schema(description = "сдвиг для постраничного вывода", example = "0l")
+    private int offset;
 
-    private Integer perPage;
+    @Schema(description = "количество комментов на страницу", example = "20l")
+    private int perPage;
 
+    @Schema(description = "список объектов TagDTO")
     private List<TagDTO> data;
 
 }

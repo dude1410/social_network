@@ -1,11 +1,9 @@
 package JavaPRO.Util;
 
-import JavaPRO.model.DTO.CommentDTO;
+import JavaPRO.model.CommentsView;
+import JavaPRO.model.DTO.CommentViewDTO;
 import JavaPRO.model.DTO.PostDTO;
-import JavaPRO.model.DTO.PersonDTO;
-import JavaPRO.model.Person;
 import JavaPRO.model.Post;
-import JavaPRO.model.PostComment;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +16,7 @@ public class PostToDTOMapper {
         this.modelMapper = new ModelMapper();
 
         modelMapper.createTypeMap(Post.class, PostDTO.class);
-        modelMapper.createTypeMap(PostComment.class, CommentDTO.class);
-        modelMapper.createTypeMap(Person.class, PersonDTO.class);
+        modelMapper.createTypeMap(CommentsView.class, CommentViewDTO.class);
     }
 
     public PostDTO convertToDTO(Post post) {

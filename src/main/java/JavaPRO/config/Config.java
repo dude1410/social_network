@@ -20,10 +20,14 @@ public class Config {
     public static final String STRING_NO_POST_IN_DB = "В базе данных не найден пост";
     public static final String STRING_NO_COMMENT_IN_DB = "В базе данных не найден комментарий";
     public static final String STRING_NO_PERSON_IN_DB = "В базе данных не найден пользователь";
+    public static final String STRING_NO_TAG_IN_DB = "В базе данных не найден тег";
     public static final String STRING_NO_USER_ID = "Не передан id пользователя";
     public static final String STRING_NO_POST_ID = "Не передан id поста";
     public static final String STRING_NO_COMMENT_ID = "Не передан id коммента";
+    public static final String STRING_NO_TAG_ID = "Не передан id тега";
     public static final String STRING_NO_CONTENT_TYPE = "Не передан тип контента";
+    public static final String STRING_NO_TAG_NAME = "Не передано название тега";
+    public static final String STRING_TAG_EXISTS_IN_DB = "Тег уже существует в базе";
     public static final String STRING_FRONT_DATA_NOT_VALID = "Данные с фронта не прошли валидацию";
     public static final String STRING_LOGOUT_UNSUCCESSFUL = "Неудачная попытка разлогиниться";
     public static final String STRING_BAD_REQUEST = "Неверный запрос";

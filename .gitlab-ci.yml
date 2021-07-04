@@ -1,64 +1,49 @@
 stages:
-    - test
     - build
-    - package
+    - test
     - deploy
     - sonar
-
-test:
-  stage: test
-  only:
-    - master
-    - merge_requests
-  except:
-    - tags
-  script:
-    - mvn clean
-  cache:
-    paths:
-      - /target
-      - /.m2
 
 build:
   stage: build
   only:
     - master
-    - merge_requests
   except:
     - tags
   script:
-    - mvn compile
-  cache:
-    paths:
-      - /target
-      - /.m2
-      
-package:
-  stage: package
+    - echo "Do your build here"
+    - mvn clean package -X -Dmaven.test.skip=true
+
+module_testing:
+  stage: test
   only:
     - master
   except:
     - tags
   script:
-    - mvn package -Dmaven.test.skip=true
-  artifacts:
-    paths:
-      - target/*.jar
-  cache:
-    policy: pull
-    paths:
-      - /target
-      - /.m2
-      
-deploy_to_server:
+    - echo "Do a test here"
+    - echo "For example run a test suite"
+
+integrational_testing:
+  stage: test
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - echo "Do another parallel test here"
+    - echo "For example run a lint test"
+
+deploy:
   stage: deploy
   only:
     - master
   except:
     - tags
   script:
+    - echo "Do your deploy here"
     - sudo systemctl restart socnet.service
-    
+
 update_sonar_report:
   stage: sonar
   only:
@@ -66,4 +51,4 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
