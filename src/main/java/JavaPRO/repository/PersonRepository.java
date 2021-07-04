@@ -39,8 +39,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "WHERE p.confirmationCode = :token")
     Integer setIsApprovedTrue(@Param("token") String token);
 
-    Person findByConfirmationCode(String confirmationCode);
-
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("UPDATE Person p " +

@@ -27,60 +27,69 @@ public class RegisterService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final Logger logger;
+    private final String registerMessageTemplate;
     @Value("${spring.mail.address}")
     private String address;
 
     public RegisterService(PersonRepository personRepository,
                            EmailService emailService,
                            PasswordEncoder passwordEncoder,
-                           TokenService tokenService, @Qualifier("registerLogger") Logger logger) {
+                           TokenService tokenService,
+                           @Qualifier("registerLogger") Logger logger,
+                           @Qualifier("RegisterTemplateMessage") String registerMessageTemplate) {
         this.personRepository = personRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
         this.logger = logger;
+        this.registerMessageTemplate = registerMessageTemplate;
     }
 
-    public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo) throws BadRequestException, InterruptedException {
-        if (userFindInDB(userInfo.getEmail())){
-            logger.warn("Запрос на регистрацию существующего пользователя. Email: " + userInfo.getEmail());
+    public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo)
+            throws BadRequestException, InterruptedException {
+        if (personRepository.findByEmail(userInfo.getEmail()) != null){
+            logger.warn(String.format("Запрос на регистрацию существующего пользователя. Email: %s", userInfo.getEmail()));
             throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
         }
         else {
             String token = tokenService.getToken();
-            int newUserId = addUserInDB(userInfo, token);
-            String messageBody = "Hello, to complete the registration follow to link " +
-                    "<a href=\"" + address + "/registration/complete?token=" + token + "\">Confirm registration</a>";
-            emailService.sendMail("Registration in social network", messageBody, userInfo.getEmail());
-            logger.info("Успешная регистрация нового пользователя. Email: " + userInfo.getEmail());
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+            if (addUserInDB(userInfo, token) == null) {
+                throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
+            }
+            emailService.sendMail("Registration in social network",
+                                   String.format(registerMessageTemplate, address, token),
+                                   userInfo.getEmail());
+            logger.info(String.format("Успешная регистрация нового пользователя. Email: %s", userInfo.getEmail()));
+            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
+                                        HttpStatus.OK);
         }
     }
 
-    public ResponseEntity<OkResponse> confirmRegistration(RegisterConfirmRequest registerConfirmRequest) throws BadRequestException {
+    public ResponseEntity<OkResponse> confirmRegistration(RegisterConfirmRequest registerConfirmRequest)
+            throws BadRequestException {
         String token = registerConfirmRequest.getToken();
         Person person = personRepository.findByCode(token);
+        if (person == null) {
+            throw new BadRequestException(Config.STRING_NO_PERSON_IN_DB);
+        }
         if (tokenService.checkToken(token) && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(registerConfirmRequest.getToken()) == 1) {
-                logger.info("Подтверждение регистрации нового пользователя. Email: " + person.getEmail());
-                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);
+                logger.info(String.format("Подтверждение регистрации нового пользователя. Email: %s", person.getEmail()));
+                return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
+                                            HttpStatus.OK);
             }
             else {
-                logger.error("Ошибка при подтверждении регистрации. Ошибка при обработке запроса в БД. Email: " + person.getEmail());
+                logger.error(String.format("Ошибка при подтверждении регистрации. Ошибка при обработке запроса в БД. Email: %s", person.getEmail()));
                 throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
             }
         }
         else {
-            logger.warn("Ошибка при подтверждении регистрации. Истек срок действия токена или регистрация была подтверждена ранее. Email: " + person.getEmail());
+            logger.warn(String.format("Ошибка при подтверждении регистрации. Истек срок действия токена или регистрация была подтверждена ранее. Email: %s", person.getEmail()));
             throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
         }
     }
 
-    private boolean userFindInDB(String email){
-        return personRepository.findByEmail(email) != null;
-    }
-
-    private int addUserInDB(RegisterRequest userInfo, String token){
+    private Integer addUserInDB(RegisterRequest userInfo, String token){
         Person person = new Person();
         person.setFirstName(userInfo.getFirstName());
         person.setLastName(userInfo.getLastName());
@@ -98,14 +107,5 @@ public class RegisterService {
 
     private Long getTimestamp(){
         return (new Date().getTime() / 1000);
-    }
-
-    private String getToken(){
-        StringBuilder token = new StringBuilder();
-        String strMass = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-        for (int i = 0; i < 10; i++){
-            token.append(strMass.charAt((int) (Math.random() * (strMass.length()))));
-        }
-        return passwordEncoder.encode(token.toString());
     }
 }
