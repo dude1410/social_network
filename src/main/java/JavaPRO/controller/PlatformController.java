@@ -43,7 +43,7 @@ public class PlatformController {
         return platformService.getCountry(country, offset, itemPerPage);
     }
 
-    @GetMapping(value = "/api/v1/platform/countries")
+    @GetMapping(value = "/api/v1/platform/towns")
     public ResponseEntity<PlatformResponse> towns(@RequestParam(value = "countryId", required = true) Integer countryid,
                                                   @RequestParam(value = "town", required = false) Integer town,
                                                   @RequestParam(value = "offset", required = false) Integer offset,
