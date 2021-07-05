@@ -1,10 +1,8 @@
 package JavaPRO.controller;
 
+import JavaPRO.api.request.EditMyProfileRequest;
 import JavaPRO.api.request.PostDataRequest;
-import JavaPRO.api.response.LoginResponse;
-import JavaPRO.api.response.MyWallResponse;
-import JavaPRO.api.response.PostShortResponse;
-import JavaPRO.api.response.ProfileByIdResponse;
+import JavaPRO.api.response.*;
 import JavaPRO.config.Config;
 import JavaPRO.config.exception.AuthenticationException;
 import JavaPRO.config.exception.BadRequestException;
@@ -64,6 +62,12 @@ public class ProfileController {
         return postService.publishPost(publishDate,
                 postDataRequest);
     }
+
+    @PutMapping("/api/v1/users/me")
+    public ResponseEntity<Response> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException {
+        return profileService.editMyProfile(editMyProfileRequest);
+    }
+
 
     /**===================
      * by karachun_maskim

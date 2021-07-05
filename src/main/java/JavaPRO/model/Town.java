@@ -18,4 +18,7 @@ public class Town implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "country_id")
+    private Integer countryId;
+
 }
