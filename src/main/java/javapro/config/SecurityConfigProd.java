@@ -29,7 +29,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class SecurityConfigProd extends WebSecurityConfigurerAdapter  {
 
 
     @Value("${javapro.storagepath}")
@@ -84,18 +84,4 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements 
         return super.authenticationManagerBean();
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://31.40.251.201")
-                .allowCredentials(true)
-                .allowedMethods("*");
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/storage/**")
-                .addResourceLocations( uploadPath + "/storage/**");
-
-    }
 }
