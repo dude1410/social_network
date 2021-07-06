@@ -3,6 +3,8 @@ spring:
   datasource:
     url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
     driver-class-name: org.postgresql.Driver
+    username: javapro
+    password: iddqd
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL92Dialect
     show-sql: false
@@ -38,6 +40,6 @@ logging:
   config: classpath:log4j2-spring-dev.xml
 # У каждого на своем компе будет своя переменная. Меняйте раскоменчивайте нужную, а не нужные в коммент
 # под MacOS
-# javapro.storagepath: /Users/olegprokhorov/IdeaProjects/group/study
+javapro.storagepath: /Users/olegprokhorov/IdeaProjects/group/study
 # под win каждый пишет свою строчку, в зависимости от нахождения папки с хранилищем.
-javapro.storagepath: D:/Projects/SocialNetworkStorage
+#javapro.storagepath: D:/Projects/SocialNetworkStorage

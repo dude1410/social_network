@@ -236,7 +236,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>JavaPRO.StudyGroup12Application</mainClass>
+							<mainClass>javapro.StudyGroup12Application</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
