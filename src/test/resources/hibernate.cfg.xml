@@ -19,8 +19,8 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">validate</property>
 
-        <mapping class="JavaPRO.model.Person"></mapping>
-        <mapping class="JavaPRO.model.Country"></mapping>
-        <mapping class="JavaPRO.model.Town"></mapping>
+        <mapping class="javapro.model.Person"></mapping>
+        <mapping class="javapro.model.Country"></mapping>
+        <mapping class="javapro.model.Town"></mapping>
     </session-factory>
 </hibernate-configuration>
