@@ -1,6 +1,6 @@
 package Autotests.util;
 
-import JavaPRO.model.Person;
+import javapro.model.Person;
 import java.util.List;
 import org.hibernate.Session;
 
