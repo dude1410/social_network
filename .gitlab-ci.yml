@@ -42,7 +42,8 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - sudo systemctl restart socnet.service
+    - sudo systemctl stop socnet.service
+    - sudo systemctl start socnet.service
 
 update_sonar_report:
   stage: sonar
