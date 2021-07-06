@@ -8,7 +8,7 @@
 		<version>2.3.9.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>JavaPRO</groupId>
+	<groupId>javapro</groupId>
 	<artifactId>SocialNetwork</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>StudyGroup-12</name>
