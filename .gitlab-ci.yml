@@ -21,7 +21,7 @@ module_testing:
   except:
     - tags
   script:
-    - echo "Do a test here"
+    - echo "Do a test here and there"
     - echo "For example run a test suite"
 
 integrational_testing:
