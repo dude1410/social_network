@@ -1,4 +1,4 @@
-package javapro.Util;
+package javapro.util;
 
 import javapro.config.Config;
 import org.springframework.context.annotation.Bean;

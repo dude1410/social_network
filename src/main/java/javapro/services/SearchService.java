@@ -1,7 +1,7 @@
 package javapro.services;
 
-import javapro.Util.PersonToDtoMapper;
-import javapro.Util.PostToDTOMapper;
+import javapro.util.PersonToDtoMapper;
+import javapro.util.PostToDTOMapper;
 import javapro.api.response.PersonsResponse;
 import javapro.api.response.PostResponse;
 import javapro.config.Config;

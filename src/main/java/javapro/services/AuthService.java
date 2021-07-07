@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.PersonToDtoMapper;
+import javapro.util.PersonToDtoMapper;
 import javapro.api.response.LoginResponse;
 import javapro.api.response.OkResponse;
 import javapro.api.response.ResponseData;

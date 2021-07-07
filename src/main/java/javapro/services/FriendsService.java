@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.PersonToPersonDTOMapper;
+import javapro.util.PersonToPersonDTOMapper;
 import javapro.api.request.IsFriendRequest;
 import javapro.api.response.*;
 import javapro.config.Config;

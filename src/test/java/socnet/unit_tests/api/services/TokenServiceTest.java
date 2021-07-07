@@ -42,6 +42,7 @@ class TokenServiceTest {
             assertThat(token, matchesPattern("[a-zA-Z0-9]+"));
             assertTrue(tokenSet.add(token));
         } catch (InterruptedException e) {
+            //sad but true...
             e.printStackTrace();
         }
     }

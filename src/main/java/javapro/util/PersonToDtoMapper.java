@@ -1,28 +1,30 @@
-package javapro.Util;
+package javapro.util;
 
 import javapro.model.Country;
-import javapro.model.dto.PersonDTO;
+import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.dto.TownDTO;
 import javapro.model.Person;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PersonToPersonDTOMapper {
+public class PersonToDtoMapper {
 
     private final ModelMapper modelMapper;
 
-    public PersonToPersonDTOMapper() {
-        this.modelMapper = new ModelMapper();
 
-        modelMapper.createTypeMap(Person.class, PersonDTO.class);
+    public PersonToDtoMapper() {
+
+        this.modelMapper = new ModelMapper();
+        modelMapper.createTypeMap(Person.class, AuthorizedPerson.class);
         modelMapper.createTypeMap(javapro.model.Town.class, TownDTO.class);
         modelMapper.createTypeMap(Country.class, javapro.model.dto.CountryDTO.class);
 
+
     }
 
-    public PersonDTO convertToDto(Person entity) {
-        return modelMapper.map(entity, PersonDTO.class);
+    public AuthorizedPerson convertToDto(Person entity) {
+        return modelMapper.map(entity, AuthorizedPerson.class);
     }
 
 }
