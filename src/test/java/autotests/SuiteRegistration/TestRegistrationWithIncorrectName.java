@@ -1,11 +1,11 @@
-package Autotests.SuiteRegistration;
+package autotests.SuiteRegistration;
 
-import static Autotests.Settings.SetUpTests.*;
-import static Autotests.SuiteRegistration.Locators.*;
-import static Autotests.SuiteRegistration.StringData.*;
+import static autotests.Settings.SetUpTests.*;
+import static autotests.SuiteRegistration.Locators.*;
+import static autotests.SuiteRegistration.StringData.*;
 
-import Autotests.Settings.SetUpTests;
-import Autotests.util.EmailCounter;
+import autotests.Settings.SetUpTests;
+import autotests.util.EmailCounter;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;

@@ -1,12 +1,12 @@
-package Autotests.SuiteRegistration;
+package autotests.SuiteRegistration;
 
-import static Autotests.Settings.SetUpTests.*;
-import static Autotests.SuiteRegistration.Locators.*;
-import static Autotests.SuiteRegistration.StringData.*;
+import static autotests.Settings.SetUpTests.*;
+import static autotests.SuiteRegistration.Locators.*;
+import static autotests.SuiteRegistration.StringData.*;
 
-import Autotests.Settings.SetUpTests;
-import Autotests.util.EmailCounter;
-import Autotests.util.HibernateUtil;
+import autotests.Settings.SetUpTests;
+import autotests.util.EmailCounter;
+import autotests.util.HibernateUtil;
 import javapro.config.Config;
 import javapro.model.Person;
 import org.openqa.selenium.JavascriptExecutor;

@@ -1,24 +1,28 @@
-package Autotests.SuiteRegistration;
+package autotests.SuiteRegistration;
 
-import static Autotests.Settings.SetUpTests.*;
-import static Autotests.SuiteRegistration.Locators.*;
-import static Autotests.SuiteRegistration.StringData.*;
+import static autotests.Settings.SetUpTests.*;
+import static autotests.SuiteRegistration.Locators.*;
+import static autotests.SuiteRegistration.StringData.*;
 
-import Autotests.Settings.SetUpTests;
+import autotests.Settings.SetUpTests;
+import autotests.util.EmailCounter;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestRegistrationWithIncorrectEmail {
+public class TestRegistrationWithIncorrectPassword {
 
     private ChromeDriver driver;
     private WebDriverWait wait;
     private Actions actions;
+
+    private String email;
 
 
     @BeforeTest
@@ -27,6 +31,11 @@ public class TestRegistrationWithIncorrectEmail {
         wait = SetUpTests.wait;
         actions = SetUpTests.actions;
         driver.navigate().to(REGISTRATION_PAGE);
+    }
+
+    @BeforeMethod(onlyForGroups = "multipleEmail")
+    public void setEmail() {
+        email = CORRECT_NOT_IN_BASE_EMAIL = EmailCounter.nextEmail(CORRECT_NOT_IN_BASE_EMAIL);
     }
 
     @Test
@@ -39,14 +48,15 @@ public class TestRegistrationWithIncorrectEmail {
             "На странице отсутствует ожидаемый элемент по локатору: " + pageLocator);
     }
 
-    @Test(dependsOnMethods = "RegistrationPage_GoToPage_PageOpens", dataProvider = "incorrectEmails",
-        dataProviderClass = StringData.class, groups = "multipleEmail")
-    public void RegistrationPage_FillingInAllFieldsValidDataExceptEmailAndRegistration_ErrorMessageInEmailField(
-        String incorrectEmail) {
+    @Test(dependsOnMethods = "RegistrationPage_GoToPage_PageOpens",
+        dataProvider = "incorrectPasswords",
+        dataProviderClass = StringData.class,
+        groups = "multipleEmail")
+    public void RegistrationPage_FillingInAllFieldsValidDataExceptPasswordAndRegistration_ErrorMessageInEmailField(String incorrectPass) {
         //arrange
-        driver.findElement(emailFieldLocator).sendKeys(incorrectEmail);
-        driver.findElement(passwordFieldLocator).sendKeys(CORRECT_PASSWORD);
-        driver.findElement(repeatPasswordFieldLocator).sendKeys(CORRECT_PASSWORD);
+        driver.findElement(emailFieldLocator).sendKeys(email);
+        driver.findElement(passwordFieldLocator).sendKeys(incorrectPass);
+        driver.findElement(repeatPasswordFieldLocator).sendKeys(incorrectPass);
         driver.findElement(nameFieldLocator).sendKeys(CORRECT_NAME);
         driver.findElement(surnameFieldLocator).sendKeys(CORRECT_NAME);
         driver.findElement(codeFieldLocator)
@@ -65,10 +75,11 @@ public class TestRegistrationWithIncorrectEmail {
 
         //assert
         Assert.assertFalse(ExpectedConditions.
-            invisibilityOfElementLocated(errorMessageInEmailFieldLocator).apply(driver),
-            "Нет сообщения об ошибке в поле email");
-        Assert.assertEquals(driver.findElement(errorMessageInEmailFieldLocator).getText(), ERROR_MESSAGE_IN_EMAIL,
-            "Текст ошибки не соотвествует ожидаемому");
+            invisibilityOfElementLocated(errorMessageInRepeatPasswordFieldLocator).apply(driver),
+            "Нет сообщения об ошибке в поле Повторите пароль");
+        Assert.assertEquals(driver.findElement(errorMessageInRepeatPasswordFieldLocator).getText(),
+            ERROR_MESSAGE_IN_PASSWORD, "Текст ошибки не соотвествует ожидаемому");
         driver.navigate().refresh();
     }
+
 }

@@ -1,4 +1,4 @@
-package Autotests.util;
+package autotests.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

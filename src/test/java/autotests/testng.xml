@@ -4,37 +4,37 @@
 <suite name="Registration">
     <test name="SetUp">
         <classes>
-            <class name="Autotests.Settings.SetUpTests"/>
+            <class name="autotests.Settings.SetUpTests"/>
         </classes>
     </test>
 
     <test name="RegistrationWithValidData">
         <classes>
-            <class name="Autotests.SuiteRegistration.TestRegistrationWithValidData"/>
+            <class name="autotests.SuiteRegistration.TestRegistrationWithValidData"/>
         </classes>
     </test>
 
     <test name="RegistrationWithIncorrectEmail">
         <classes>
-            <class name="Autotests.SuiteRegistration.TestRegistrationWithIncorrectEmail"/>
+            <class name="autotests.SuiteRegistration.TestRegistrationWithIncorrectEmail"/>
         </classes>
     </test>
 
     <test name="RegistrationWithIncorrectPassword">
         <classes>
-            <class name="Autotests.SuiteRegistration.TestRegistrationWithIncorrectPassword"/>
+            <class name="autotests.SuiteRegistration.TestRegistrationWithIncorrectPassword"/>
         </classes>
     </test>
 
     <test name="RegistrationWithIncorrectName">
         <classes>
-            <class name="Autotests.SuiteRegistration.TestRegistrationWithIncorrectName"/>
+            <class name="autotests.SuiteRegistration.TestRegistrationWithIncorrectName"/>
         </classes>
     </test>
 
     <test name="TearDown">
         <classes>
-            <class name="Autotests.Settings.TearDownTests"/>
+            <class name="autotests.Settings.TearDownTests"/>
         </classes>
     </test>
 </suite>
