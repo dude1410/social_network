@@ -22,10 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -142,10 +139,13 @@ public class SearchService {
     //Конвертер строки из View в строку из таблицы
     private Person viewToPerson(PersonView personView) throws NotFoundException {
 
-        if (personRepository.findById(personView.getId()).isEmpty()) {
+        Optional<Person> person = personRepository.findById(personView.getId());
+
+        if (person.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
+        } else {
+            return person.get();
         }
-        return personRepository.findById(personView.getId()).get();
     }
 
     private String stringFix(String variable) {
