@@ -10,6 +10,8 @@ build:
     - master
   except:
     - tags
+  before_script:
+    - sudo systemctl stop socnet.service  
   script:
     - echo "Do your build here"
     - mvn clean package -X -Dmaven.test.skip=true
@@ -42,7 +44,6 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - sudo systemctl stop socnet.service
     - sudo systemctl start socnet.service
 
 update_sonar_report:
