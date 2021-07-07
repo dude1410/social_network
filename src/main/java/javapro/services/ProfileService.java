@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.PersonToDtoMapper;
+import javapro.util.PersonToDtoMapper;
 import javapro.api.request.EditMyProfileRequest;
 import javapro.api.response.*;
 import javapro.config.Config;

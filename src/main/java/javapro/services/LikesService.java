@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.PersonToDtoMapper;
+import javapro.util.PersonToDtoMapper;
 import javapro.api.response.IsLikedResponse;
 import javapro.api.response.LikeResponse;
 import javapro.config.Config;

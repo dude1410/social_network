@@ -1,4 +1,4 @@
-package javapro.Util;
+package javapro.util;
 
 import javapro.model.dto.CommentDTO;
 import javapro.model.PostComment;
