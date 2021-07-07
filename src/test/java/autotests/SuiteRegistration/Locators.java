@@ -1,4 +1,4 @@
-package Autotests.SuiteRegistration;
+package autotests.SuiteRegistration;
 
 import org.openqa.selenium.By;
 

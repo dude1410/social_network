@@ -1,6 +1,6 @@
-package Autotests.Settings;
+package autotests.Settings;
 
-import Autotests.util.HibernateConnection;
+import autotests.util.HibernateConnection;
 import org.testng.annotations.AfterSuite;
 
 public class TearDownTests {

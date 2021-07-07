@@ -1,4 +1,4 @@
-package Autotests.util;
+package autotests.util;
 
 public class EmailCounter {
 
