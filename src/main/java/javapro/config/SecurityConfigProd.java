@@ -19,6 +19,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
@@ -26,7 +30,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfigProd extends WebSecurityConfigurerAdapter  {
+public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
     @Value("${javapro.storagepath}")
@@ -81,4 +85,18 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter  {
         return super.authenticationManagerBean();
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://31.40.251.201")
+                .allowCredentials(true)
+                .allowedMethods("*");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/storage/**")
+                .addResourceLocations( uploadPath + "/storage/**");
+
+    }
 }
