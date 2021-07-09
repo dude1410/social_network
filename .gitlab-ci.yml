@@ -55,7 +55,7 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
   after_script:
     - echo 'fire up socnet again!'
     - sudo systemctl restart socnet.service
