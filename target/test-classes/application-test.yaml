@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
@@ -15,7 +14,7 @@ spring:
     url: jdbc:postgresql://31.40.251.201:5432/javapro
     user: javapro
     password: iddqd
-    enabled: true
+    enabled: false
     contexts: dev
     change-log: classpath:db.changelog/db.changelog-master.yml
   mail:
@@ -36,10 +35,4 @@ spring:
     default-encoding: UTF-8
 server:
   port: 8086
-logging:
-  config: classpath:log4j2-spring-dev.xml
-# У каждого на своем компе будет своя переменная. Меняйте раскоменчивайте нужную, а не нужные в коммент
-# под MacOS
-#javapro.storagepath: /Users/olegprokhorov/IdeaProjects/group/study
-# под win каждый пишет свою строчку, в зависимости от нахождения папки с хранилищем.
-javapro.storagepath: C:/Users/maksi/Desktop/SocialNetworkStorage
+javapro.storagepath: /home/storage
