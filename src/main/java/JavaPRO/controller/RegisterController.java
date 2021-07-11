@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,6 @@ public class RegisterController {
     private final RegisterService registerService;
     private final EmailService emailService;
 
-    @Autowired
     public RegisterController(RegisterService registerService, EmailService emailService) {
         this.registerService = registerService;
         this.emailService = emailService;
