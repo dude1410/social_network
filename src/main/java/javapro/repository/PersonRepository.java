@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -36,15 +35,15 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     @Transactional
     @Query("UPDATE Person p " +
             "SET p.isApproved = true " +
-            "WHERE p.confirmationCode = :token")
-    Integer setIsApprovedTrue(@Param("token") String token);
+            "WHERE p = :person")
+    Integer setIsApprovedTrue(@Param("person") Person person);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("UPDATE Person p " +
             "SET p.password = :newPassword " +
-            "WHERE p.confirmationCode = :code")
-    Integer setNewPassword(@Param("newPassword") String newPassword, @Param("code") String code);
+            "WHERE p = :person")
+    Integer setNewPassword(@Param("newPassword") String newPassword, @Param("person") Person person);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
