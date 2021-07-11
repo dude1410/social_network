@@ -50,6 +50,7 @@ public class PlatformService {
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
         PlatformResponse platformResponse = new PlatformResponse();
 
+
         Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
         Page<Country> countries = (country == null) ?
                 countryRepository.findAll(pageable) :
@@ -76,6 +77,7 @@ public class PlatformService {
         } else {
             towns = townRepository.findOne(pageable, countryId, town);
         }
+
 
         platformResponse.setError("ok");
         platformResponse.setTotal(Math.toIntExact(towns.getTotalElements()));
