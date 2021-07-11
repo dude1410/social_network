@@ -22,7 +22,7 @@ public class Token {
     @Column(nullable = false)
     private String token;
 
-    @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
-    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy.MM.dd HH:mm:ss")
+    @Column(name= "creating_date", nullable = false)
     private Date date;
 }
