@@ -10,9 +10,12 @@ build:
     - master
   except:
     - tags
+  before_script:
+    - echo "socnet is in stop state for now"
+    - sudo systemctl stop socnet.service  
   script:
-    - echo "Do your build here"
-    - mvn clean package -X -Dmaven.test.skip=true
+    - echo "Do your build here and there"
+    - mvn clean compile -X -Dmaven.test.skip=true
 
 module_testing:
   stage: test
@@ -21,7 +24,7 @@ module_testing:
   except:
     - tags
   script:
-    - echo "Do a test here"
+    - echo "Do a test here and there"
     - echo "For example run a test suite"
 
 integrational_testing:
@@ -42,7 +45,8 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - sudo systemctl restart socnet.service
+    - mvn package -Dmaven.test.skip=true
+    - sudo systemctl start socnet.service
 
 update_sonar_report:
   stage: sonar
@@ -51,4 +55,7 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
+    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
+  after_script:
+    - echo 'fire up socnet again!!'
+    - sudo systemctl restart socnet.service
