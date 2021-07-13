@@ -67,10 +67,6 @@ public class SearchService {
 
         checkAuthentication();
 
-        if (firstName.isBlank() || firstName.isEmpty()) {
-            throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
-        }
-
         //Преобразуем пришедшее нечто к рабочему формату
         firstName = stringFix(firstName);
         lastName = stringFix(lastName);

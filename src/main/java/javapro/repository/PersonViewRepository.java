@@ -15,7 +15,8 @@ public interface PersonViewRepository extends JpaRepository<PersonView, Integer>
             "AND LOWER(COALESCE(pv.lastName,''))        LIKE %:lastName% " +
             "AND (COALESCE(pv.age, 0)                   BETWEEN :ageFrom AND :ageTo) " +
             "AND LOWER(COALESCE(pv.countryName,''))     LIKE %:country% " +
-            "AND LOWER(COALESCE(pv.townName,''))        LIKE %:town% "
+            "AND LOWER(COALESCE(pv.townName,''))        LIKE %:town% " +
+            "ORDER BY LOWER(COALESCE(pv.firstName,'')) ASC , LOWER(COALESCE(pv.lastName,'')) ASC "
     )
     Page<PersonView> findPersonsByProperties(String firstName, String lastName, Integer ageFrom, Integer ageTo, String country, String town, Pageable pageable);
 }

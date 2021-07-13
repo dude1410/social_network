@@ -13,7 +13,6 @@ import javapro.model.dto.*;
 import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.PostRepository;
-import javapro.util.PostToDTOMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
