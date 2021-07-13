@@ -1,13 +1,13 @@
 package javapro.repository;
 
-import javapro.model.PersonView;
 import javapro.model.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
@@ -22,19 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND p.time BETWEEN :dateFrom AND :dateTo " +
             "ORDER BY p.time DESC "
     )
-    List<Post> findPostsByProperties(String searchText , Date dateFrom, Date dateTo, String searchAuthor);
-
-    @Query("SELECT " +
-            "pv " +
-            "FROM PersonView pv " +
-            "WHERE LOWER(COALESCE(pv.firstName,''))     LIKE %:firstName% " +
-            "AND LOWER(COALESCE(pv.lastName,''))        LIKE %:lastName% " +
-            "AND (COALESCE(pv.age, 0)                   BETWEEN :ageFrom AND :ageTo) " +
-            "AND LOWER(COALESCE(pv.countryName,''))     LIKE %:country% " +
-            "AND LOWER(COALESCE(pv.townName,''))        LIKE %:town% "
-    )
-    List<PersonView> findPersonsByProperties(String firstName, String lastName, Integer ageFrom, Integer ageTo, String country, String town);
-
+    Page<Post> findPostsByProperties(String searchText , Date dateFrom, Date dateTo, String searchAuthor, Pageable pageable);
 
     @Query("SELECT DISTINCT " +
             "p " +
@@ -43,7 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND p.isBlocked = false " +
             "AND p.time <= :serverTime " +
             "ORDER BY p.time DESC ")
-    List<Post> findAllPosts(Date serverTime);
+    Page<Post> findAllPosts(Date serverTime, Pageable pageable);
 
     @Query("SELECT " +
             "p " +
@@ -61,7 +49,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND p.isDeleted = false " +
             "AND p.isBlocked = false " +
             "ORDER BY p.time DESC ")
-    List<Post> findPostsByAuthorID(int authorID);
+    Page<Post> findPostsByAuthorID(int authorID, Pageable pageable);
 
 
     @Query("SELECT " +

@@ -13,6 +13,9 @@ import javapro.model.dto.TagDeleteDTO;
 import javapro.model.Tag;
 import javapro.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -60,13 +63,16 @@ public class TagService {
                 ));
     }
 
-    public ResponseEntity<TagsResponse> getTags(String tagText) throws BadRequestException {
+    public ResponseEntity<TagsResponse> getTags(String tagText,
+                                                Integer offset,
+                                                Integer itemPerPage) throws BadRequestException {
 
         if (tagText.isEmpty() || tagText.isBlank()){
             throw new BadRequestException(Config.STRING_NO_TAG_NAME);
         }
 
-        List<Tag> tagsList = tagRepository.findTagsByText(tagText.toLowerCase(Locale.ROOT));
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        Page<Tag> tagsList = tagRepository.findTagsByText(tagText.toLowerCase(Locale.ROOT), pageable);
 
         List<TagDTO> tagDTOs = new ArrayList<>();
 
@@ -75,9 +81,9 @@ public class TagService {
         return ResponseEntity
                 .ok(new TagsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) tagsList.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         tagDTOs
                 ));
     }

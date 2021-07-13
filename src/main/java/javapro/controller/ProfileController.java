@@ -49,7 +49,7 @@ public class ProfileController {
     public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id,
                                                  @RequestParam(name = "offset", defaultValue = "0") Integer offset,
                                                  @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws NotFoundException {
-        return postService.getPostsByUser();
+        return postService.getPostsByUser(offset, itemPerPage);
     }
 
     @PostMapping(value = "/api/v1/users/{id}/wall")

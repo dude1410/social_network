@@ -15,8 +15,12 @@ import javapro.model.PersonView;
 import javapro.model.Post;
 import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
+import javapro.repository.PersonViewRepository;
 import javapro.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,16 +34,21 @@ public class SearchService {
 
     private final PostRepository postRepository;
     private final PersonRepository personRepository;
+    private final PersonViewRepository personViewRepository;
     private final LikeRepository likeRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
     private final PostToDTOMapper postToDTOMapper;
 
     public SearchService(PostRepository postRepository,
-                         PersonRepository personRepository, LikeRepository likeRepository, PersonToDtoMapper personToDtoMapper,
+                         PersonRepository personRepository,
+                         PersonViewRepository personViewRepository,
+                         LikeRepository likeRepository,
+                         PersonToDtoMapper personToDtoMapper,
                          PostToDTOMapper postToDTOMapper) {
         this.postRepository = postRepository;
         this.personRepository = personRepository;
+        this.personViewRepository = personViewRepository;
         this.likeRepository = likeRepository;
         this.personToDtoMapper = personToDtoMapper;
         this.postToDTOMapper = postToDTOMapper;
@@ -51,16 +60,14 @@ public class SearchService {
             Integer ageFrom,
             Integer ageTo,
             String country,
-            String town
+            String town,
+            Integer offset,
+            Integer itemPerPage
     ) throws UnAuthorizedException, BadRequestException {
-        if (SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName() == null) {
-            throw new UnAuthorizedException(Config.STRING_AUTH_ERROR);
-        }
 
-        if (firstName.isBlank() || firstName.isEmpty()){
+        checkAuthentication();
+
+        if (firstName.isBlank() || firstName.isEmpty()) {
             throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
         }
 
@@ -72,7 +79,8 @@ public class SearchService {
         country = stringFix(country);
         town = stringFix(town);
 
-        List<PersonView> personFound = postRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town);
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        Page<PersonView> personFound = personViewRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town, pageable);
 
         List<Person> personList = new ArrayList<>();
 
@@ -91,34 +99,32 @@ public class SearchService {
         return ResponseEntity
                 .ok(new PersonsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) personFound.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         personDTOS));
     }
 
     public ResponseEntity<PostResponse> searchPosts(String searchText,
                                                     Long dateFromLong,
                                                     Long dateToLong,
-                                                    String searchAuthor) throws BadRequestException, UnAuthorizedException {
+                                                    String searchAuthor,
+                                                    Integer offset,
+                                                    Integer itemPerPage) throws BadRequestException, UnAuthorizedException {
 
-        if (SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName() == null) {
-            throw new UnAuthorizedException(Config.STRING_AUTH_ERROR);
-        }
+        checkAuthentication();
 
-        if (searchText.isBlank() || searchText.isEmpty()){
+        if (searchText.isBlank() || searchText.isEmpty()) {
             throw new BadRequestException(Config.STRING_NO_SEARCH_TEXT);
         }
 
-        stringFix(searchText);
-        stringFix(searchAuthor);
+        searchText = stringFix(searchText);
+        searchAuthor = stringFix(searchAuthor);
         Date dateFrom = dateFromFix(dateFromLong);
         Date dateTo = dateToFix(dateToLong);
 
-        List<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor);
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        Page<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, pageable);
 
         List<PostDTO> postDTOList = new ArrayList();
 
@@ -128,13 +134,24 @@ public class SearchService {
         return ResponseEntity
                 .ok(new PostResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) postList.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         postDTOList));
     }
 
-    /** Внутренние методы доя обработки данных */
+    private void checkAuthentication() throws UnAuthorizedException {
+        if (SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName() == null) {
+            throw new UnAuthorizedException(Config.STRING_AUTH_ERROR);
+        }
+    }
+
+    /**
+     * Внутренние методы доя обработки данных
+     */
 
     //Конвертер строки из View в строку из таблицы
     private Person viewToPerson(PersonView personView) throws NotFoundException {

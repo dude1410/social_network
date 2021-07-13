@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @Tag(name = "/api/v1/post", description = "Операции с постами")
 public class PostController {
@@ -29,8 +28,13 @@ public class PostController {
     @Operation(description = "Получить все посты")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить все посты"),
             @ApiResponse(responseCode = "404", description = "Посты не найдены в БД")})
-    public ResponseEntity<PostResponse> getAllPosts() throws NotFoundException {
-        return postService.getAllPosts();
+    public ResponseEntity<PostResponse> getAllPosts(@RequestParam(value = "offset",
+                                                        required = false,
+                                                        defaultValue = "0") Integer offset,
+                                                    @RequestParam(value = "itemPerPage",
+                                                            required = false,
+                                                            defaultValue = "20") Integer itemPerPage) throws NotFoundException {
+        return postService.getAllPosts(offset, itemPerPage);
     }
 
     @PutMapping(value = "/api/v1/post/{id}")

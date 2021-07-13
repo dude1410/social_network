@@ -37,9 +37,9 @@ public class TagController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Тег успешно удален"),
             @ApiResponse(responseCode = "400", description = "Не передан тэг")})
     public ResponseEntity<TagsResponse> getTags(@RequestParam String tag,
-                                                @RequestParam(defaultValue = "0l") Long offset,
-                                                @RequestParam(defaultValue = "20l") Long itemPerPage) throws BadRequestException {
-        return tagService.getTags(tag);
+                                                @RequestParam(defaultValue = "0") Integer offset,
+                                                @RequestParam(defaultValue = "20") Integer itemPerPage) throws BadRequestException {
+        return tagService.getTags(tag, offset, itemPerPage);
     }
 
     @DeleteMapping("/api/v1/tags/")

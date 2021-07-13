@@ -1,6 +1,5 @@
 package javapro.services;
 
-import javapro.Util.PersonToDtoMapper;
 import javapro.Util.PostToDTOMapper;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
@@ -14,6 +13,9 @@ import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,25 +31,24 @@ public class PostService {
     private final LikeRepository likeRepository;
 
     private final PostToDTOMapper postToDTOMapper;
-    private final PersonToDtoMapper personToDtoMapper;
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
                        LikeRepository likeRepository,
-                       PostToDTOMapper postToDTOMapper,
-                       PersonToDtoMapper personToDtoMapper) throws NotFoundException {
+                       PostToDTOMapper postToDTOMapper) throws NotFoundException {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
         this.postToDTOMapper = postToDTOMapper;
-        this.personToDtoMapper = personToDtoMapper;
     }
 
-    public ResponseEntity<MyWallResponse> getPostsByUser() throws NotFoundException {
+    public ResponseEntity<MyWallResponse> getPostsByUser(Integer offset, Integer itemPerPage) throws NotFoundException {
 
         Person person = getCurrentUser();
 
-        List<Post> postList = postRepository.findPostsByAuthorID(person.getId());
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+
+        Page<Post> postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
 
         if (postList.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
@@ -63,16 +64,18 @@ public class PostService {
         return ResponseEntity
                 .ok(new MyWallResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) postList.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         postDTOList
                 ));
     }
 
-    public ResponseEntity<PostResponse> getAllPosts() throws NotFoundException {
+    public ResponseEntity<PostResponse> getAllPosts(Integer offset, Integer itemPerPage) throws NotFoundException {
 
-        List<Post> postList = postRepository.findAllPosts(new Date());
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+
+        Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);
 
         if (postList.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
@@ -82,12 +85,13 @@ public class PostService {
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
         postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
+
         return ResponseEntity
                 .ok(new PostResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) postList.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         postDTOList
                 ));
     }
