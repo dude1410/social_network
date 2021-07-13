@@ -40,6 +40,8 @@ public class Config {
     public static final String STRING_NO_DATA_FOUND = "Запись не найдена";
     public static final String STRING_NO_RECOMMENDATIONS = "Список рекомендаций не удалось составить";
     public static final String STRING_REQUEST_REPEATED = "Запрос на добавление в друзья уже существует";
+    public static final String STRING_TOKEN_ERROR = "Ошибка генерации токена";
+    public static final String STRING_TOKEN_CHECK_ERROR = "Ошибка проверки токена";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }

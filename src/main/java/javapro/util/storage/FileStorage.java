@@ -1,4 +1,4 @@
-package javapro.Util.Storage;
+package javapro.util.storage;
 
 
 import javapro.config.Config;

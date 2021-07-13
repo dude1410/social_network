@@ -1,7 +1,7 @@
 package javapro.services;
 
-import javapro.Util.CommentToDTOMapper;
-import javapro.Util.PersonToDtoMapper;
+import javapro.util.CommentToDTOMapper;
+import javapro.util.PersonToDtoMapper;
 import javapro.api.request.CommentBodyRequest;
 import javapro.api.response.*;
 import javapro.config.Config;

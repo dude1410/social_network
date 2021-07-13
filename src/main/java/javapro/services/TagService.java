@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.TagToDTOMapper;
+import javapro.util.TagToDTOMapper;
 import javapro.api.request.TagRequest;
 import javapro.api.response.TagDeleteResponse;
 import javapro.api.response.TagResponse;

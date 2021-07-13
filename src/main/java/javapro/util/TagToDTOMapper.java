@@ -1,4 +1,4 @@
-package javapro.Util;
+package javapro.util;
 
 import javapro.model.dto.TagDTO;
 import javapro.model.Tag;

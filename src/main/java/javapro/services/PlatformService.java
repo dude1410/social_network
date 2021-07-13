@@ -9,6 +9,7 @@ import javapro.repository.CountryRepository;
 import javapro.repository.TownRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class PlatformService {
 
     private final CountryRepository countryRepository;
     private final TownRepository townRepository;
+
 
     public PlatformService(CountryRepository countryRepository,
                            TownRepository townRepository) {
@@ -48,13 +50,12 @@ public class PlatformService {
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
         PlatformResponse platformResponse = new PlatformResponse();
 
-        Page<Country> countries;
 
-        if (country == null) {
-            countries = countryRepository.findAll(PageRequest.of(offset / itemPerPage, itemPerPage));
-        } else {
-            countries = countryRepository.findOne(PageRequest.of(offset / itemPerPage, itemPerPage), country);
-        }
+        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
+        Page<Country> countries = (country == null) ?
+                countryRepository.findAll(pageable) :
+                countryRepository.findOne(pageable, country);
+
 
         platformResponse.setTotal(Math.toIntExact(countries.getTotalElements()));
         platformResponse.setData(countries);
@@ -68,13 +69,15 @@ public class PlatformService {
     public ResponseEntity<PlatformResponse> getTown(Integer countryId, Integer town, Integer offset, Integer itemPerPage) {
         PlatformResponse platformResponse = new PlatformResponse();
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
+        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
         Page<Town> towns;
 
         if (town == null) {
-            towns = townRepository.findAll(PageRequest.of(offset / itemPerPage, itemPerPage), countryId);
+            towns = townRepository.findAll(pageable, countryId);
         } else {
-            towns = townRepository.findOne(PageRequest.of(offset / itemPerPage, itemPerPage), countryId, town);
+            towns = townRepository.findOne(pageable, countryId, town);
         }
+
 
         platformResponse.setError("ok");
         platformResponse.setTotal(Math.toIntExact(towns.getTotalElements()));

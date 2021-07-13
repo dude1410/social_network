@@ -1,6 +1,6 @@
 package javapro.services;
 
-import javapro.Util.Storage.FileStorage;
+import javapro.util.storage.FileStorage;
 import javapro.api.response.FileStorageResponse;
 import javapro.api.response.Response;
 import javapro.config.Config;

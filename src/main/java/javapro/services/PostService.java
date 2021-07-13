@@ -40,6 +40,7 @@ public class PostService {
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
         this.postToDTOMapper = postToDTOMapper;
+        this.personToDtoMapper = personToDtoMapper;
     }
 
     public ResponseEntity<MyWallResponse> getPostsByUser(Integer offset, Integer itemPerPage) throws NotFoundException {

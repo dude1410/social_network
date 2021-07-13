@@ -1,4 +1,4 @@
-package javapro.Util;
+package javapro.util;
 
 import javapro.model.CommentsView;
 import javapro.model.dto.CommentViewDTO;

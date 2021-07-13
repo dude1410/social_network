@@ -1,6 +1,5 @@
-package socnet.unit_tests.api.services;
+package javapro.services;
 
-import javapro.services.TokenService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
@@ -42,12 +41,13 @@ class TokenServiceTest {
             assertThat(token, matchesPattern("[a-zA-Z0-9]+"));
             assertTrue(tokenSet.add(token));
         } catch (InterruptedException e) {
+            //sad but true...
             e.printStackTrace();
         }
     }
 
     @RepeatedTest(TOTAL_ITERATIONS)
-    void testCheckToken(){
+    void testCheckToken() {
         try {
             String token = testableService.getToken();
             assertTrue(testableService.checkToken(token));
@@ -57,7 +57,7 @@ class TokenServiceTest {
     }
 
     @AfterAll
-    static void invalidateTestTokenSet(){
+    static void invalidateTestTokenSet() {
         tokenSet = null;
     }
 }
