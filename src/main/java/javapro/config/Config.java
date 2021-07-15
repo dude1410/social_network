@@ -42,6 +42,7 @@ public class Config {
     public static final String STRING_REQUEST_REPEATED = "Запрос на добавление в друзья уже существует";
     public static final String STRING_TOKEN_ERROR = "Ошибка генерации токена";
     public static final String STRING_TOKEN_CHECK_ERROR = "Ошибка проверки токена";
+    public static final String STRING_WRONG_DATA = "Неверно указана дата";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }

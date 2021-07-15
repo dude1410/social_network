@@ -20,8 +20,8 @@ public class EditMyProfileRequest {
     @JsonProperty("photo_id")
     private Long photoId;
     private String about;
-    @JsonProperty("city")
-    private String townId;
-    @JsonProperty("country")
-    private String countryId;
+    @JsonProperty("town_id")
+    private Integer townId;
+    @JsonProperty("country_id")
+    private Integer countryId;
 }

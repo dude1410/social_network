@@ -16,13 +16,13 @@ public class PlatformResponse<T> {
   @Schema(description = "метка времени", example = "2147483648L")
   private Long timestamp;
 
-  @Schema(description = "общее количество постов", example = "45l")
+  @Schema(description = "общее количество ", example = "45l")
   private int total;
 
   @Schema(description = "сдвиг для постраничного вывода", example = "0l")
   private int offset;
 
-  @Schema(description = "количество постов на страницу", example = "20l")
+  @Schema(description = "количество на страницу", example = "20l")
   private int perPage;
 
   @Schema(description = "объект data")
