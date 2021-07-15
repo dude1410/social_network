@@ -49,14 +49,10 @@ public class PlatformService {
     public ResponseEntity<PlatformResponse> getCountry(String country, Integer offset, Integer itemPerPage) {
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
         PlatformResponse platformResponse = new PlatformResponse();
-
-
         Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
         Page<Country> countries = (country == null) ?
                 countryRepository.findAll(pageable) :
                 countryRepository.findOne(pageable, country);
-
-
         platformResponse.setTotal(Math.toIntExact(countries.getTotalElements()));
         platformResponse.setData(countries);
         platformResponse.setError("ok");

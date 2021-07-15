@@ -60,12 +60,12 @@ public class StorageService {
         String thumbImagePath = uploadPath + "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/thumbs/";
         String relative = new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
 
-//        person.setPhoto(relative + "/" + file.getOriginalFilename());
-        person.setPhoto(thumbImagePath + file.getOriginalFilename());
+
+        person.setPhoto(relative + file.getOriginalFilename());
         personRepository.save(person);
         Runnable task = () -> {
             try {
-                fileStorage.fileWriter(file, originalImagePath, thumbImagePath);
+                fileStorage.fileWriter(file, originalImagePath);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
@@ -79,15 +79,17 @@ public class StorageService {
         fileStorageResponse.setBytes(file.getSize());
         fileStorageResponse.setFileFormat(file.getContentType());
         fileStorageResponse.setFileName(file.getOriginalFilename());
-        fileStorageResponse.setCreatedAt(0);
+        fileStorageResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()).getTime());
         fileStorageResponse.setFileType(file.getContentType());
-        fileStorageResponse.setRawFileURL(thumbImagePath);
-        fileStorageResponse.setRelativeFilePath(relative);
+        fileStorageResponse.setRawFileURL(thumbImagePath +  file.getOriginalFilename());
+        fileStorageResponse.setRelativeFilePath(relative + "/" + file.getOriginalFilename());
 
         System.out.println(thumbImagePath);
         System.out.println(relative);
-        return ResponseEntity.ok(new Response("ok",
-                new Timestamp(System.currentTimeMillis()).getTime(),
-                fileStorageResponse));
+        Response response = new Response();
+        response.setError("ok");
+        response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        response.setData(fileStorageResponse);
+        return ResponseEntity.ok(response);
     }
 }
