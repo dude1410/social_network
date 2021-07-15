@@ -13,6 +13,8 @@ public interface TownRepository extends JpaRepository<Town, Integer> {
 
     Optional<Town> findByName(String name);
 
+    Optional<Town> findById(Integer id);
+
     @Query("select t " +
             "from Town t " +
             "where t.countryId = :countryId ")

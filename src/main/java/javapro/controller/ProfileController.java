@@ -63,7 +63,8 @@ public class ProfileController {
     }
 
     @PutMapping("/api/v1/users/me")
-    public ResponseEntity<Response> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException {
+    @Operation(description = "Редактирование профиля")
+    public ResponseEntity<Response> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
         return profileService.editMyProfile(editMyProfileRequest);
     }
 

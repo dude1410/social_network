@@ -23,6 +23,6 @@ public class FileStorageResponse {
 
     private String fileType;
 
-    private int createdAt;
+    private Long createdAt;
 
 }
