@@ -74,6 +74,7 @@ public class PostService {
 
     public ResponseEntity<PostResponse> getAllPosts(Integer offset, Integer itemPerPage) throws NotFoundException {
 
+
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
         Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);

@@ -1,6 +1,5 @@
 package javapro.repository;
 
-import javapro.model.Person;
 import javapro.model.PostComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -43,14 +42,6 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
             "FROM PostLike pl " +
             "WHERE pl.comment.id = :commentID ")
     Integer getLikesOnComment(Integer commentID);
-
-    @Query("SELECT DISTINCT " +
-            "prsn " +
-            "FROM PostLike pl " +
-            "LEFT JOIN PostComment p ON pl.comment.id = p.id " +
-            "LEFT JOIN Person prsn ON pl.person.id = prsn.id " +
-            "WHERE pl.comment.id = :commentID ")
-    List<Person> getUsersWhoLikedComment(Integer commentID);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional

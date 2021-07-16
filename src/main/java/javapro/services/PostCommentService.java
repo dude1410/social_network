@@ -258,7 +258,7 @@ public class PostCommentService {
 
         List<AuthorizedPerson> personDTOS = new ArrayList<>();
 
-        List<Person> persons = commentRepository.getUsersWhoLikedComment(commentID);
+        List<Person> persons = likeRepository.getUsersWhoLikedComment(commentID);
         if (!persons.isEmpty()) {
             persons.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
         }
@@ -302,7 +302,7 @@ public class PostCommentService {
         }
 
         Integer likesCount = commentRepository.getLikesOnComment(commentID);
-        List<Person> persons = commentRepository.getUsersWhoLikedComment(commentID);
+        List<Person> persons = likeRepository.getUsersWhoLikedComment(commentID);
 
         LikeDTO likesDTO = new LikeDTO();
 
