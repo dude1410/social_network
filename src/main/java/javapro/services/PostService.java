@@ -13,7 +13,6 @@ import javapro.model.dto.*;
 import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.PostRepository;
-import javapro.util.PostToDTOMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -74,6 +73,7 @@ public class PostService {
     }
 
     public ResponseEntity<PostResponse> getAllPosts(Integer offset, Integer itemPerPage) throws NotFoundException {
+
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 

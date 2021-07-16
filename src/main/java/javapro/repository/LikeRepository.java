@@ -49,4 +49,12 @@ public interface LikeRepository extends JpaRepository<PostLike, Integer> {
             "WHERE pl.post.id = :postID ")
     List<Person> getUsersWhoLikedPost(int postID);
 
+    @Query("SELECT DISTINCT " +
+            "prsn " +
+            "FROM PostLike pl " +
+            "LEFT JOIN PostComment p ON pl.comment.id = p.id " +
+            "LEFT JOIN Person prsn ON pl.person.id = prsn.id " +
+            "WHERE pl.comment.id = :commentID ")
+    List<Person> getUsersWhoLikedComment(Integer commentID);
+
 }
