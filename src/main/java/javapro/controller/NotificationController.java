@@ -18,7 +18,7 @@ public class NotificationController {
 
 
 //  todo  PUT : http://localhost:8086/api/v1/account/notifications
-
+//  todo GET : http://31.40.251.201:8086/api/v1/account/notifications
 
     @GetMapping("/api/v1/notifications")
     public ResponseEntity<PlatformResponse> getNotifications(@RequestParam(value = "offset", required = false) Long offset,
