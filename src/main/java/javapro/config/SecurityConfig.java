@@ -87,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/storage/**")
-                .addResourceLocations(uploadPath + "/storage/**");
+        registry.addResourceHandler("/img/**")
+                .addResourceLocations("file:/Users/olegprokhorov/IdeaProjects/group/study/img/");
     }
 }

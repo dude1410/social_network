@@ -1,7 +1,7 @@
 package javapro.model.enums;
 
 public enum NotificationType {
-    POST,
+    FRIEND_BIRTHDAY,
     POST_COMMENT,
     COMMENT_COMMENT,
     FRIEND_REQUEST,

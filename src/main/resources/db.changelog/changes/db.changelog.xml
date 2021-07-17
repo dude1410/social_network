@@ -57,7 +57,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="phone" type="VARCHAR(255)"/>
-            <column name="photo" type="VARCHAR(1000)"/>
+            <column name="photo" type="TEXT"/>
             <column name="reg_date" type="TIMESTAMP WITHOUT TIME ZONE">
                 <constraints nullable="false"/>
             </column>
