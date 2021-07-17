@@ -43,8 +43,7 @@ public class ProfileController {
     @Operation(description = "Получение записей на стене пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка открыть стену пользователя"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "id пользователя не задан"),
-            @ApiResponse(responseCode = "404", description = "Посты не найдены в БД")})
+            @ApiResponse(responseCode = "400", description = "id пользователя не задан")})
     public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id,
                                                  @RequestParam(name = "offset", defaultValue = "0") Integer offset,
                                                  @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws NotFoundException {

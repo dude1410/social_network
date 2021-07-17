@@ -1,6 +1,5 @@
 package javapro.services;
 
-import javapro.util.PersonToDtoMapper;
 import javapro.util.PostToDTOMapper;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
@@ -51,10 +50,6 @@ public class PostService {
 
         Page<Post> postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
 
-        if (postList.isEmpty()) {
-            throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
-        }
-
         List<PostDTO> postDTOList = new ArrayList<>();
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
@@ -78,10 +73,6 @@ public class PostService {
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
         Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);
-
-        if (postList.isEmpty()) {
-            throw new NotFoundException(Config.STRING_NO_POSTS_IN_DB);
-        }
 
         List<PostDTO> postDTOList = new ArrayList();
 
