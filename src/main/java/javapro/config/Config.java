@@ -43,6 +43,7 @@ public class Config {
     public static final String STRING_TOKEN_ERROR = "Ошибка генерации токена";
     public static final String STRING_TOKEN_CHECK_ERROR = "Ошибка проверки токена";
     public static final String STRING_WRONG_DATA = "Неверно указана дата";
+    public static final String STRING_NOT_FOUND_NOTIFICATION_SETUP = "Нет данных по настройкам уведомлений";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }
