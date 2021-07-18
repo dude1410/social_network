@@ -24,5 +24,5 @@ public interface TownRepository extends JpaRepository<Town, Integer> {
             "from Town t " +
             "WHERE t.id = :id " +
             "AND t.countryId = :countryId ")
-    Page<Town> findOne (Pageable pageable, @Param("countryId") Integer countryId, @Param("id") Integer id);
+    Page<Town> findOne (Pageable pageable, @Param("countryId") Integer countryId, @Param("id") Integer name);
 }

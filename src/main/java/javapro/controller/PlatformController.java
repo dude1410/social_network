@@ -46,7 +46,7 @@ public class PlatformController {
     @GetMapping(value = "/api/v1/platform/towns")
     @Operation(description = "Вывод всех доступный городов в стране")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Город в стране выбран")})
-    public ResponseEntity<PlatformResponse> towns(@RequestParam(value = "countryId", required = true) Integer countryid,
+    public ResponseEntity<PlatformResponse> towns(@RequestParam(value = "countryId") Integer countryid,
                                                   @RequestParam(value = "town", required = false) Integer town,
                                                   @RequestParam(value = "offset", required = false) Integer offset,
                                                   @RequestParam(value = "itemPerPage", required = false) Integer itemPerPage) {
