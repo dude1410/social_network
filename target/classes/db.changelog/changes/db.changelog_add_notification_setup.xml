@@ -1,0 +1,36 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="op" id="1624711365200-1">
+        <createTable tableName="notification_setup">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="notification_setup_pkey"/>
+            </column>
+            <column name="notification_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enable" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="op" id="1624711365200-2">
+        <addForeignKeyConstraint baseColumnNames="person_id"
+                                 baseTableName="notification_setup"
+                                 constraintName="fk_notification_setup_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="person"
+                                 validate="true"/>
+    </changeSet>
+    <changeSet author="op" id="1624711365200-3">
+        <createIndex indexName="fki_notification_setup_id" tableName="notification_setup">
+            <column name="person_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
