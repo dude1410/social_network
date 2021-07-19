@@ -6,7 +6,6 @@ import javapro.repository.TokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
-import java.util.Random;
 
 @Service
 public class TokenService {
@@ -29,13 +28,10 @@ public class TokenService {
     }
 
     public Token setNewPersonToken(Person person){
-        Token token = tokenRepository.findByPerson(person);
-        setToken(token, person);
-        return tokenRepository.findByPerson(person);
-    }
-
-    public Token generatePersonToken(Person person){
-        Token token = new Token();
+        Token token = person.getToken();
+        if (token == null) {
+            token = new Token();
+        }
         setToken(token, person);
         return tokenRepository.findByPerson(person);
     }
@@ -53,30 +49,5 @@ public class TokenService {
         token.setToken(getNewToken(person.getEmail()));
         token.setDate(new Date());
         tokenRepository.save(token);
-    }
-
-
-
-
-
-    //длина токена без учета части с временной меткой
-    private static final int tokenPartLength = 20;
-
-    public String getToken() throws InterruptedException {
-        return getRandomString(tokenPartLength)
-                .append(new Date().getTime())
-                .toString();
-    }
-
-    private synchronized StringBuilder getRandomString(int length) throws InterruptedException {
-        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < length; i++){
-            int number = random.nextInt(62);
-            sb.append(str.charAt(number));
-        }
-        Thread.sleep(10);
-        return sb;
     }
 }
