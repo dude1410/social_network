@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class RegisterService {
@@ -59,7 +60,7 @@ public class RegisterService {
                         "Ошибка при добавлении нового пользователя в БД. Email: %s", person.getEmail()));
                 throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
             }
-            Token token = tokenService.generatePersonToken(person);
+            Token token = tokenService.setNewPersonToken(person);
             if (token == null) {
                 logger.error(String.format("Ошибка при подтверждении регистрации. " +
                         "Ошибка генерации токена. Email: %s", person.getEmail()));

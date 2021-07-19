@@ -76,6 +76,9 @@ public class Person implements Serializable {
     @Column(name = "role", nullable = false)
     private Integer role;
 
+    @OneToOne(mappedBy = "person")
+    private Token token;
+
     public Role getRole() {
         if (role == 0) {
             return Role.USER;
