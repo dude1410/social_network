@@ -56,4 +56,4 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn sonar:sonar -e -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dsonar.java.binaries=/ttarget/classes/**.*class
+    - mvn sonar:sonar -e -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dsonar.java.binaries=/target/classes/**.*class
