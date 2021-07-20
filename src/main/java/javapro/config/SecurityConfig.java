@@ -1,7 +1,6 @@
 package javapro.config;
 
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,12 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 
     @Override
-    protected void configure(@NotNull HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
                 .antMatchers("/logs").permitAll()
                 .antMatchers("/login").permitAll()
                 .and()
