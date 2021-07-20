@@ -13,6 +13,7 @@ build:
   before_script:
     - echo "socnet is in stop state for now"
     - sudo systemctl stop socnet.service  
+    - mvn clean
   script:
     - echo "Do your build here and there"
     - mvn compile -Dmaven.test.skip=true
