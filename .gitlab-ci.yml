@@ -15,7 +15,7 @@ build:
     - sudo systemctl stop socnet.service  
   script:
     - echo "Do your build here and there"
-    - mvn clean compile -Dmaven.test.skip=true
+    - mvn compile -Dmaven.test.skip=true
 
 module_testing:
   stage: test
