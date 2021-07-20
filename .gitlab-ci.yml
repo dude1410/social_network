@@ -46,7 +46,7 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - mvn clean package -Dmaven.test.skip=true
+    - mvn package -Dmaven.test.skip=true
     - sudo systemctl restart socnet.service
 
 update_sonar_report:
@@ -56,4 +56,4 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
