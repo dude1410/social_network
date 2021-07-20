@@ -2,7 +2,7 @@ stages:
     - build
     - test
     - deploy
-    - sonar
+    # - sonar
 
 build:
   stage: build
@@ -49,11 +49,11 @@ deploy:
     - mvn package -Dmaven.test.skip=true
     - sudo systemctl start socnet.service
 
-update_sonar_report:
-  stage: sonar
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - mvn sonar:sonar -e -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dsonar.java.binaries=/target/classes/
+# update_sonar_report:
+#   stage: sonar
+#   only:
+#     - master
+#   except:
+#     - tags
+#   script:
+#     - mvn sonar:sonar -e -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
