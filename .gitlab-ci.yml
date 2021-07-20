@@ -1,8 +1,8 @@
 stages:
     - build
     - test
-    - deploy
     - sonar
+    - deploy
 
 build:
   stage: build
@@ -38,6 +38,15 @@ integrational_testing:
     - echo "Do another parallel test here.."
     - echo "For example run a lint test"
 
+update_sonar_report:
+  stage: sonar
+  only:
+    - master
+  except:
+    - tags
+  script:
+    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.skip.test=true
+
 deploy:
   stage: deploy
   only:
@@ -46,14 +55,5 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - mvn package -Dmaven.test.skip=true
+    - mvn clean package -Dmaven.test.skip=true
     - sudo systemctl start socnet.service
-
-update_sonar_report:
-  stage: sonar
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa
