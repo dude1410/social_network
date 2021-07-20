@@ -45,7 +45,7 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.skip.test=true
+    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
 
 deploy:
   stage: deploy
