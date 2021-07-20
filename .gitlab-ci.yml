@@ -15,7 +15,7 @@ build:
     - sudo systemctl stop socnet.service  
   script:
     - echo "Do your build here and there"
-    - mvn clean compile -X -Dmaven.test.skip=true
+    - mvn package -Dmaven.test.skip=true
 
 module_testing:
   stage: test
@@ -45,7 +45,6 @@ deploy:
     - tags
   script:
     - echo "Do your deploy here"
-    - mvn package -Dmaven.test.skip=true
     - sudo systemctl restart socnet.service
 
 update_sonar_report:
@@ -55,7 +54,7 @@ update_sonar_report:
   except:
     - tags
   script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
-  after_script:
-    - echo 'fire up socnet again!!'
-    - sudo systemctl restart socnet.service
+    - mvn sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
+  # after_script:
+  #   - echo 'fire up socnet again!!'
+  #   - sudo systemctl restart socnet.service
