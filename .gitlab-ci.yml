@@ -34,7 +34,7 @@ integrational_testing:
   except:
     - tags
   script:
-    - echo "Do another parallel test here"
+    - echo "Do another parallel test here.."
     - echo "For example run a lint test"
 
 deploy:
@@ -46,7 +46,7 @@ deploy:
   script:
     - echo "Do your deploy here"
     - mvn package -Dmaven.test.skip=true
-    - sudo systemctl start socnet.service
+    - sudo systemctl restart socnet.service
 
 update_sonar_report:
   stage: sonar
