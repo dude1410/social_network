@@ -7,6 +7,9 @@ databaseChangeLog:
       file: db.changelog/changes/db.changelog_add_token.xml
   - include:
       file: db.changelog/changes/db.changelog_add_notification_setup.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_deleted_person.xml
+
 #  - include:
 #      file: db.changelog/changes/db.changelog_add_person.sql
 #  - include:

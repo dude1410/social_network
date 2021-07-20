@@ -22,7 +22,7 @@ public class DefaultController {
 
     @GetMapping(value = "personal-data.html")
     public String personalData(){
-        return "policy";
+        return "personal-data";
     }
 
 
