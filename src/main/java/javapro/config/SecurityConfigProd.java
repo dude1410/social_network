@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -54,7 +53,6 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements 
                                 "http://31.40.251.201:8086/personal-data.html"))))
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
                 .antMatchers("/logs").permitAll()
                 .antMatchers("/login").permitAll()
                 .and()
