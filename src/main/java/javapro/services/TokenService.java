@@ -28,12 +28,12 @@ public class TokenService {
     }
 
     public Token setNewPersonToken(Person person){
-        Token token = person.getToken();
+        Token token = tokenRepository.findByPerson(person);
         if (token == null) {
             token = new Token();
         }
         setToken(token, person);
-        return tokenRepository.findByPerson(person);
+        return token;
     }
 
     public Token findToken(String strToken){
