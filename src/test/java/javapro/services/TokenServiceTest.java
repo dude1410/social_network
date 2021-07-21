@@ -59,28 +59,24 @@ class TokenServiceTest {
     @Test
     void testSetNewPersonToken() {
         Person person = new Person();
-        Token oldToken = new Token();
-        Token newToken = new Token();
-        oldToken.setToken("oldToken");
-        newToken.setToken("newToken");
-        person.setToken(oldToken);
         person.setEmail("personEmail");
+        Token token = new Token();
+        String strToken = "token";
+        token.setToken(strToken);
+        token.setPerson(person);
         verify(passwordEncoder, atMostOnce()).encode(person.getEmail());
-        when(tokenRepository.findByPerson(person)).thenReturn(newToken);
-        assertNotEquals(oldToken,
-                        testableService.setNewPersonToken(person));
+        when(tokenRepository.findByPerson(person)).thenReturn(token);
+        assertNotEquals(strToken,
+                        testableService.setNewPersonToken(person).getToken());
     }
 
     @Test
     void testSetNewPersonTokenNullToken() {
         Person person = new Person();
-        Token newToken = new Token();
-        newToken.setToken("newToken");
-        person.setToken(null);
         person.setEmail("personEmail");
         verify(passwordEncoder, atMostOnce()).encode(person.getEmail());
-        when(tokenRepository.findByPerson(person)).thenReturn(newToken);
-        assertNotNull(testableService.setNewPersonToken(person).getToken());
+        when(tokenRepository.findByPerson(person)).thenReturn(null);
+        assertNotNull(testableService.setNewPersonToken(person));
     }
 
     @Test
