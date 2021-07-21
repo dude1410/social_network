@@ -1,11 +1,11 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
-    <changeSet author="eyese (generated)" id="1624711365172-1">
+    <changeSet author="eyese (generated)" id="1626891142477-1">
         <createTable tableName="post_comment">
             <column autoIncrement="true" name="id" type="SERIAL">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="post_comment_pkey"/>
             </column>
-            <column name="comment_text" type="VARCHAR(255)">
+            <column name="comment_text" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="is_blocked" type="BOOLEAN">
@@ -128,11 +128,6 @@
             <column name="name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <!--
-    <changeSet author="eyese (generated)" id="1624711365172-7">
-        <addPrimaryKey columnNames="id" constraintName="post_pkey" tableName="post"/>
-    </changeSet>
-    -->
     <changeSet author="eyese (generated)" id="1624711365172-8">
         <createTable tableName="town">
             <column autoIncrement="true" name="id" type="SERIAL">
@@ -170,7 +165,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="eyese (generated)" id="1624711365172-11">
+    <changeSet author="eyese (generated)" id="1626891142477-20">
         <createTable tableName="post">
             <column autoIncrement="true" name="id" type="SERIAL">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="post_pkey"/>
@@ -178,7 +173,7 @@
             <column name="is_blocked" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="post_text" type="VARCHAR(255)">
+            <column name="post_text" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="time" type="TIMESTAMP WITHOUT TIME ZONE">

@@ -13,11 +13,11 @@ import javapro.model.dto.NotificationTypeDTO;
 import javapro.model.enums.NotificationType;
 import javapro.repository.NotificationSetupRepository;
 import javapro.repository.PersonRepository;
+import javapro.util.Time;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +46,15 @@ public class NotificationService {
         }
 */
 
+
+
         offset = (offset == null) ? 0 : offset;
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
 
-        var response = new PlatformResponse<ArrayList>();
+        var response = new PlatformResponse<>();
 
         response.setError("ok");
-        response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        response.setTimestamp(Time.getTime());
         response.setTotal(0);
         response.setOffset(Math.toIntExact(offset));
         response.setPerPage(Math.toIntExact(itemPerPage));
@@ -74,22 +76,20 @@ public class NotificationService {
         var notificationSetupList = getNotificationSetup(personId);
 
         if (notificationSetupList.size() == 0) {
-//            var saveNotificationList = new ArrayList<NotificationSetup>();
-
+            var saveNotificationList = new ArrayList<NotificationSetup>();
             for (NotificationType element : NotificationType.values()) {
                 var notification = new NotificationSetup();
                 notification.setPersonId(personId);
                 notification.setNotificationtype(element.name());
                 notification.setEnable(true);
-//                saveNotificationList.add(notification);
-                notificationSetupRepository.save(notification);
+                saveNotificationList.add(notification);
             }
-//            notificationSetupRepository.saveAll(saveNotificationList);
+            notificationSetupRepository.saveAll(saveNotificationList);
         }
 
         var response = new Response<>();
         response.setError("ok");
-        response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        response.setTimestamp(Time.getTime());
 
         var notificationDataFromBd = notificationSetupRepository.findAllByPersonId(personId);
 
@@ -134,7 +134,7 @@ public class NotificationService {
                 notification.setEnable(enable);
                 notificationSetupRepository.save(notification);
                 response.setError("параметр изменен");
-                response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+                response.setTimestamp(Time.getTime());
                 var message = new MessageDTO();
                 message.setMessage("параметр изменен");
                 response.setData(message);
@@ -146,6 +146,7 @@ public class NotificationService {
 
 
     private Person isAuthorize() throws AuthenticationException {
+
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
@@ -159,4 +160,6 @@ public class NotificationService {
     private List<NotificationSetup> getNotificationSetup(Integer personId) {
         return notificationSetupRepository.findAllByPersonId(personId);
     }
+
+
 }
