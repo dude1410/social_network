@@ -1,6 +1,8 @@
 package javapro.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javapro.model.Country;
+import javapro.model.Town;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -21,8 +23,8 @@ public class ProfileByIdData {
     private String phone;
     private String photo;
     private String about;
-    private CityData city;
-    private CountryData country;
+    private Town town;
+    private Country country;
     @JsonProperty("message_permission")
     private String messagePermission;
     @JsonProperty("last_online_time")

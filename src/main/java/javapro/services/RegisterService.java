@@ -6,9 +6,10 @@ import javapro.api.response.OkResponse;
 import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
+import javapro.config.exception.NotFoundException;
+import javapro.model.Person;
 import javapro.model.Token;
 import javapro.model.enums.MessagesPermission;
-import javapro.model.Person;
 import javapro.repository.PersonRepository;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,9 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class RegisterService {
@@ -48,7 +49,7 @@ public class RegisterService {
     }
 
     public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo)
-            throws BadRequestException {
+            throws BadRequestException, NotFoundException {
         if (personRepository.findByEmail(userInfo.getEmail()) != null){
             logger.warn(String.format("Запрос на регистрацию существующего пользователя. Email: %s", userInfo.getEmail()));
             throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
@@ -82,6 +83,7 @@ public class RegisterService {
             throw new BadRequestException(Config.STRING_NO_PERSON_IN_DB);
         }
         Person person = token.getPerson();
+
         if (tokenService.checkToken(token.getToken()) && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(person) == 1) {
                 logger.info(String.format("Подтверждение регистрации нового пользователя. Email: %s", person.getEmail()));

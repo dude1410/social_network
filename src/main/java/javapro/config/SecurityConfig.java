@@ -52,10 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .httpBasic().disable()
                 .logout()
                 .permitAll();
-
-
     }
-
+    
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
         var daoAuthenticationProvider = new DaoAuthenticationProvider();

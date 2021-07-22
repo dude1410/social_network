@@ -1,6 +1,14 @@
 package javapro.model.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javapro.model.Country;
+import javapro.model.Town;
+import lombok.Getter;
+
+import java.sql.Timestamp;
+
+@Getter
 public class DeletedPersonData {
 
     private String photo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKYAAACmCAYAAABQiPR3AAAUC" +
@@ -282,4 +290,16 @@ public class DeletedPersonData {
             "WqVKlSpUqVK" +
             "lWqVKlSpUqVKlWqVKlSpUqVKlWqVKlSpUqVKlWqVKlSpUqVKlWqVKlSpUqVKlWqVKlSpUqVKvXQ6P8HLQ5WonMZ6RUAAAAA" +
             "SUVORK5CYII=";
+
+    @JsonProperty(value = "first_name")
+    private String firstName = "Deleted";
+    @JsonProperty(value = "last_name")
+    private String lastName = "User";
+    @JsonProperty(value = "birth_date")
+    private Timestamp birthDate = null;
+    private String phone = null;
+    private String about = null;
+    private Country country = null;
+    private Town town = null;
+
 }
