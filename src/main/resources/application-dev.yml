@@ -36,9 +36,6 @@ spring:
     default-encoding: UTF-8
 server:
   port: 8086
-  servlet:
-    session:
-      timeout: -1
 logging:
   config: classpath:log4j2-spring-dev.xml
 # У каждого на своем компе будет своя переменная. Меняйте раскоменчивайте нужную, а не нужные в коммент
