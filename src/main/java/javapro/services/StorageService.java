@@ -1,12 +1,13 @@
 package javapro.services;
 
-import javapro.util.storage.FileStorage;
 import javapro.api.response.FileStorageResponse;
 import javapro.api.response.Response;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.BadRequestException;
 import javapro.repository.PersonRepository;
+import javapro.util.Time;
+import javapro.util.storage.FileStorage;
 import javassist.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Service
@@ -79,7 +79,7 @@ public class StorageService {
         fileStorageResponse.setBytes(file.getSize());
         fileStorageResponse.setFileFormat(file.getContentType());
         fileStorageResponse.setFileName(file.getOriginalFilename());
-        fileStorageResponse.setCreatedAt(new Timestamp(System.currentTimeMillis()).getTime());
+        fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
         fileStorageResponse.setRawFileURL(thumbImagePath +  file.getOriginalFilename());
         fileStorageResponse.setRelativeFilePath(relative + "/" + file.getOriginalFilename());
@@ -88,7 +88,7 @@ public class StorageService {
         System.out.println(relative);
         Response response = new Response();
         response.setError("ok");
-        response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        response.setTimestamp(Time.getTime());
         response.setData(fileStorageResponse);
         return ResponseEntity.ok(response);
     }

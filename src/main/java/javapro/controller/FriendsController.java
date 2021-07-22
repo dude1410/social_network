@@ -37,7 +37,7 @@ public class FriendsController {
             @ApiResponse(responseCode = "404", description = "Список друзей пуст"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")})
     public ResponseEntity<FriendsResponse> getFriends(@RequestParam(value = "name", required = false) String name,
-                                                      @RequestParam(value = "offset", defaultValue = "0") Long offset,
+                                                      @RequestParam(value = "offset", defaultValue = "0", required = false) Long offset,
                                                       @RequestParam(value = "itemPerPage", defaultValue = "20") Long itemPerPage)
             throws AuthenticationException, NotFoundException {
         return friendsService.getFriends(name, offset, itemPerPage);
@@ -74,7 +74,7 @@ public class FriendsController {
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден / пользователь уже у вас в друзьях")})
     public ResponseEntity<FriendsResponse> getRequestList(@RequestParam(value = "name", required = false) String name,
-                                                          @RequestParam(value = "offset", defaultValue = "0") Long offset,
+                                                          @RequestParam(value = "offset", defaultValue = "0", required = false) Long offset,
                                                           @RequestParam(value = "itemPerPage", defaultValue = "20") Long itemPerPage)
             throws AuthenticationException, NotFoundException {
         return friendsService.getRequestList(name, offset, itemPerPage);
@@ -99,7 +99,7 @@ public class FriendsController {
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Список рекомендаций не удалось составить"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
-    public ResponseEntity<FriendsResponse> getRecommendations(@RequestParam("offset") Long offset,
+    public ResponseEntity<FriendsResponse> getRecommendations(@RequestParam(value = "offset", required = false) Long offset,
                                                               @DefaultValue(value = "20l") @RequestParam("itemPerPage") Long itemPerPage)
             throws AuthenticationException, NotFoundException, BadRequestException {
         return friendsService.getRecommendations(offset, itemPerPage);
