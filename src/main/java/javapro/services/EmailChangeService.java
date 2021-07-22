@@ -5,12 +5,12 @@ import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.repository.PersonRepository;
+import javapro.util.Time;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.Date;
 
 @Service
 public class EmailChangeService {
@@ -27,7 +27,7 @@ public class EmailChangeService {
     public ResponseEntity<OkResponse> changeEmail(String oldEmail, String newEmail) throws BadRequestException {
         if (personRepository.changeEmail(oldEmail, newEmail) == 1) {
             logger.info(String.format("Успешная смена email (Настройки пользователя). old Email: %s. new Email: %s", oldEmail, newEmail));
-            return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
+            return new ResponseEntity<>(new OkResponse("null", Time.getTime(), new ResponseData("OK")),
                                         HttpStatus.OK);
         } else {
             logger.error(String.format("Ошибка при смене пароля (Настройки пользователя). Ошибка при обработке запроса в БД. Email: %s", oldEmail));
@@ -35,7 +35,7 @@ public class EmailChangeService {
         }
     }
 
-    private Long getTimestamp() {
-        return (new Date().getTime() / 1000);
-    }
+//    private Long getTimestamp() {
+//        return (new Date().getTime() / 1000);
+//    }
 }

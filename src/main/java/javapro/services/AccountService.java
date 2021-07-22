@@ -6,6 +6,7 @@ import javapro.api.response.OkResponse;
 import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
+import javapro.config.exception.NotFoundException;
 import javapro.model.Person;
 import javapro.model.Token;
 import javapro.repository.PersonRepository;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class PassRecoveryService {
+public class AccountService {
 
     private final EmailService emailService;
     private final TokenService tokenService;
@@ -32,11 +33,11 @@ public class PassRecoveryService {
     @Value("${spring.mail.address}")
     private String address;
 
-    public PassRecoveryService(EmailService emailService,
-                               TokenService tokenService, PersonRepository personRepository,
-                               TokenRepository tokenRepository, PasswordEncoder passwordEncoder,
-                               @Qualifier("passRecoveryLogger") Logger logger,
-                               @Qualifier("PassRecoveryTemplateMessage") String passRecoveryMessageTemplate) {
+    public AccountService(EmailService emailService,
+                          TokenService tokenService, PersonRepository personRepository,
+                          TokenRepository tokenRepository, PasswordEncoder passwordEncoder,
+                          @Qualifier("passRecoveryLogger") Logger logger,
+                          @Qualifier("PassRecoveryTemplateMessage") String passRecoveryMessageTemplate) {
         this.emailService = emailService;
         this.tokenService = tokenService;
         this.personRepository = personRepository;
@@ -45,7 +46,7 @@ public class PassRecoveryService {
         this.passRecoveryMessageTemplate = passRecoveryMessageTemplate;
     }
 
-    public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException {
+    public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException, NotFoundException {
         Person person = personRepository.findByEmail(email);
         if (person == null) {
             logger.error(String.format("Ошибка при восстановлении пароля. Пользователь с введенным email не найден. Email: %s", email));
@@ -79,6 +80,7 @@ public class PassRecoveryService {
             throw new BadRequestException(Config.STRING_TOKEN_CHECK_ERROR);
         } else {
             Person person = token.getPerson();
+
             if (personRepository.setNewPassword(passwordEncoder.encode(password), person) != null) {
                 logger.info(String.format("Успешная смена пароля. Email: %s", person.getEmail()));
                 return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")), HttpStatus.OK);

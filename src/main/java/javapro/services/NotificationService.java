@@ -47,7 +47,6 @@ public class NotificationService {
 */
 
 
-
         offset = (offset == null) ? 0 : offset;
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
 
@@ -125,7 +124,7 @@ public class NotificationService {
         Boolean enable = request.getEnable();
 
         for (NotificationType element : NotificationType.values()) {
-            if(notificationType.equals(element.toString())){
+            if (notificationType.equals(element.toString())) {
                 var notification = notificationSetupRepository
                         .findByNotificationtypeAndPersonId(request.getNotificationType(), personId);
                 if (notification == null) {

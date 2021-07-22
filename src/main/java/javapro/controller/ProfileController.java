@@ -1,20 +1,26 @@
 package javapro.controller;
 
-import javapro.api.request.EditMyProfileRequest;
-import javapro.api.request.PostDataRequest;
-import javapro.api.response.*;
-import javapro.config.Config;
-import javapro.config.exception.AuthenticationException;
-import javapro.config.exception.BadRequestException;
-import javapro.config.exception.NotFoundException;
-import javapro.services.PostService;
-import javapro.services.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javapro.api.request.EditMyProfileRequest;
+import javapro.api.request.PostDataRequest;
+import javapro.api.response.LoginResponse;
+import javapro.api.response.MyWallResponse;
+import javapro.api.response.PostShortResponse;
+import javapro.api.response.Response;
+import javapro.config.Config;
+import javapro.config.exception.AuthenticationException;
+import javapro.config.exception.BadRequestException;
+import javapro.config.exception.NotFoundException;
+import javapro.model.dto.MessageDTO;
+import javapro.model.dto.auth.AuthorizedPerson;
+import javapro.services.PostService;
+import javapro.services.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 
 @RestController
@@ -50,6 +56,7 @@ public class ProfileController {
         return postService.getPostsByUser(offset, itemPerPage);
     }
 
+
     @PostMapping(value = "/api/v1/users/{id}/wall")
     @Operation(description = "Создать пост на стене пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка создать пост"),
@@ -63,7 +70,8 @@ public class ProfileController {
 
     @PutMapping("/api/v1/users/me")
     @Operation(description = "Редактирование профиля")
-    public ResponseEntity<Response> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Данные изменены")})
+    public ResponseEntity<Response<AuthorizedPerson>> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
         return profileService.editMyProfile(editMyProfileRequest);
     }
 
@@ -75,10 +83,21 @@ public class ProfileController {
     @Operation(description = "Просмотр страницы пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешное получение данных пользователя"),
             @ApiResponse(responseCode = "400", description = "Не удалось получить данные пользователя")})
-    public ResponseEntity<ProfileByIdResponse> getUserById(@PathVariable Integer id, Principal principal) throws BadRequestException {
+    public ResponseEntity<Response<AuthorizedPerson>> getUserById(@PathVariable Integer id, Principal principal) throws BadRequestException, NotFoundException {
         if (principal == null) {
             throw new BadRequestException(Config.STRING_AUTH_ERROR);
         }
         return profileService.getProfileById(id);
+    }
+
+    @DeleteMapping("/api/v1/users/me")
+    public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException, AuthenticationException, NotFoundException {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return profileService.deletePerson();
     }
 }

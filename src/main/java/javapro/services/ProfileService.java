@@ -1,16 +1,24 @@
 package javapro.services;
 
-import javapro.util.PersonToDtoMapper;
 import javapro.api.request.EditMyProfileRequest;
-import javapro.api.response.*;
+import javapro.api.response.LoginResponse;
+import javapro.api.response.Response;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
+import javapro.model.DeletedPerson;
 import javapro.model.Person;
+import javapro.model.dto.DeletedPersonData;
+import javapro.model.dto.MessageDTO;
+import javapro.model.dto.auth.AuthorizedPerson;
+import javapro.model.enums.DeletedType;
 import javapro.repository.CountryRepository;
+import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.TownRepository;
+import javapro.util.PersonToDtoMapper;
+import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,19 +35,23 @@ public class ProfileService {
     private final PersonToDtoMapper personToDtoMapper;
     private final CountryRepository countryRepository;
     private final TownRepository townRepository;
+    private final DeletedPersonRepository deletedPersonRepository;
 
     public ProfileService(PersonRepository personRepository,
                           PersonToDtoMapper personToDtoMapper,
                           CountryRepository countryRepository,
-                          TownRepository townRepository) {
+                          TownRepository townRepository,
+                          DeletedPersonRepository deletedPersonRepository) {
         this.personRepository = personRepository;
         this.personToDtoMapper = personToDtoMapper;
         this.countryRepository = countryRepository;
         this.townRepository = townRepository;
+        this.deletedPersonRepository = deletedPersonRepository;
     }
 
     public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
             NotFoundException {
+
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
@@ -48,6 +60,7 @@ public class ProfileService {
                 .getContext()
                 .getAuthentication()
                 .getName();
+
         var userFromDB = personRepository.findByEmailForLogin(personEmail);
 
         if (userFromDB == null) {
@@ -57,39 +70,34 @@ public class ProfileService {
 
         authorizedPerson.setToken(null);
         return ResponseEntity
-                .ok(new LoginResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
+                .ok(new LoginResponse("successfully", Time.getTime(), authorizedPerson));
     }
 
-    public ResponseEntity<ProfileByIdResponse> getProfileById(Integer id) throws BadRequestException {
+    public ResponseEntity<Response<AuthorizedPerson>> getProfileById(Integer id) throws NotFoundException, BadRequestException {
         Optional<Person> personOpt = personRepository.findById(id);
+        AuthorizedPerson authorizedPerson;
+
         if (personOpt.isPresent()) {
             Person person = personOpt.get();
-            ProfileByIdData profileByIdData = new ProfileByIdData(
-                    person.getId(),
-                    person.getFirstName(),
-                    person.getLastName(),
-                    person.getRegDate() == null ? null : person.getRegDate().getTime(),
-                    person.getBirthDate() == null ? null : person.getRegDate().getTime(),
-                    person.getEmail(),
-                    person.getPhone(),
-                    person.getPhoto(),
-                    person.getAbout(),
-                    new CityData(person.getTownId() == null ? null : person.getTownId().getId(),
-                            person.getTownId() == null ? null : person.getTownId().getName()),
-                    new CountryData(person.getCountryId() == null ? null : person.getCountryId().getId(),
-                            person.getCountryId() == null ? null : person.getCountryId().getName()),
-                    person.getMessagesPermission().toString(),
-                    person.getLastOnlineTime().getTime(),
-                    person.isBlocked()
-            );
-            return ResponseEntity.ok(new ProfileByIdResponse("null", new Timestamp(System.currentTimeMillis()).getTime(), profileByIdData));
+
+            if (person.isBlocked()) {
+                throw new BadRequestException(Config.STRING_PERSON_ISBLOCKED);
+            }
+
+            authorizedPerson = personToDtoMapper.convertToDto(person);
+            var response = new Response<AuthorizedPerson>();
+            response.setError("null");
+            response.setTimestamp(Time.getTime());
+            response.setData(authorizedPerson);
+            authorizedPerson.setToken(null);
+            return ResponseEntity.ok(response);
         } else {
-            throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
+            throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
     }
 
 
-    public ResponseEntity<Response> editMyProfile(EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
+    public ResponseEntity<Response<AuthorizedPerson>> editMyProfile(EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
 
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
@@ -99,13 +107,17 @@ public class ProfileService {
                 .getAuthentication()
                 .getName());
 
+        if (person.isBlocked()) {
+            throw new BadRequestException(Config.STRING_PERSON_ISBLOCKED);
+        }
+
         //about
         if (editMyProfileRequest.getAbout() != null) {
             person.setAbout(editMyProfileRequest.getAbout());
         }
         //birth day
         if (editMyProfileRequest.getBirthDate() != null) {
-            if(editMyProfileRequest.getBirthDate().after(new Timestamp(System.currentTimeMillis()))){
+            if (editMyProfileRequest.getBirthDate().after(new Timestamp(System.currentTimeMillis()))) {
                 throw new BadRequestException(Config.STRING_WRONG_DATA);
             }
             person.setBirthDate(editMyProfileRequest.getBirthDate());
@@ -135,13 +147,52 @@ public class ProfileService {
 
         personRepository.save(person);
 
-        var response = new Response();
+        var response = new Response<AuthorizedPerson>();
         response.setError("successfully");
-        response.setTimestamp(new Timestamp(System.currentTimeMillis()).getTime());
+        response.setTimestamp(Time.getTime());
         var authorizedPerson = personToDtoMapper.convertToDto(person);
         authorizedPerson.setToken(null);
         response.setData(authorizedPerson);
 
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response<MessageDTO>> deletePerson() throws BadRequestException, NotFoundException {
+
+        var person = personRepository.findByEmail(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName());
+
+        if (person == null) {
+            throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
+        }
+
+        if (person.isBlocked()) {
+            throw new BadRequestException(Config.STRING_PERSON_ISBLOCKED);
+        }
+        var deletedPersonData = new DeletedPersonData();
+
+        person.setPhoto(deletedPersonData.getPhoto());
+        person.setAbout(deletedPersonData.getAbout());
+        person.setBirthDate(deletedPersonData.getBirthDate());
+        person.setCountryId(deletedPersonData.getCountry());
+        person.setTownId(deletedPersonData.getTown());
+        person.setFirstName(deletedPersonData.getFirstName());
+        person.setLastName(deletedPersonData.getLastName());
+        person.setPhone(deletedPersonData.getPhone());
+        personRepository.save(person);
+
+        DeletedPerson deletedPerson = new DeletedPerson();
+        deletedPerson.setType(DeletedType.Temporarily.toString());
+        deletedPerson.setPersonId(person.getId());
+
+        deletedPersonRepository.save(deletedPerson);
+
+        var response = new Response<MessageDTO>();
+        response.setError("Пользователь удален");
+        response.setTimestamp(Time.getTime());
+        response.setData(new MessageDTO());
         return ResponseEntity.ok(response);
     }
 

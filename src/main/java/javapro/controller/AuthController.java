@@ -45,7 +45,7 @@ public class AuthController {
     @Operation(description = "Выход из учетной записи")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка выйти из учетной записи"),
             @ApiResponse(responseCode = "400", description = "Неуспешная попытка выйти из учетной записи")})
-    public ResponseEntity<OkResponse> logout() throws BadRequestException {
-        return authService.logout();
+    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest) throws BadRequestException {
+        return authService.logout(httpServletRequest);
     }
 }

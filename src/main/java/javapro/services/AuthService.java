@@ -6,8 +6,10 @@ import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
+import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
 import javapro.util.PersonToDtoMapper;
+import javapro.util.Time;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -26,32 +28,36 @@ import java.sql.Timestamp;
 
 @Service
 @EnableScheduling
-public class AuthService{
+public class AuthService {
 
     private final Logger logger;
     private final PersonRepository personRepository;
     private final AuthenticationManager authenticationManager;
     private final PersonToDtoMapper personToDtoMapper;
     private final PasswordEncoder passwordEncoder;
-
+    private final DeletedPersonRepository deletedPersonRepository;
 
 
     public AuthService(@Qualifier("authorizationLogger") Logger logger,
                        PersonRepository personRepository,
                        AuthenticationManager authenticationManager,
                        PersonToDtoMapper personToDtoMapper,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       DeletedPersonRepository deletedPersonRepository) {
         this.logger = logger;
         this.personRepository = personRepository;
         this.authenticationManager = authenticationManager;
         this.personToDtoMapper = personToDtoMapper;
         this.passwordEncoder = passwordEncoder;
 
+        this.deletedPersonRepository = deletedPersonRepository;
     }
 
-    public ResponseEntity<LoginResponse> loginUser (UnauthorizedPersonDTO user,
+    public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
                                                    Errors validationErrors,
-                                                    HttpServletRequest httpServletRequest)  throws BadRequestException  {
+                                                   HttpServletRequest httpServletRequest) throws BadRequestException {
+
+
 
         if (validationErrors.hasErrors()) {
             logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
@@ -67,6 +73,10 @@ public class AuthService{
         }
 
         var userFromDB = personRepository.findByEmailForLogin(email);
+
+        if(deletedPersonRepository.findByPersonId(userFromDB.getId()).isPresent()){
+            throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
+        }
 
         if (userFromDB == null) {
             logger.info(String.format("User with email '%s' is not found!", email));
@@ -88,38 +98,33 @@ public class AuthService{
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         HttpSession session = httpServletRequest.getSession();
         session.setMaxInactiveInterval(-1);
-
 
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         logger.info("Успешная авторизация пользователя. Email: " + email);
         return ResponseEntity
-                .ok(new LoginResponse("successfully", new Timestamp(System.currentTimeMillis()).getTime(), authorizedPerson));
+                .ok(new LoginResponse("successfully", Time.getTime(), authorizedPerson));
     }
 
 
+    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest) {
 
-
-    public ResponseEntity<OkResponse> logout() throws BadRequestException {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-        logger.info(String.format("Result of logout: Is Authenticated? '%s'",
-                SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            logger.error("Ошибка при выходе из сети. Email: " + SecurityContextHolder.getContext().getAuthentication().getName());
-            throw new BadRequestException(Config.STRING_LOGOUT_UNSUCCESSFUL);
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
-        logger.info("Успешный выход пользователя из сети. Email: " + SecurityContextHolder.getContext().getAuthentication().getName());
         return ResponseEntity.ok(new OkResponse("successfully",
-                new Timestamp(System.currentTimeMillis()).getTime(),
+                Time.getTime(),
                 new ResponseData("ok")));
     }
 
     @Scheduled(cron = "0 0 12 * * ?")
     private void deleteAllNotApprovedPerson() {
-        var time = new Timestamp(new Timestamp(System.currentTimeMillis()).getTime() - 86400000);
+        var time = new Timestamp(Time.getTime() - 86400000);
         personRepository.deleteAllByRegDateBefore(time);
     }
+
+
 }

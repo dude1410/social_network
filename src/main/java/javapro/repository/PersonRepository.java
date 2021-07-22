@@ -15,10 +15,11 @@ import java.util.Optional;
 @Transactional
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
-    @Query("SELECT p " +
-            "FROM Person p " +
-            "WHERE p.email = :email ")
-    Person findByEmail(@Param("email") String email);
+//    @Query("SELECT p " +
+//            "FROM Person p " +
+//            "WHERE p.email = :email ")
+    Person findByEmail(String email);
+
 
     @Query("SELECT p " +
             "FROM Person p " +
@@ -27,10 +28,10 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "WHERE p.email =:email ")
     Person findByEmailForLogin(@Param("email") String email);
 
-    @Query("SELECT p " +
-            "FROM Person p " +
-            "WHERE p.confirmationCode = :code")
-    Person findByCode(@Param("code") String code);
+//    @Query("SELECT p " +
+//            "FROM Person p " +
+//            "WHERE p.confirmationCode = :code")
+//    Person findByCode(@Param("code") String code);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
@@ -130,5 +131,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "or (src_dst.status = 'FRIEND' and src2.status = 'FRIEND' and src2.dstPersonId.id = :userId and p.id != :userId) " +
             "group by p ")
     List<Person> findRecommendations(@Param("userId") Integer userId);
+
+
 
 }

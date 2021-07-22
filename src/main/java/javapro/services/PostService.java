@@ -1,5 +1,6 @@
 package javapro.services;
 
+import javapro.repository.DeletedPersonRepository;
 import javapro.util.PostToDTOMapper;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
@@ -12,6 +13,7 @@ import javapro.model.dto.*;
 import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.PostRepository;
+import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,22 +31,36 @@ public class PostService {
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final DeletedPersonRepository deletedPersonRepository;
 
     private final PostToDTOMapper postToDTOMapper;
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
                        LikeRepository likeRepository,
-                       PostToDTOMapper postToDTOMapper) throws NotFoundException {
+                       DeletedPersonRepository deletedPersonRepository,
+                       PostToDTOMapper postToDTOMapper) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.deletedPersonRepository = deletedPersonRepository;
         this.postToDTOMapper = postToDTOMapper;
     }
 
     public ResponseEntity<MyWallResponse> getPostsByUser(Integer offset, Integer itemPerPage) throws NotFoundException {
 
         Person person = getCurrentUser();
+
+        if (deletedPersonRepository.findByPersonId(person.getId()).isPresent()) {
+            return ResponseEntity
+                    .ok(new MyWallResponse("successfully",
+                            Time.getTime(),
+                            0,
+                            0,
+                            0,
+                            null
+                    ));
+        }
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
@@ -59,7 +75,7 @@ public class PostService {
 
         return ResponseEntity
                 .ok(new MyWallResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         (int) postList.getTotalElements(),
                         offset,
                         itemPerPage,
@@ -74,14 +90,14 @@ public class PostService {
 
         Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);
 
-        List<PostDTO> postDTOList = new ArrayList();
+        var postDTOList = new ArrayList<PostDTO>();
 
         postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
         postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
 
         return ResponseEntity
                 .ok(new PostResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         (int) postList.getTotalElements(),
                         offset,
                         itemPerPage,
@@ -116,7 +132,7 @@ public class PostService {
         return ResponseEntity
                 .ok(new DeletePostByIDResponse(
                         "successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         postDeleteDTO
                 ));
     }
@@ -145,7 +161,7 @@ public class PostService {
 
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         postDTO
                 ));
     }
@@ -166,7 +182,7 @@ public class PostService {
         postDTO.setLikes(likeRepository.getLikes(postDTO.getId()));
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         postDTO
                 ));
     }
@@ -193,7 +209,7 @@ public class PostService {
 
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         postDTO
                 ));
     }
@@ -218,7 +234,7 @@ public class PostService {
         postDTO.setLikes(likeRepository.getLikes(postDTO.getId()));
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         postDTO
                 ));
     }
@@ -239,7 +255,7 @@ public class PostService {
 
         return ResponseEntity
                 .ok(new ReportCommentResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        Time.getTime(),
                         new MessageDTO()
                 ));
     }
