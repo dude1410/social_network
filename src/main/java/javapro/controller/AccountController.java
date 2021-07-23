@@ -82,20 +82,21 @@ public class AccountController {
         return accountService.changePassword(passwordChangeRequest, userEmail);
     }
 
-    @PostMapping(value = "/account/register",
+    @PostMapping(value = "/api/v1/account/register",
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Регистрация нового пользователя")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Ссылка на подтверждение регистрации направлена"),
             @ApiResponse(responseCode = "400", description = "На этот почтовый ящик уже зарегестрирован другой аккаунт")})
     public ResponseEntity<OkResponse> registration(@Valid @RequestBody RegisterRequest registerRequest, Errors errors) throws BadRequestException, InterruptedException, ValidationException, NotFoundException {
+        System.out.println("jffhsfhdshfkshfshfkdhskfhsjkf");
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
         return registerService.registerNewUser(registerRequest);
     }
 
-    @PostMapping(value = "/account/register/confirm",
+    @PostMapping(value = "/api/v1/account/register/confirm",
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Подтверждение регистрации нового пользователя")
