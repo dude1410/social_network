@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - include:
+      file: db.changelog/changes/db.changelog.xml
+  - include:
+      file: db.changelog/changes/db.changelog_views.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_token.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_notification_setup.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_deleted_person.xml
+
+#  - include:
+#      file: db.changelog/changes/db.changelog_add_person.sql
+#  - include:
+#      file: db.changelog/changes/db.changelog_add_friendship.sql
