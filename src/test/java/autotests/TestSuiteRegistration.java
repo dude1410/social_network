@@ -36,6 +36,7 @@ public class TestSuiteRegistration {
     }
 
     private By registrationButton = By.cssSelector(".form-layout__btn");
+    private By accountTitle = By.cssSelector(".form__subtitle");
     private By fieldEmail = By.id("register-email");
     private By fieldPassword = By.id("register-password");
     private By fieldConfirmPassword = By.id("register-repeat-password");
@@ -51,7 +52,7 @@ public class TestSuiteRegistration {
     public void registrationWithCorrectData()
     {
         //arrange
-        var email = "zerone1012@mail.ru";
+        var email = "zerone1015@mail.ru";
         var password = "Zerone1000";
         var name = "Андрей";
         var surname = "Михайлов";
@@ -60,6 +61,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(password);
@@ -92,6 +94,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(invalidEmail);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(password);
@@ -121,6 +124,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(password);
@@ -154,6 +158,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(invalidPassword);
@@ -183,6 +188,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldName).sendKeys(name);
@@ -211,6 +217,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(invalidPassword);
         driver.findElement(fieldName).sendKeys(name);
@@ -239,6 +246,7 @@ public class TestSuiteRegistration {
 
         //act
         driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldPassword).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(password);
@@ -251,6 +259,62 @@ public class TestSuiteRegistration {
         //assert
         var actualResult = driver.findElement(By.xpath("(//*[@class='form__error'])[2]")).getText();
         Assert.assertEquals("Пользователь зарегистрирован", expectedResult, actualResult);
+    }
+
+    @Test
+    public void registrationWithAnIncorrectCode()
+    {
+        //arrange
+        var email = "zerone1000@mail.ru";
+        var password = "Zerone1000";
+        var name = "Андрей";
+        var surname = "Михайлов";
+        var codeNumbers = "0000";
+        var expectedResult = "Цифры не совпадают";
+
+        //act
+        driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
+        driver.findElement(fieldEmail).sendKeys(email);
+        driver.findElement(fieldPassword).sendKeys(password);
+        driver.findElement(fieldConfirmPassword).sendKeys(password);
+        driver.findElement(fieldName).sendKeys(name);
+        driver.findElement(fieldSurname).sendKeys(surname);
+        driver.findElement(fieldCode).sendKeys(codeNumbers);
+        driver.findElement(checkboxIAgree).click();
+        driver.findElement(backToRegistrationButton).click();
+        driver.findElement(registerButton).click();
+
+        //assert
+        var actualResult = driver.findElement(By.xpath("(//*[@class='form__error'])[2]")).getText();
+        Assert.assertEquals("Пользователь зарегистрирован", expectedResult, actualResult);
+    }
+
+    @Test
+    public void registrationWithoutCheckbox()
+    {
+        //arrange
+        var email = "zerone1000@mail.ru";
+        var password = "Zerone1000";
+        var name = "Андрей";
+        var surname = "Михайлов";
+        var expectedResult = "[[ChromeDriver: chrome on WINDOWS (b6306992ffcf9b7a4addea27bb838fd2)] -> css selector: .invalid]";
+
+        //act
+        driver.findElement(registrationButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountTitle));
+        driver.findElement(fieldEmail).sendKeys(email);
+        driver.findElement(fieldPassword).sendKeys(password);
+        driver.findElement(fieldConfirmPassword).sendKeys(password);
+        driver.findElement(fieldName).sendKeys(name);
+        driver.findElement(fieldSurname).sendKeys(surname);
+        String numbersOfCode = driver.findElement(code).getText();
+        driver.findElement(fieldCode).click();
+        driver.findElement(fieldCode).sendKeys(numbersOfCode);
+        driver.findElement(registerButton).click();
+
+        //assert
+        driver.findElement(By.cssSelector(".invalid"));
     }
 }
 
