@@ -317,4 +317,3 @@ public class TestSuiteRegistration {
         driver.findElement(By.cssSelector(".invalid"));
     }
 }
-
