@@ -43,7 +43,6 @@ public class FileStorage {
                 File thumbsImageFile = new File(originalImagePath + "/thumb/" + file.getOriginalFilename());
                 FileUtils.writeByteArrayToFile(thumbsImageFile, tumbsImage);
 
-//
                 ImageIO.write(originalImage, Objects.requireNonNull(file.getOriginalFilename()).
                         substring(file.getOriginalFilename().lastIndexOf('.') + 1), baos);
                 byte[] originalImageByteArray = baos.toByteArray();

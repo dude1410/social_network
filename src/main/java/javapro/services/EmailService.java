@@ -38,7 +38,7 @@ public class EmailService {
                 messageHelper.setTo(email);
                 messageHelper.setSubject(subject);
                 message.setContent(messageBody, "text/html; charset=UTF-8");
-                javaMailSender.send(message);
+//                javaMailSender.send(message);
             } catch (MessagingException e) {
                 e.printStackTrace();
                 logger.error(String.format("Ошибка отправки сообщения '%s' на почту %s.", subject, email));

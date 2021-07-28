@@ -75,7 +75,7 @@ public class FriendsService {
 
         Integer userId = checkPersonByEmail();
         checkPersonById(id);
-
+// todo
         Friendship friendship = friendshipRepository.findFriendshipByUsers(userId, id);
         if (friendship == null) {
             throw new BadRequestException(Config.STRING_NO_FRIENDS_FOUND);
@@ -111,7 +111,7 @@ public class FriendsService {
     }
 
 
-    private Integer checkPersonByEmail() throws AuthenticationException, NotFoundException {
+    public Integer checkPersonByEmail() throws AuthenticationException, NotFoundException {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (userEmail == null) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
