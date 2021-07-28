@@ -1,13 +1,15 @@
 package javapro.model;
 
 import javapro.model.enums.MessagesPermission;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Immutable
 @Table(name = "vi_persons")

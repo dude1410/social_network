@@ -52,6 +52,8 @@ public class ProfileService {
     public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
             NotFoundException {
 
+
+
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }

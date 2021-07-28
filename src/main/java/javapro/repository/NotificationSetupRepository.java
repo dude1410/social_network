@@ -13,4 +13,6 @@ public interface NotificationSetupRepository extends JpaRepository<NotificationS
     List<NotificationSetup> findAllByPersonId(Integer personId);
 
     NotificationSetup findByNotificationtypeAndPersonId(String notificationType, Integer personId);
+
+
 }
