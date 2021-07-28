@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FriendsServiceTest {
 
     // Test objects
@@ -171,6 +174,88 @@ public class FriendsServiceTest {
         assertEquals("ok", response.getBody().getData().getMessage());
         verify(friendshipRepository, Mockito.times(1)).delete(any());
     }
+
+    @Test
+    void deleteFriendFailNoFriendshipFound() {
+
+        // prepare test data
+
+        // subs
+        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(1);
+        when(personRepository.findPersonById(2)).thenReturn(new Person());
+        when(friendshipRepository.findFriendshipByUsers(eq(1), eq(2))).thenReturn(null);
+
+        // run test
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            ResponseEntity<OkResponse> response = friendsService.deleteFriend(2);
+        });
+        String expectedMessage = "Друзей по запросу не найдено";
+        String actualMessage = exception.getMessage();
+
+        // check
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void deleteFriendFailUnsuccess_CheckPersonById_NullId() {
+
+        // prepare test data
+
+        // subs
+        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(1);
+
+        // run test
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            ResponseEntity<OkResponse> response = friendsService.deleteFriend(null);
+        });
+        String expectedMessage = "Не передан id пользователя";
+        String actualMessage = exception.getMessage();
+
+        // check
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void deleteFriendFailUnsuccess_CheckPersonById_NullPerson() {
+
+        // prepare test data
+
+        // subs
+        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(1);
+        when(personRepository.findPersonById(eq(0))).thenReturn(null);
+
+        // run test
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            ResponseEntity<OkResponse> response = friendsService.deleteFriend(0);
+        });
+        String expectedMessage = "Пользователь не найден.";
+        String actualMessage = exception.getMessage();
+
+        // check
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void addFriendSuccess() throws AuthenticationException, NotFoundException, BadRequestException {
+
+        // prepare test data
+
+        // subs
+        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(1);
+        when(personRepository.findPersonById(eq(2))).thenReturn(new Person());
+        when(friendshipRepository.findFriendshipRequest(eq(1), eq(2))).thenReturn(new Friendship());
+
+        // run test
+        ResponseEntity<OkResponse> response = friendsService.addFriend(2);
+
+        // check
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("successfully", response.getBody().getError());
+        assertEquals("ok", response.getBody().getData().getMessage());
+    }
+
+    // todo продолжить с метода addFriend: friendship не найден в БД
 
 
 

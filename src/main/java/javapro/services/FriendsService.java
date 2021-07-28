@@ -75,7 +75,6 @@ public class FriendsService {
 
         Integer userId = checkPersonByEmail();
         checkPersonById(id);
-// todo
         Friendship friendship = friendshipRepository.findFriendshipByUsers(userId, id);
         if (friendship == null) {
             throw new BadRequestException(Config.STRING_NO_FRIENDS_FOUND);
@@ -87,9 +86,6 @@ public class FriendsService {
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));
     }
-
-    // todo: нет эндпойнта на утверждение дружбы
-    // todo: может измениться вариант ответа
 
     public ResponseEntity<OkResponse> addFriend(Integer id) throws AuthenticationException,
             NotFoundException,
@@ -109,7 +105,6 @@ public class FriendsService {
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));
     }
-
 
     public Integer checkPersonByEmail() throws AuthenticationException, NotFoundException {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();

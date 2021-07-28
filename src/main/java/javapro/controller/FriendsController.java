@@ -105,18 +105,17 @@ public class FriendsController {
         return friendsService.getRecommendations(offset, itemPerPage);
     }
 
-    // todo: может измениться вариант ответа
-//    @PostMapping(value = "/friends/{id}", // todo: изменить
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Operation(description = "Принять/добавить в друзья")
-//    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка добавить в друзья"), // todo: проверить после появления эндпойнта
-//            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-//            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-//            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
-//    public ResponseEntity<OkResponse> addFriend(@PathVariable Integer id)
-//            throws AuthenticationException, NotFoundException, BadRequestException {
-//        return friendsService.addFriend(id);
-//    }
+    @PostMapping(value = "/friends/apply/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Принять в друзья")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка добавить в друзья"),
+            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
+            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    public ResponseEntity<OkResponse> addFriend(@PathVariable Integer id)
+            throws AuthenticationException, NotFoundException, BadRequestException {
+        return friendsService.addFriend(id);
+    }
 }
 
 
