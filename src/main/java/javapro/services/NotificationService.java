@@ -8,17 +8,25 @@ import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.NotFoundException;
 import javapro.model.NotificationSetup;
 import javapro.model.Person;
+import javapro.model.dto.EntityAuthorDTO;
 import javapro.model.dto.MessageDTO;
+import javapro.model.dto.NotificationDTO;
 import javapro.model.dto.NotificationTypeDTO;
 import javapro.model.enums.NotificationType;
+import javapro.repository.DeletedPersonRepository;
+import javapro.repository.NotificationRepository;
 import javapro.repository.NotificationSetupRepository;
 import javapro.repository.PersonRepository;
 import javapro.util.Time;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -26,17 +34,24 @@ public class NotificationService {
 
     private final PersonRepository personRepository;
     private final NotificationSetupRepository notificationSetupRepository;
+    private final DeletedPersonRepository deletedPersonRepository;
+    private final NotificationRepository notificationRepository;
 
     public NotificationService(PersonRepository personRepository,
-                               NotificationSetupRepository notificationSetupRepository) {
+                               NotificationSetupRepository notificationSetupRepository,
+                               DeletedPersonRepository deletedPersonRepository,
+                               NotificationRepository notificationRepository) {
         this.personRepository = personRepository;
         this.notificationSetupRepository = notificationSetupRepository;
+        this.deletedPersonRepository = deletedPersonRepository;
+        this.notificationRepository = notificationRepository;
     }
 
-    public ResponseEntity<PlatformResponse> getNotification(Long offset, Long itemPerPage) throws AuthenticationException, NotFoundException {
-/*
-        заготовка под будущее:
-        с проверкой авторизации
+    public ResponseEntity<PlatformResponse<Object>> getNotification(Integer offset, Integer itemPerPage) throws AuthenticationException, NotFoundException {
+
+
+        offset = (offset == null) ? 0 : offset;
+        itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
         int personId;
         var person = isAuthorize();
         if (person == null) {
@@ -44,20 +59,41 @@ public class NotificationService {
         } else {
             personId = person.getId();
         }
-*/
+        var notificationSetup = notificationSetupRepository.findAllByPersonId(personId);
+        HashMap<String, Boolean> setupData = new HashMap<>();
 
+        notificationSetup.forEach(element -> setupData.put(element.getNotificationtype(), element.getEnable()));
+        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
+        Pageable pageable = PageRequest.of(offset, itemPerPage, Sort.by("sentTime"));
 
-        offset = (offset == null) ? 0 : offset;
-        itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
+        var entity = notificationRepository.findAllByPersonId(pageable, personId);
+        ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
+        entity.forEach(el -> {
+            if (el.getEntity().getPerson().getId() != personId) {
+                if (setupData.get(el.getNotificationType().toString()).equals(true)) {
+                    var notificationDTO = new NotificationDTO();
+                    notificationDTO.setId(el.getId());
+                    var entityAuthorDTO = new EntityAuthorDTO();
+                    entityAuthorDTO.setPhoto(el.getEntity().getPerson().getPhoto());
+                    entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
+                    entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
+                    notificationDTO.setEntityAuthor(entityAuthorDTO);
+                    notificationDTO.setEventType(el.getNotificationType().toString());
+                    notificationDTO.setSentTime(el.getSentTime().getTime());
+                    notificationDTO.setInfo("что-то сюда надо написать");
+                    notificationDTOArrayList.add(notificationDTO);
+                }
+            }
+        });
 
         var response = new PlatformResponse<>();
 
         response.setError("ok");
         response.setTimestamp(Time.getTime());
-        response.setTotal(0);
-        response.setOffset(Math.toIntExact(offset));
-        response.setPerPage(Math.toIntExact(itemPerPage));
-        response.setData(new ArrayList());
+        response.setTotal(notificationDTOArrayList.size());
+        response.setOffset(offset);
+        response.setPerPage(itemPerPage);
+        response.setData(notificationDTOArrayList);
         return ResponseEntity.ok(response);
     }
 
@@ -110,7 +146,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<Response> setAccountNotification(NotificationSetupRequest request) throws AuthenticationException, NotFoundException {
+    public ResponseEntity<Response<MessageDTO>> setAccountNotification(NotificationSetupRequest request) throws AuthenticationException, NotFoundException {
 
         int personId;
         var person = isAuthorize();
@@ -159,6 +195,4 @@ public class NotificationService {
     private List<NotificationSetup> getNotificationSetup(Integer personId) {
         return notificationSetupRepository.findAllByPersonId(personId);
     }
-
-
 }
