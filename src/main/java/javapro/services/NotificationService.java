@@ -22,13 +22,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@EnableScheduling
 @Service
 public class NotificationService {
 
@@ -77,6 +79,7 @@ public class NotificationService {
                     entityAuthorDTO.setPhoto(el.getEntity().getPerson().getPhoto());
                     entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
                     entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
+                    entityAuthorDTO.setId(el.getEntity().getPerson().getId());
                     notificationDTO.setEntityAuthor(entityAuthorDTO);
                     notificationDTO.setEventType(el.getNotificationType().toString());
                     notificationDTO.setSentTime(el.getSentTime().getTime());
@@ -194,5 +197,12 @@ public class NotificationService {
 
     private List<NotificationSetup> getNotificationSetup(Integer personId) {
         return notificationSetupRepository.findAllByPersonId(personId);
+    }
+
+
+    @Scheduled(cron = "0 0 12 * * ?")
+    private void removeFoulNotifications(){
+
+
     }
 }
