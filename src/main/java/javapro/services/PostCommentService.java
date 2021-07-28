@@ -1,7 +1,5 @@
 package javapro.services;
 
-import javapro.util.CommentToDTOMapper;
-import javapro.util.PersonToDtoMapper;
 import javapro.api.request.CommentBodyRequest;
 import javapro.api.response.*;
 import javapro.config.Config;
@@ -10,10 +8,10 @@ import javapro.config.exception.NotFoundException;
 import javapro.model.*;
 import javapro.model.dto.*;
 import javapro.model.dto.auth.AuthorizedPerson;
-import javapro.repository.CommentRepository;
-import javapro.repository.LikeRepository;
-import javapro.repository.PersonRepository;
-import javapro.repository.PostRepository;
+import javapro.model.enums.NotificationType;
+import javapro.repository.*;
+import javapro.util.CommentToDTOMapper;
+import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +29,8 @@ public class PostCommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationEntityRepository notificationEntityRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
     private final CommentToDTOMapper commentToDTOMapper;
@@ -39,12 +39,16 @@ public class PostCommentService {
                               CommentRepository commentRepository,
                               PostRepository postRepository,
                               LikeRepository likeRepository,
+                              NotificationRepository notificationRepository,
+                              NotificationEntityRepository notificationEntityRepository,
                               PersonToDtoMapper personToDtoMapper,
                               CommentToDTOMapper commentToDTOMapper) {
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.notificationRepository = notificationRepository;
+        this.notificationEntityRepository = notificationEntityRepository;
         this.personToDtoMapper = personToDtoMapper;
         this.commentToDTOMapper = commentToDTOMapper;
     }
@@ -75,13 +79,25 @@ public class PostCommentService {
         }
 
         comment.setCommentText(commentRequest.getComment_text());
-        comment.setAuthor(getCurrentUser());
+        var person = getCurrentUser();
+        comment.setAuthor(person);
         comment.setDeleted(false);
         comment.setBlocked(false);
 
-        commentRepository.save(comment);
+        var commentData = commentRepository.save(comment).getId();
 
         CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+
+        Runnable task = () -> {
+            try {
+                createNotificationEntity(commentData, person);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+
 
         return ResponseEntity
                 .ok(new CommentResponse("successfully",
@@ -334,5 +350,31 @@ public class PostCommentService {
         }
 
         return person;
+    }
+
+    private void createNotificationEntity(Integer id, Person person) throws NotFoundException {
+//      create new notification_entity
+        var postComment = commentRepository.findCommentByID(id);
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setPerson(person);
+        if (postComment.getParentComment() != null) {
+            notificationEntity.setPostComment(postComment);
+        }
+        notificationEntity.setPost(postRepository.findPostByID(postComment.getPost().getId()));
+        var notificationEnt = notificationEntityRepository.save(notificationEntity);
+        ArrayList<Notification> postCommentArrayList = new ArrayList<>();
+        var notification = new Notification();
+        notification.setSentTime((Timestamp) postComment.getTime());
+        notification.setEntity(notificationEnt);
+        if (postComment.getParentComment() != null) {
+            notification.setNotificationType(NotificationType.COMMENT_COMMENT);
+            var parentComment = commentRepository.findCommentByID(postComment.getParentComment().getId());
+            notification.setPerson(personRepository.findPersonById(parentComment.getAuthor().getId()));
+            postCommentArrayList.add(notification);
+        }
+        notification.setNotificationType(NotificationType.POST_COMMENT);
+        notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
+        postCommentArrayList.add(notification);
+        notificationRepository.saveAll(postCommentArrayList);
     }
 }

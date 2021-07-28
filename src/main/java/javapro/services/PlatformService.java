@@ -10,6 +10,7 @@ import javapro.repository.TownRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,12 @@ public class PlatformService {
     public ResponseEntity<PlatformResponse> getCountry(String country, Integer offset, Integer itemPerPage) {
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
         PlatformResponse platformResponse = new PlatformResponse();
-        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
+
+
+//        Sort name = new Sort(Sort.Direction.Desc, "firstName")
+//        Sort lastNameDOBSort = new Sort(Sort.Direction.Asc, "lastName", "DOB")
+//        Sort allNamesSort = new Sort(new Sort.Order(Sort.Direction.Desc, "firstName"), new Sort.Order(Sort.Direction.Asc, "lastName"))
+        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage, Sort.by("name"));
         Page<Country> countries = (country == null) ?
                 countryRepository.findAll(pageable) :
                 countryRepository.findOne(pageable, country);
@@ -65,7 +71,7 @@ public class PlatformService {
     public ResponseEntity<PlatformResponse> getTown(Integer countryId, Integer town, Integer offset, Integer itemPerPage) {
         PlatformResponse platformResponse = new PlatformResponse();
         itemPerPage = (itemPerPage == null) ? 20 : itemPerPage;
-        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage);
+        Pageable pageable = PageRequest.of((offset == null) ? 0 : offset / itemPerPage, itemPerPage, Sort.by("name"));
         Page<Town> towns;
 
         if (town == null) {

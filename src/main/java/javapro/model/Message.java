@@ -1,15 +1,17 @@
 package javapro.model;
 
-import javapro.model.enums.ReadStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import javapro.model.enums.ReadStatus;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "message")
 public class Message implements Serializable {

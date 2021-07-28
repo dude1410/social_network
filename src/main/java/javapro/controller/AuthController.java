@@ -12,12 +12,14 @@ import javapro.services.AuthService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin
 @RestController
 @Tag(name = "/api/v1/auth", description = "Вход и выход из учетной записи")
 public class AuthController {
