@@ -35,7 +35,7 @@ public class RegisterController {
     @Operation(description = "Обращение в службу поддержки")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Обращение успешно отправлено"),
             @ApiResponse(responseCode = "404", description = "Форма обращения не заполнена или заполнена неверно")})
-    public ResponseEntity<MailSupportResponse> mailSupport(@Valid @RequestBody MailSupportRequest request, Errors errors) throws BadRequestException, ValidationException {
+    public ResponseEntity<MailSupportResponse> mailSupport(@Valid @RequestBody MailSupportRequest request, Errors errors) throws ValidationException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
