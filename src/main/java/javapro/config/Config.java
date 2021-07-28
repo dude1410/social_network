@@ -46,6 +46,8 @@ public class Config {
     public static final String STRING_NOT_FOUND_NOTIFICATION_SETUP = "Нет данных по настройкам уведомлений";
     public static final String STRING_PERSON_ISBLOCKED = "Пользователь заблокирован";
     public static final String STRING_PERSON_ISDELETED = "Пользователь удален";
+    public static final String STRING_PERSON_EMPTY_FISTNAME = "Поле с именем не может быть пустым";
+    public static final String STRING_PERSON_EMPTY_LASTNAME = "Поле с фамилией не может быть пустым";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }
