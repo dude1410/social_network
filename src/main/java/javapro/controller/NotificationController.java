@@ -5,14 +5,13 @@ import javapro.api.response.PlatformResponse;
 import javapro.api.response.Response;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.NotFoundException;
+import javapro.model.dto.MessageDTO;
 import javapro.services.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @Controller
 public class NotificationController {
     private final NotificationService notificationService;
@@ -21,15 +20,9 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-
-// todo Request URL: http://31.40.251.201:8086/api/v1/account/notifications  Request Method: GET
-
-//  todo  PUT : http://localhost:8086/api/v1/account/notifications
-//  todo GET : http://31.40.251.201:8086/api/v1/account/notifications
-
     @GetMapping("/api/v1/notifications")
-    public ResponseEntity<PlatformResponse> getNotifications(@RequestParam(value = "offset", required = false) Long offset,
-                                                             @RequestParam(value = "itemPerPage", required = false) Long itemPerPage) throws AuthenticationException, NotFoundException {
+    public ResponseEntity<PlatformResponse<Object>> getNotifications(@RequestParam(value = "offset", required = false) Integer offset,
+                                                                                         @RequestParam(value = "itemPerPage", required = false) Integer itemPerPage) throws AuthenticationException, NotFoundException {
         return notificationService.getNotification(offset, itemPerPage);
     }
 
@@ -39,7 +32,7 @@ public class NotificationController {
     }
 
     @PutMapping("/api/v1/account/notifications")
-    public ResponseEntity<Response> setAccountNotification(@RequestBody NotificationSetupRequest request) throws AuthenticationException, NotFoundException {
+    public ResponseEntity<Response<MessageDTO>> setAccountNotification(@RequestBody NotificationSetupRequest request) throws AuthenticationException, NotFoundException {
         return notificationService.setAccountNotification(request);
     }
 

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@CrossOrigin
 @RestController
 @Tag(name = "/api/v1/users", description = "Операции с профилем")
 public class ProfileController {

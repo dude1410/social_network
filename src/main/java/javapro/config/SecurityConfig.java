@@ -48,12 +48,43 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/logs").permitAll()
                 .antMatchers("/login").permitAll()
                 .and()
+                .sessionManagement()
+                .invalidSessionUrl("/login")
+                .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .logout()
                 .permitAll();
+
+
+//        http
+//                .csrf().disable()
+//                .sessionManagement()
+//                .invalidSessionUrl("/login")
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/", "/api/v1/account/register/confirm", "/api/v1/account/register").permitAll()
+//                .antMatchers("/api/v1/account/password/recovery", "/api/v1/auth/login").permitAll()
+//                .antMatchers("/app/devlogs", "/app/prodlogs", "/api/v1/platform/languages").permitAll()
+//                .antMatchers("/api/v1/support", "/api/v1/auth/logout").permitAll()
+////                .anyRequest().authenticated()
+//                .and()
+////                .sessionManagement()
+////                .invalidSessionUrl("/login")
+////                .and()
+//                .formLogin().disable()
+//                .httpBasic().disable()
+//                .logout()
+//                .permitAll();
     }
-    
+
+//    @Override
+//    public void configure(WebSecurity web) throws Exception {
+//        web
+//                .ignoring()
+//                .antMatchers("/**");
+//    }
+
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
         var daoAuthenticationProvider = new DaoAuthenticationProvider();

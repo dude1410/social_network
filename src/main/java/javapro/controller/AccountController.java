@@ -15,13 +15,11 @@ import javapro.services.EmailChangeService;
 import javapro.services.RegisterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.security.Principal;
-
+@CrossOrigin
 @RestController
 @Tag(name = "/api/v1/account", description = "Обработка действия с аккаунтом")
 public class AccountController {

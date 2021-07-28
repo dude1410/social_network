@@ -5,6 +5,8 @@ import javapro.model.Token;
 import javapro.repository.TokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Service
@@ -47,7 +49,7 @@ public class TokenService {
     private void setToken(Token token, Person person){
         token.setPerson(person);
         token.setToken(getNewToken(person.getEmail()));
-        token.setDate(new Date());
+        token.setDate(new Timestamp(System.currentTimeMillis()));
         tokenRepository.save(token);
     }
 }
