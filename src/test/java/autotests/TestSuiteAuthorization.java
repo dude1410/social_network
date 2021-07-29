@@ -43,8 +43,8 @@ public class TestSuiteAuthorization {
     public void authorizationWithCorrectData()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var expectedResult = " Моя страница";
         var logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
@@ -63,8 +63,8 @@ public class TestSuiteAuthorization {
     @Test
     public void authorizationWithWrongPassword() throws InterruptedException {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "erone114";
+        var email = "zerone115@mail.ru";
+        var password = "erone115";
         var expectedResult = "Пароль указан неверно.";
 
         //act
@@ -81,8 +81,8 @@ public class TestSuiteAuthorization {
     @Test
     public void authorizationWithAnUnregisteredEmail() throws InterruptedException {
         //arrange
-        var email = "zerone0114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone0115@mail.ru";
+        var password = "Zerone115";
         var expectedResult = "Пользователь с таким email не найден";
 
         //act
