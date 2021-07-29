@@ -56,6 +56,7 @@ public class testSuiteAuthorization {
         //assert
         var actualResult = driver.findElement(By.xpath("(//*[@class='main-layout__link'])[1]")).getText();
         Assert.assertEquals("Пользователь неавторизован", expectedResult, actualResult);
+        driver.findElement(logoutButton).click();
     }
 
     @Test

@@ -52,7 +52,7 @@ public class TestSuiteRegistration {
     public void registrationWithCorrectData()
     {
         //arrange
-        var email = "zerone1015@mail.ru";
+        var email = "zerone1018@mail.ru";
         var password = "Zerone1000";
         var name = "Андрей";
         var surname = "Михайлов";
@@ -115,7 +115,7 @@ public class TestSuiteRegistration {
     @Test
     public void RegistrationWithRegisteredEmail() throws InterruptedException {
         //arrange
-        var email = "zerone1000@mail.ru";
+        var email = "zerone201@mail.ru";
         var password = "Zerone1000";
         var name = "Андрей";
         var surname = "Михайлов";
