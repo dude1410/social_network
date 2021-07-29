@@ -7,9 +7,12 @@ import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
+import javapro.model.NotificationSetup;
 import javapro.model.Person;
 import javapro.model.Token;
 import javapro.model.enums.MessagesPermission;
+import javapro.model.enums.NotificationType;
+import javapro.repository.NotificationSetupRepository;
 import javapro.repository.PersonRepository;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,12 +23,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Service
 public class RegisterService {
 
     private final PersonRepository personRepository;
+    private final NotificationSetupRepository notificationSetupRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
@@ -35,12 +40,13 @@ public class RegisterService {
     private String address;
 
     public RegisterService(PersonRepository personRepository,
-                           EmailService emailService,
+                           NotificationSetupRepository notificationSetupRepository, EmailService emailService,
                            PasswordEncoder passwordEncoder,
                            TokenService tokenService,
                            @Qualifier("registerLogger") Logger logger,
                            @Qualifier("RegisterTemplateMessage") String registerMessageTemplate) {
         this.personRepository = personRepository;
+        this.notificationSetupRepository = notificationSetupRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
@@ -116,7 +122,20 @@ public class RegisterService {
         person.setLastOnlineTime(new Timestamp(System.currentTimeMillis()));
         // TODO: 11.07.2021
         person.setConfirmationCode("token");
-        personRepository.save(person);
+        var personId = personRepository.save(person).getId();
+
+
+            var saveNotificationList = new ArrayList<NotificationSetup>();
+            for (NotificationType element : NotificationType.values()) {
+                var notification = new NotificationSetup();
+                notification.setPersonId(personId);
+                notification.setNotificationtype(element.name());
+                notification.setEnable(true);
+                saveNotificationList.add(notification);
+            }
+            notificationSetupRepository.saveAll(saveNotificationList);
+
+
         return person;
     }
 

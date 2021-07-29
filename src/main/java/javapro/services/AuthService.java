@@ -81,9 +81,11 @@ public class AuthService {
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
-        if(deletedPersonRepository.findByPersonId(userFromDB.getId()).isPresent()){
+
+        if(deletedPersonRepository.findPerson(userFromDB.getId()) != null){
             throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
         }
+
 
         if (userFromDB == null) {
             logger.info(String.format("User with email '%s' is not found!", email));
