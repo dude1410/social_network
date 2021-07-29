@@ -46,16 +46,16 @@ public class TestSuiteChangePasswordInUserProfile {
     private By repeatPasswordFieldInSChangeForm = By.xpath("(//*[@class='form__input'])[2]");
     private By changeButtonInChangeForm = By.cssSelector(".modal__button");
     private By popUpMessage = By.cssSelector(".v-snack__content");
-    private By logo = By.cssSelector(".main-layout__logo");
+    private By titleMainPage = By.cssSelector(".form-layout__title");
     private By title = By.xpath("(//*[@class='main-layout__link'])[1]");
     private By logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
     @Test
     public void changePasswordToValid() throws InterruptedException {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone1155";
-        var newPassword = "Zerone115";
+        var email = "zerone116@mail.ru";
+        var password = "Zerone116";
+        var newPassword = "Zerone1166";
         var expectedResultMessage = "Пароль успешно изменён. Авторизуйтесь с новым паролем";
         var expectedResultTitle = " Моя страница";
 
@@ -63,17 +63,17 @@ public class TestSuiteChangePasswordInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
-        Thread.sleep(1000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
-        Thread.sleep(1000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(passwordFieldInChangeForm).sendKeys(newPassword);
         driver.findElement(repeatPasswordFieldInSChangeForm).sendKeys(newPassword);
         driver.findElement(changeButtonInChangeForm).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(popUpMessage));
+        wait.until(ExpectedConditions.presenceOfElementLocated(titleMainPage));
 
         //assert
         var actualResultMessage = driver.findElement(popUpMessage).getText();
@@ -83,7 +83,7 @@ public class TestSuiteChangePasswordInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(newPassword);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(title));
 
         //assert
         var actualResultTitle = driver.findElement(title).getText();
@@ -95,17 +95,19 @@ public class TestSuiteChangePasswordInUserProfile {
     public void changePasswordWithEmptyFields()
     {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone115";
+        var email = "zerone116@mail.ru";
+        var password = "Zerone116";
         var expectedResult = "Введите пароль";
 
         //act
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(changeButtonInChangeForm).click();

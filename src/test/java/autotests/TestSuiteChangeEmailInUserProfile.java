@@ -45,8 +45,8 @@ public class TestSuiteChangeEmailInUserProfile {
     private By emailFieldInChangeForm = By.xpath("(//*[@class='form__input'])[1]");
     private By repeatEmailFieldInSChangeForm = By.xpath("(//*[@class='form__input'])[2]");
     private By changeButtonInChangeForm = By.cssSelector(".modal__button");
+    private By titleMainPage = By.cssSelector(".form-layout__title");
     private By popUpMessage = By.cssSelector(".v-snack__content");
-    private By logo = By.cssSelector(".main-layout__logo");
     private By title = By.xpath("(//*[@class='main-layout__link'])[1]");
     private By logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
@@ -64,15 +64,17 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(emailFieldInChangeForm).sendKeys(newEmail);
         driver.findElement(repeatEmailFieldInSChangeForm).sendKeys(newEmail);
         driver.findElement(changeButtonInChangeForm).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(popUpMessage));
+        wait.until(ExpectedConditions.presenceOfElementLocated(titleMainPage));
 
         //assert
         var actualResultMessage = driver.findElement(popUpMessage).getText();
@@ -82,7 +84,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(newEmail);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(title));
 
         //assert
         var actualResultTitle = driver.findElement(title).getText();
@@ -102,9 +104,11 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(changeButtonInChangeForm).click();
@@ -129,9 +133,11 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(emailFieldInChangeForm).sendKeys(newEmail);
@@ -159,9 +165,11 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(logo));
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
         driver.findElement(safety).click();
         driver.findElement(changeButtonInSafety).click();
         driver.findElement(emailFieldInChangeForm).sendKeys(newEmail);
