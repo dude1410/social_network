@@ -71,7 +71,7 @@ public class NotificationService {
         var entity = notificationRepository.findAllByPersonId(pageable, personId);
         ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
         entity.forEach(el -> {
-            if (el.getEntity().getPerson().getId() != personId) {
+            if (el.getEntity().getPerson().getId() != personId ) {
                 if (setupData.get(el.getNotificationType().toString()).equals(true)) {
                     var notificationDTO = new NotificationDTO();
                     notificationDTO.setId(el.getId());
