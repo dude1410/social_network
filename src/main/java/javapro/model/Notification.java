@@ -1,15 +1,18 @@
 package javapro.model;
 
-import javapro.model.enums.NotificationType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import javapro.model.enums.NotificationType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "notification")
 public class Notification implements Serializable {
@@ -27,7 +30,7 @@ public class Notification implements Serializable {
     @DateTimeFormat(pattern = "yyyy.MM.dd HH-mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH-mm")
     @Column(name = "sent_time", nullable = false)
-    private Date sentTime;
+    private Timestamp sentTime;
 
     @ManyToOne
     @JoinColumn(name = "person_id", nullable = false, foreignKey = @ForeignKey(name = "FK_person_id"))

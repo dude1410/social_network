@@ -1,14 +1,16 @@
 package javapro.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "block_history")
 public class BlockHistory implements Serializable {

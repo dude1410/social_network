@@ -8,6 +8,7 @@ import javapro.config.exception.BadRequestException;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
+import javapro.repository.TokenRepository;
 import javapro.util.PersonToDtoMapper;
 import javapro.util.Time;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,10 @@ import org.springframework.validation.Errors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 
 @Service
 @EnableScheduling
@@ -36,6 +40,7 @@ public class AuthService {
     private final PersonToDtoMapper personToDtoMapper;
     private final PasswordEncoder passwordEncoder;
     private final DeletedPersonRepository deletedPersonRepository;
+    private final TokenRepository tokenRepository;
 
 
     public AuthService(@Qualifier("authorizationLogger") Logger logger,
@@ -43,7 +48,8 @@ public class AuthService {
                        AuthenticationManager authenticationManager,
                        PersonToDtoMapper personToDtoMapper,
                        PasswordEncoder passwordEncoder,
-                       DeletedPersonRepository deletedPersonRepository) {
+                       DeletedPersonRepository deletedPersonRepository,
+                       TokenRepository tokenRepository) {
         this.logger = logger;
         this.personRepository = personRepository;
         this.authenticationManager = authenticationManager;
@@ -51,6 +57,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
 
         this.deletedPersonRepository = deletedPersonRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
@@ -74,9 +81,11 @@ public class AuthService {
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
-        if(deletedPersonRepository.findByPersonId(userFromDB.getId()).isPresent()){
+
+        if(deletedPersonRepository.findPerson(userFromDB.getId()) != null){
             throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
         }
+
 
         if (userFromDB == null) {
             logger.info(String.format("User with email '%s' is not found!", email));
@@ -120,10 +129,19 @@ public class AuthService {
                 new ResponseData("ok")));
     }
 
-    @Scheduled(cron = "0 0 12 * * ?")
-    private void deleteAllNotApprovedPerson() {
-        var time = new Timestamp(Time.getTime() - 86400000);
-        personRepository.deleteAllByRegDateBefore(time);
+//    @Scheduled(cron = "0 0 12 * * ?")
+
+    @Scheduled(cron = "0 */1 * ? * *")
+    private void deleteAllNotApprovedPerson() throws InterruptedException {
+        System.out.println("scheduling started");
+
+        var time = LocalDateTime.now().minusDays(1);
+
+        Instant instant =  time.toInstant(ZoneOffset.UTC);
+        Date date = Date.from(instant);
+        tokenRepository.deleteAllByDateBefore(date);
+        Thread.sleep(5000);
+        personRepository.deleteAllByRegDateBefore(date);
     }
 
 

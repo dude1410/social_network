@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +68,9 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "from Person p " +
             "WHERE p.isApproved = false " +
             "AND p.regDate < :timestamp")
-    void deleteAllByRegDateBefore(Timestamp timestamp);
+    void deleteAllByRegDateBefore(Date timestamp);
+
+
 
     @Query("select p.id " +
             "from Person p " +
@@ -132,6 +136,16 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "group by p ")
     List<Person> findRecommendations(@Param("userId") Integer userId);
 
+    @Query("SELECT p " +
+            "FROM Person p " +
+            "WHERE p.isApproved = true " +
+            "AND p.isBlocked = false ")
+    List<Person> findAllByisApprovedTrueAndisBlockedTrue();
+
+    @Query("select p " +
+            "from Person p " +
+            "WHERE p.id = :personId")
+    Person findPersonByApprovedIsTrueAAndBlockedIsFalse(@Param("personId") Integer personID);
 
 
 }

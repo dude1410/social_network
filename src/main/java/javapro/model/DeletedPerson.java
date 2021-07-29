@@ -1,7 +1,9 @@
 package javapro.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.Entity;
@@ -10,7 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @RequiredArgsConstructor
-@Data
+@Setter
+@Getter
 @Entity
 public class DeletedPerson {
 

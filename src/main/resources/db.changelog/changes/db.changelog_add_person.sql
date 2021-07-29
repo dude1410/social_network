@@ -1,4 +1,7 @@
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
+(1, 'User', 'Deleted', '2021-06-21 10:40:23' , 'ud@ud.com', '$2y$12$M87fse/9tCoK0Qk.GjRKFeLZBw111bjRqxoAUJuddZuL6u.EnA3wC', 'true', 'ALL', '2021-06-21 10:40:23' , 'true', '0');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
 (108, 'Owen', 'Ugo', '2021-06-21 10:40:23', 'ougo0@mac.com', '$2y$12$v5spPzqiYnsYwd/0UFqILuPJJQhEbYoAFaOpCK7ceUnD49AbMY/3e', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values

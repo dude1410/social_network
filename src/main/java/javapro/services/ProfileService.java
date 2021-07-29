@@ -52,6 +52,7 @@ public class ProfileService {
     public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
             NotFoundException {
 
+
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
@@ -112,9 +113,7 @@ public class ProfileService {
         }
 
         //about
-        if (editMyProfileRequest.getAbout() != null) {
-            person.setAbout(editMyProfileRequest.getAbout());
-        }
+        person.setAbout(editMyProfileRequest.getAbout() != null ? editMyProfileRequest.getAbout() : null);
         //birth day
         if (editMyProfileRequest.getBirthDate() != null) {
             if (editMyProfileRequest.getBirthDate().after(new Timestamp(System.currentTimeMillis()))) {
@@ -137,13 +136,15 @@ public class ProfileService {
             person.setPhone(editMyProfileRequest.getPhone());
         }
         //First Name
-        if (editMyProfileRequest.getFirstName() != null) {
+        if (!editMyProfileRequest.getFirstName().isEmpty()) {
             person.setFirstName(editMyProfileRequest.getFirstName());
-        }
+        } else throw new BadRequestException(Config.STRING_PERSON_EMPTY_FISTNAME);
+
+
         //Last Name
-        if (editMyProfileRequest.getLastName() != null) {
+        if (!editMyProfileRequest.getLastName().isEmpty()) {
             person.setLastName(editMyProfileRequest.getLastName());
-        }
+        } else throw new BadRequestException(Config.STRING_PERSON_EMPTY_LASTNAME);
 
         personRepository.save(person);
 
