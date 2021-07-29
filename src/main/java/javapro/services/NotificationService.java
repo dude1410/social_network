@@ -6,6 +6,7 @@ import javapro.api.response.Response;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.NotFoundException;
+import javapro.model.Notification;
 import javapro.model.NotificationSetup;
 import javapro.model.Person;
 import javapro.model.dto.EntityAuthorDTO;
@@ -17,7 +18,9 @@ import javapro.repository.DeletedPersonRepository;
 import javapro.repository.NotificationRepository;
 import javapro.repository.NotificationSetupRepository;
 import javapro.repository.PersonRepository;
+import javapro.util.NotificationToNotificationDTOMaper;
 import javapro.util.Time;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,16 +40,16 @@ public class NotificationService {
 
     private final PersonRepository personRepository;
     private final NotificationSetupRepository notificationSetupRepository;
-    private final DeletedPersonRepository deletedPersonRepository;
     private final NotificationRepository notificationRepository;
+
 
     public NotificationService(PersonRepository personRepository,
                                NotificationSetupRepository notificationSetupRepository,
                                DeletedPersonRepository deletedPersonRepository,
-                               NotificationRepository notificationRepository) {
+                               NotificationRepository notificationRepository,
+                               NotificationToNotificationDTOMaper maper) {
         this.personRepository = personRepository;
         this.notificationSetupRepository = notificationSetupRepository;
-        this.deletedPersonRepository = deletedPersonRepository;
         this.notificationRepository = notificationRepository;
     }
 
@@ -61,34 +65,8 @@ public class NotificationService {
         } else {
             personId = person.getId();
         }
-        var notificationSetup = notificationSetupRepository.findAllByPersonId(personId);
-        HashMap<String, Boolean> setupData = new HashMap<>();
 
-        notificationSetup.forEach(element -> setupData.put(element.getNotificationtype(), element.getEnable()));
-        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
-        Pageable pageable = PageRequest.of(offset, itemPerPage, Sort.by("sentTime"));
-
-        var entity = notificationRepository.findAllByPersonId(pageable, personId);
-        ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
-        entity.forEach(el -> {
-            if (el.getEntity().getPerson().getId() != personId ) {
-                if (setupData.get(el.getNotificationType().toString()).equals(true)) {
-                    var notificationDTO = new NotificationDTO();
-                    notificationDTO.setId(el.getId());
-                    var entityAuthorDTO = new EntityAuthorDTO();
-                    entityAuthorDTO.setPhoto(el.getEntity().getPerson().getPhoto());
-                    entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
-                    entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
-                    entityAuthorDTO.setId(el.getEntity().getPerson().getId());
-                    notificationDTO.setEntityAuthor(entityAuthorDTO);
-                    notificationDTO.setEventType(el.getNotificationType().toString());
-                    notificationDTO.setSentTime(el.getSentTime().getTime());
-                    notificationDTO.setInfo("что-то сюда надо написать");
-                    notificationDTOArrayList.add(notificationDTO);
-                }
-            }
-        });
-
+        var notificationDTOArrayList = getListNotifications(personId);
         var response = new PlatformResponse<>();
 
         response.setError("ok");
@@ -101,7 +79,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<Response> getAccountNotification() throws AuthenticationException, NotFoundException {
+    public ResponseEntity<Response> getAccountNotificationSetup() throws AuthenticationException, NotFoundException {
 
         int personId;
         var person = isAuthorize();
@@ -183,6 +161,67 @@ public class NotificationService {
     }
 
 
+    public ResponseEntity<PlatformResponse<Object>> readNotifications(Boolean all, Integer id) {
+        int personId = personRepository.findByEmailForLogin(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName())
+                .getId();
+        if (id != null) {
+            notificationRepository.deleteById(id);
+        } else {
+            notificationRepository.deleteAll(personId);
+        }
+        var notificationDTOArrayList = getListNotifications(personId);
+        var response = new PlatformResponse<>();
+
+        response.setError("ok");
+        response.setTimestamp(Time.getTime());
+        response.setTotal(notificationDTOArrayList.size());
+        response.setOffset(0);
+        response.setPerPage(20);
+        response.setData(notificationDTOArrayList);
+        return ResponseEntity.ok(response);
+
+
+    }
+
+
+    private ArrayList<NotificationDTO> getListNotifications(Integer personId) {
+
+        var notificationSetup = notificationSetupRepository.findAllByPersonId(personId);
+        HashMap<String, Boolean> setupData = new HashMap<>();
+        notificationSetup.forEach(element -> setupData.put(element.getNotificationtype(), element.getEnable()));
+        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("sentTime").descending());
+
+        Page<Notification> entity = notificationRepository.findAllByPersonId(pageable, personId);
+
+        ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
+        entity.forEach(el -> {
+            if (el.getEntity().getPerson().getId() != personId) {
+                if (setupData.get(el.getNotificationType().toString()).equals(true)) {
+
+
+                    var notificationDTO = new NotificationDTO();
+                    notificationDTO.setId(el.getId());
+                    var entityAuthorDTO = new EntityAuthorDTO();
+                    entityAuthorDTO.setPhoto(el.getEntity().getPerson().getPhoto());
+                    entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
+                    entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
+                    entityAuthorDTO.setId(el.getEntity().getPerson().getId());
+                    notificationDTO.setEntityAuthor(entityAuthorDTO);
+                    notificationDTO.setEventType(el.getNotificationType().toString());
+                    notificationDTO.setSentTime(el.getSentTime().getTime());
+                    notificationDTO.setInfo("maperrr");
+                    notificationDTOArrayList.add(notificationDTO);
+                }
+            }
+        });
+        return notificationDTOArrayList;
+    }
+
     private Person isAuthorize() throws AuthenticationException {
 
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
@@ -201,7 +240,7 @@ public class NotificationService {
 
 
     @Scheduled(cron = "0 0 12 * * ?")
-    private void removeFoulNotifications(){
+    private void removeFoulNotifications() {
 
 
     }
