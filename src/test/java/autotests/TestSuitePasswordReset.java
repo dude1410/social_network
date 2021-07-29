@@ -42,7 +42,7 @@ public class TestSuitePasswordReset {
     @Test
     public void resetPasswordForRegisteredEmail() throws InterruptedException {
         //arrange
-        var email = "zerone200@mail.ru";
+        var email = "zerone201@mail.ru";
         var expectedResultTitle = "На ваш e-mail отправлена ссылка для восстановления пароля";
         var expectedResultText = "В течение 5 минут, на указанную вами почту, придёт письмо со ссылкой. Перейдите по ней, чтобы восстановить пароль.";
 
