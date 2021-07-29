@@ -8,7 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class testSuiteAuthorization {
+public class TestSuiteAuthorization {
     public static WebDriver driver;
     public static WebDriverWait wait;
 
@@ -46,25 +46,27 @@ public class testSuiteAuthorization {
         var email = "zerone114@mail.ru";
         var password = "Zerone114";
         var expectedResult = " Моя страница";
+        var logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
         //act
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".main-layout__logo")));
+        driver.findElement(logoutButton).click();
+
 
         //assert
         var actualResult = driver.findElement(By.xpath("(//*[@class='main-layout__link'])[1]")).getText();
         Assert.assertEquals("Пользователь неавторизован", expectedResult, actualResult);
-        driver.findElement(logoutButton).click();
     }
 
     @Test
-    public void authorizationWithAnUnregisteredEmail() throws InterruptedException {
+    public void authorizationWithWrongPassword() throws InterruptedException {
         //arrange
-        var email = "zerone0114@mail.ru";
-        var password = "Zerone114";
-        var expectedResult = "Пользователь с таким email не найден";
+        var email = "zerone114@mail.ru";
+        var password = "erone114";
+        var expectedResult = "Пароль указан неверно.";
 
         //act
         driver.findElement(emailField).sendKeys(email);
@@ -78,11 +80,11 @@ public class testSuiteAuthorization {
     }
 
     @Test
-    public void authorizationWithWrongPassword() throws InterruptedException {
+    public void authorizationWithAnUnregisteredEmail() throws InterruptedException {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "erone114";
-        var expectedResult = "Пароль указан неверно.";
+        var email = "zerone0114@mail.ru";
+        var password = "Zerone114";
+        var expectedResult = "Пользователь с таким email не найден";
 
         //act
         driver.findElement(emailField).sendKeys(email);

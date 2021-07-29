@@ -43,7 +43,7 @@ public class TestSuiteSupport {
     public void sendingAMessageToSupport() throws InterruptedException
     {
         //arrange
-        var email = "zerone201@mail.ru";
+        var email = "zerone200@mail.ru";
         var text = "Текст сообщения, чтобы проверить отправку формы";
         var expectedResult = "Ваше обращение в службу поддержки направлено";
 
@@ -63,7 +63,7 @@ public class TestSuiteSupport {
     public void sendingAMessageToSupportWithAnInvalidEmail()
     {
         //arrange
-        var email = "zerone201@mail";
+        var email = "zerone200@mail";
         var text = "Текст сообщения, чтобы проверить отправку формы";
         var expectedResult = "Введите корректный E-mail";
 
