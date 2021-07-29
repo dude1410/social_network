@@ -44,7 +44,7 @@ public class TestSuiteChangeEmailInUserProfile {
     private By changeButtonInSafety = By.xpath("(//*[@class='btn'])[1]");
     private By emailFieldInChangeForm = By.xpath("(//*[@class='form__input'])[1]");
     private By repeatEmailFieldInSChangeForm = By.xpath("(//*[@class='form__input'])[2]");
-    private By changeButtonInChangeForm = By.xpath("(//*[contains(@class, 'btn')])[5]");
+    private By changeButtonInChangeForm = By.cssSelector(".modal__button");
     private By popUpMessage = By.cssSelector(".v-snack__content");
     private By logo = By.cssSelector(".main-layout__logo");
     private By title = By.xpath("(//*[@class='main-layout__link'])[1]");
@@ -54,9 +54,9 @@ public class TestSuiteChangeEmailInUserProfile {
     public void changeEmailToValid()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
-        var newEmail = "zerone0114@mail.ru";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
+        var newEmail = "zerone0115@mail.ru";
         var expectedResultMessage = "E-mail успешно изменён. Авторизуйтесь с новым адресом";
         var expectedResultTitle = " Моя страница";
 
@@ -76,7 +76,7 @@ public class TestSuiteChangeEmailInUserProfile {
 
         //assert
         var actualResultMessage = driver.findElement(popUpMessage).getText();
-        Assert.assertEquals("Нет сообщения о смене пароля", expectedResultMessage, actualResultMessage);
+        Assert.assertEquals("Нет сообщения о смене email", expectedResultMessage, actualResultMessage);
 
         //act
         driver.findElement(emailField).sendKeys(newEmail);
@@ -94,8 +94,8 @@ public class TestSuiteChangeEmailInUserProfile {
     public void changeEmailWithEmptyFields()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var expectedResult = "Введите E-mail";
 
         //act

@@ -65,8 +65,8 @@ public class TestSuiteProfileEditing {
     public void fillingAProfile()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var phoneNumber = "9991234567";
         var text = "Текст для заполнения поля о себе";
         var expectedResultDateOfBirth = "25 мая 1975 (46 лет)";
@@ -128,8 +128,8 @@ public class TestSuiteProfileEditing {
     public void nameСhange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var name = "Андрей";
         var expectedResult = "Андрей Шуфутинский";
 
@@ -157,8 +157,8 @@ public class TestSuiteProfileEditing {
     public void surnameСhange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var surname = "Попов";
         var expectedResult = "Андрей Попов";
 
@@ -186,8 +186,8 @@ public class TestSuiteProfileEditing {
     public void phoneNumberChange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var phoneNumber = "1234567890";
         var expectedResult = "+7 (123) 456-78-90";
 
@@ -214,8 +214,8 @@ public class TestSuiteProfileEditing {
     public void cityChange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var expectedResult = "Россия, Майкоп";
 
         //act
@@ -251,8 +251,8 @@ public class TestSuiteProfileEditing {
     public void CountryAndCityChange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var expectedResult = "Россия, Майкоп";
 
         //act
@@ -292,8 +292,8 @@ public class TestSuiteProfileEditing {
     public void aboutMeChange()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone115@mail.ru";
+        var password = "Zerone115";
         var text = "Новый текст для заполнения поля о себе";
         var expectedResult = "Новый текст для заполнения поля о себе";
 
