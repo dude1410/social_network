@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -161,29 +160,37 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<PlatformResponse<Object>> readNotifications(Boolean all, Integer id) {
+    public ResponseEntity<PlatformResponse<Object>> readNotifications(Integer id) {
         int personId = personRepository.findByEmailForLogin(SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName())
                 .getId();
-        if (id != null) {
-            notificationRepository.deleteById(id);
-        } else {
-            notificationRepository.deleteAll(personId);
-        }
+        notificationRepository.deleteById(id);
+        return ResponseEntity.ok(createResponse(personId));
+    }
+
+
+    public ResponseEntity<PlatformResponse<Object>> readAllNotifications() {
+        int personId = personRepository.findByEmailForLogin(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName())
+                .getId();
+        notificationRepository.deleteAll(personId);
+        return ResponseEntity.ok(createResponse(personId));
+    }
+
+    private PlatformResponse<Object> createResponse(Integer personId) {
         var notificationDTOArrayList = getListNotifications(personId);
         var response = new PlatformResponse<>();
-
         response.setError("ok");
         response.setTimestamp(Time.getTime());
         response.setTotal(notificationDTOArrayList.size());
         response.setOffset(0);
         response.setPerPage(20);
         response.setData(notificationDTOArrayList);
-        return ResponseEntity.ok(response);
-
-
+        return response;
     }
 
 
@@ -202,8 +209,6 @@ public class NotificationService {
         entity.forEach(el -> {
             if (el.getEntity().getPerson().getId() != personId) {
                 if (setupData.get(el.getNotificationType().toString()).equals(true)) {
-
-
                     var notificationDTO = new NotificationDTO();
                     notificationDTO.setId(el.getId());
                     var entityAuthorDTO = new EntityAuthorDTO();
@@ -236,12 +241,5 @@ public class NotificationService {
 
     private List<NotificationSetup> getNotificationSetup(Integer personId) {
         return notificationSetupRepository.findAllByPersonId(personId);
-    }
-
-
-    @Scheduled(cron = "0 0 12 * * ?")
-    private void removeFoulNotifications() {
-
-
     }
 }
