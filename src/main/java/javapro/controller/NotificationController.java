@@ -36,11 +36,14 @@ public class NotificationController {
         return notificationService.setAccountNotification(request);
     }
 
-    @PutMapping("/api/v1/notifications")
-    public ResponseEntity<PlatformResponse<Object>> readNotifications (@PathVariable ("all") Boolean all,
-                                                      @PathVariable("id") Integer id ){
-    return notificationService.readNotifications(all, id);
+    @DeleteMapping("/api/v1/notifications/{id}")
+    public ResponseEntity<PlatformResponse<Object>> readNotifications (@PathVariable("id") Integer id ){
+    return notificationService.readNotifications(id);
     }
 
+    @DeleteMapping("/api/v1/notifications")
+    public ResponseEntity<PlatformResponse<Object>> readAllNotifications (){
+        return notificationService.readAllNotifications();
+    }
 
 }
