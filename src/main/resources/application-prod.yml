@@ -40,7 +40,8 @@ logging:
   config: classpath:log4j2-spring-prod.xml
 
 # тут не трогать. это путь до хранилища на prod
-javapro.storagepath: /home/javapro/javapro-socialnetwork-studygroup-12
+javapro.storagepath.baseurl: http://31.40.251.201:8086
+javapro.storagepath: /home/javapro/javapro-socialnetwork-studygroup-12/storage/thumb/
 
 
 
