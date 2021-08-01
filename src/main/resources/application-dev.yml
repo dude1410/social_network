@@ -40,8 +40,6 @@ logging:
   config: classpath:log4j2-spring-dev.xml
 # У каждого на своем компе будет своя переменная. Меняйте раскоменчивайте нужную, а не нужные в коммент
 # под MacOS
-# базовый url для отображения статиков с бека
-javapro.storagepath.baseurl: http://localhost:8086
+javapro.storagepath: Users/olegprokhorov/IdeaProjects/group/study
 # под win каждый пишет свою строчку, в зависимости от нахождения папки с хранилищем.
 #javapro.storagepath: C:/Users/maksi/Desktop/SocialNetworkStorage
-javapro.storagepath: /Users/codewizard/Desktop/storage/thumb/
