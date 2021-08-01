@@ -26,6 +26,9 @@ public class StorageService {
     @Value("${javapro.storagepath}")
     private String uploadPath;
 
+    @Value(("${javapro.storagepath.baseurl}"))
+    private String baseURL;
+
     private final Logger logger = LogManager.getLogger(StorageService.class);
 
 
@@ -56,12 +59,12 @@ public class StorageService {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
 
-        String originalImagePath = uploadPath + "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/";
-        String thumbImagePath = uploadPath + "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/thumbs/";
-        String relative = new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
+        String originalImagePath = uploadPath + "/storage/"; //+ "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/";
+        String thumbImagePath = uploadPath + "/storage/thumb/";//+ "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/thumb/";
+        String relative = "/" + new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
 
 
-        person.setPhoto(relative + file.getOriginalFilename());
+        person.setPhoto(baseURL + relative + file.getOriginalFilename());
         personRepository.save(person);
         Runnable task = () -> {
             try {
