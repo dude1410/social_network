@@ -107,8 +107,8 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        HttpSession session = httpServletRequest.getSession();
-        session.setMaxInactiveInterval(-1);
+//        HttpSession session = httpServletRequest.getSession();
+//        session.setMaxInactiveInterval(-1);
 
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
