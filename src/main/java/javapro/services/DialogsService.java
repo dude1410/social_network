@@ -74,11 +74,16 @@ public class DialogsService {
         dialogMessagesResponse.setTotal(allDialogMessages.size());
         dialogMessagesResponse.setOffset(offset);
         dialogMessagesResponse.setPerPage(perPage);
-        if (allDialogMessages.size() > 0) {
+        if (dialogMessagePage.size() > 0) {
             for (DialogMessage dialogMessage : dialogMessagePage) {
+                RecipientData recipientData = new RecipientData();
+                recipientData.setId(dialogMessage.getRecipientId().getId());
+                recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
+                recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
+                recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
                 dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
                                                                 dialogMessage.getAuthorId().getId(),
-                                                                dialogMessage.getRecipientId().getId(),
+                                                                recipientData,
                                                                 dialogMessage.getMessageText(),
                                                                 dialogMessage.getReadStatus()));
             }
