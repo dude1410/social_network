@@ -18,15 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDate;
 
 @Service
 public class StorageService {
 
     @Value("${javapro.storagepath}")
     private String uploadPath;
-
-    @Value("${javapro.storagepath.baseurl}")
-    private String baseUrl;
 
     private final Logger logger = LogManager.getLogger(StorageService.class);
 
@@ -58,12 +56,12 @@ public class StorageService {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
 
-        String originalImagePath = uploadPath; // + "/storage/"; //+ LocalDate.now().toString() + "/" + person.getId().toString() + "/";
-        String thumbImagePath = uploadPath; //+ "/storage/thumb/";//+ LocalDate.now().toString() + "/" + person.getId().toString() + "/thumb/";
-        String relative = "/" + new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
+        String originalImagePath = uploadPath + "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/";
+        String thumbImagePath = uploadPath + "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/thumbs/";
+        String relative = new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
 
 
-        person.setPhoto(baseUrl + relative + file.getOriginalFilename());
+        person.setPhoto(relative + file.getOriginalFilename());
         personRepository.save(person);
         Runnable task = () -> {
             try {
@@ -83,7 +81,7 @@ public class StorageService {
         fileStorageResponse.setFileName(file.getOriginalFilename());
         fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
-        fileStorageResponse.setRawFileURL(thumbImagePath + file.getOriginalFilename());
+        fileStorageResponse.setRawFileURL(thumbImagePath +  file.getOriginalFilename());
         fileStorageResponse.setRelativeFilePath(relative + "/" + file.getOriginalFilename());
 
         System.out.println(thumbImagePath);
