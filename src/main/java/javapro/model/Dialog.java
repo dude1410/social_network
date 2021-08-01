@@ -2,6 +2,8 @@ package javapro.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "dialogs")
-public class Dialog {
+public class Dialog{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +20,5 @@ public class Dialog {
 
     @OneToMany(mappedBy = "dialog")
     private List<DialogMessage> dialogMessageList;
+
 }

@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
-    driver-class-name: org.postgresql.Driver
-    username: javapro
-    password: iddqd
-    #url: jdbc:postgresql://localhost:5432/javapro?user=postgres&password=admin
+    #url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
     #driver-class-name: org.postgresql.Driver
-    #username: postgres
-    #password: admin
+    #username: javapro
+    #password: iddqd
+    url: jdbc:postgresql://localhost:5432/javapro?user=postgres&password=admin
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL92Dialect
     show-sql: false
@@ -16,10 +16,10 @@ spring:
     generate-ddl: false
   liquibase:
     url: jdbc:postgresql://localhost:5432/javapro
-    #user: postgres
-    #password: admin
-    user: javapro
-    password: iddqd
+    user: postgres
+    password: admin
+    #user: javapro
+    #password: iddqd
     enabled: true
     contexts: dev
     change-log: classpath:db.changelog/db.changelog-master.yml

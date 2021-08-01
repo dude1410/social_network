@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javapro.model.enums.ReadStatus;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "dialog_message")
-public class DialogMessage {
+public class DialogMessage implements Comparable<DialogMessage>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +44,10 @@ public class DialogMessage {
     @Enumerated(EnumType.STRING)
     @Column(name = "read_status", nullable = false)
     private ReadStatus readStatus;
+
+
+    @Override
+    public int compareTo(@NotNull DialogMessage o) {
+        return time.compareTo(o.getTime());
+    }
 }

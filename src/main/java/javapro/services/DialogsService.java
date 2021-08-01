@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,65 +32,101 @@ public class DialogsService {
     }
 
     public ResponseEntity<AllPersonDialogsResponse> getAllPersonDialogs(String personEmail, Integer offset, Integer perPage) {
+        List<DialogData> dialogData;
         Person person = personRepository.findByEmail(personEmail);
-        int pageNumber = offset / perPage;
-        AllPersonDialogsResponse allPersonDialogsResponse = new AllPersonDialogsResponse();
-        List<DialogData> dialogData = new ArrayList<>();
-        Pageable pageWithDialogs = PageRequest.of(pageNumber, perPage);
-        List<Dialog> allUserDialog = dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId());
-
-        allPersonDialogsResponse.setError("string");
-        allPersonDialogsResponse.setTimestamp(Time.getTime());
-        allPersonDialogsResponse.setTotal(allUserDialog.size());
-        allPersonDialogsResponse.setOffset(offset);
-        allPersonDialogsResponse.setPerPage(perPage);
-
-        if (allUserDialog.size() > 0) {
-            for (Dialog dialog : allUserDialog) {
-                List<DialogMessage> dialogMessages = dialog.getDialogMessageList();
-                DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
-                dialogData.add(new DialogData(dialog.getId(), 0,
-                        new DialogMessageDTO(lastDialogMessage.getId(),
-                                lastDialogMessage.getTime().getTime(),
-                                lastDialogMessage.getAuthorId().getId(),
-                                lastDialogMessage.getRecipientId().getId(),
-                                lastDialogMessage.getMessageText(),
-                                lastDialogMessage.getReadStatus())));
-            }
-        }
-        allPersonDialogsResponse.setData(dialogData);
-        return new ResponseEntity<>(allPersonDialogsResponse, HttpStatus.OK);
+        Pageable pageWithDialogs = PageRequest.of(offset / perPage, perPage);
+        //получение списка диалогов пользователя
+        List<Dialog> allUserDialog = Optional.of(dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId()))
+                .orElse(new ArrayList<>());
+        dialogData = prepareDialogData(allUserDialog);
+        return new ResponseEntity<>(prepareAllPersonDialogResponse(dialogData,
+                allUserDialog.size(), offset, perPage), HttpStatus.OK);
     }
 
     public ResponseEntity<DialogMessagesResponse> getDialogMessages(Integer dialogId, Integer offset, Integer perPage) throws BadRequestException {
-        DialogMessagesResponse dialogMessagesResponse = new DialogMessagesResponse();
-        List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
+        List<DialogMessageData> dialogMessageDataList;
         Dialog dialog = dialogRepository.findById(dialogId).orElseThrow(() -> new BadRequestException("dialog not found"));
         List<DialogMessage> allDialogMessages = dialog.getDialogMessageList();
         List <DialogMessage> dialogMessagePage = allDialogMessages.stream()
+                                                                  .sorted()
                                                                   .skip(offset)
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
+        dialogMessageDataList = prepareDialogMessageData(dialogMessagePage);
+        return new ResponseEntity<>(prepareDialogMessageResponse(dialogMessageDataList,
+                allDialogMessages.size(), offset, perPage), HttpStatus.OK);
+    }
+
+    public ResponseEntity<UnreadedCountResponse> getUnreadedCount(String email){
+        UnreadedCountResponse unreadedCountResponse = new UnreadedCountResponse(
+                "string",
+                Time.getTime(),
+                new UnreadedCountData(0)
+        );
+        return new ResponseEntity<>(unreadedCountResponse, HttpStatus.OK);
+    }
+
+    private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
+                                                                    Integer total, Integer offset, Integer perPage){
+        AllPersonDialogsResponse allPersonDialogsResponse = new AllPersonDialogsResponse();
+        allPersonDialogsResponse.setError("string");
+        allPersonDialogsResponse.setTimestamp(Time.getTime());
+        allPersonDialogsResponse.setTotal(total);
+        allPersonDialogsResponse.setOffset(offset);
+        allPersonDialogsResponse.setPerPage(perPage);
+        allPersonDialogsResponse.setData(dialogDataList);
+        return allPersonDialogsResponse;
+    }
+
+    private DialogMessagesResponse prepareDialogMessageResponse(List<DialogMessageData> dialogMessageDataList,
+                                                                Integer total, Integer offset, Integer perPage){
+        DialogMessagesResponse dialogMessagesResponse = new DialogMessagesResponse();
         dialogMessagesResponse.setError("string");
         dialogMessagesResponse.setTimestamp(Time.getTime());
-        dialogMessagesResponse.setTotal(allDialogMessages.size());
+        dialogMessagesResponse.setTotal(total);
         dialogMessagesResponse.setOffset(offset);
         dialogMessagesResponse.setPerPage(perPage);
-        if (dialogMessagePage.size() > 0) {
-            for (DialogMessage dialogMessage : dialogMessagePage) {
-                RecipientData recipientData = new RecipientData();
-                recipientData.setId(dialogMessage.getRecipientId().getId());
-                recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
-                recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
-                recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
-                dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
-                                                                dialogMessage.getAuthorId().getId(),
-                                                                recipientData,
-                                                                dialogMessage.getMessageText(),
-                                                                dialogMessage.getReadStatus()));
-            }
+        return dialogMessagesResponse;
+    }
+
+    private List<DialogData> prepareDialogData(List<Dialog> allUserDialog){
+        List<DialogData> dialogDataList = new ArrayList<>();
+        List<DialogMessage> dialogMessages;
+        for (Dialog dialog : allUserDialog) {
+            dialogMessages = dialog.getDialogMessageList();
+            Collections.sort(dialogMessages);
+            DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
+            RecipientData recipientData = new RecipientData();
+            recipientData.setId(lastDialogMessage.getRecipientId().getId());
+            recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
+            recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
+            recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
+            dialogDataList.add(new DialogData(dialog.getId(), 0,
+                    new DialogMessageDTO(lastDialogMessage.getId(),
+                            lastDialogMessage.getTime().getTime(),
+                            lastDialogMessage.getAuthorId().getId(),
+                            recipientData,
+                            lastDialogMessage.getMessageText(),
+                            lastDialogMessage.getReadStatus())));
         }
-        dialogMessagesResponse.setData(dialogMessageDataList);
-        return new ResponseEntity<>(dialogMessagesResponse, HttpStatus.OK);
+        return dialogDataList;
+    }
+
+    private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList){
+        List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
+
+        for (DialogMessage dialogMessage : dialogMessageList) {
+            RecipientData recipientData = new RecipientData();
+            recipientData.setId(dialogMessage.getRecipientId().getId());
+            recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
+            recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
+            recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
+            dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
+                    dialogMessage.getAuthorId().getId(),
+                    recipientData,
+                    dialogMessage.getMessageText(),
+                    dialogMessage.getReadStatus()));
+        }
+        return dialogMessageDataList;
     }
 }
