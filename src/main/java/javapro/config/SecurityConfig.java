@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -78,12 +79,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 //                .permitAll();
     }
 
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web
-//                .ignoring()
-//                .antMatchers("/**");
-//    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/storage/**");
+    }
 
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
@@ -114,7 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:/Users/olegprokhorov/IdeaProjects/group/study/img/");
+        registry.addResourceHandler("/storage/thumb/**")
+                .addResourceLocations("file:/Users/codewizard/Desktop/storage/thumb/");
     }
 }
