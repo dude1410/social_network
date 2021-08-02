@@ -6,6 +6,7 @@ import javapro.model.Dialog;
 import javapro.model.DialogMessage;
 import javapro.model.Person;
 import javapro.model.dto.DialogMessageDTO;
+import javapro.model.enums.ReadStatus;
 import javapro.repository.DialogRepository;
 import javapro.repository.PersonRepository;
 import javapro.util.Time;
@@ -69,15 +70,14 @@ public class DialogsService {
             unreadedCountResponse = new UnreadedCountResponse(
                     "string",
                     Time.getTime(),
-                    new UnreadedCountData(unreadCount)
-            );
+                    new UnreadedCountData(unreadCount));
         }
         return new ResponseEntity<>(unreadedCountResponse, HttpStatus.OK);
     }
 
     private Integer getUnreadCountMessageInDialog(Dialog dialog, Integer personId){
         return (int) dialog.getDialogMessageList().stream()
-                                     .filter(dialogMessage -> (dialogMessage.getAuthorId().getId() != personId) && (dialogMessage.getReadStatus().equals("SENT")))
+                                     .filter(dialogMessage -> ((!dialogMessage.getAuthorId().getId().equals(personId)) && (dialogMessage.getReadStatus() != ReadStatus.READ)))
                                      .count();
     }
 
