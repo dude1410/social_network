@@ -48,6 +48,6 @@ public class DialogsController {
         if (principal == null) {
             throw new BadRequestException(Config.STRING_AUTH_ERROR);
         }
-        return dialogsService.getUnreadedCount(principal.getName());
+        return dialogsService.getUnreadCount(principal.getName());
     }
 }

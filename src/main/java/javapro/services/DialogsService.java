@@ -38,7 +38,7 @@ public class DialogsService {
         //получение списка диалогов пользователя
         List<Dialog> allUserDialog = Optional.of(dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId()))
                 .orElse(new ArrayList<>());
-        dialogData = prepareDialogData(allUserDialog);
+        dialogData = prepareDialogData(allUserDialog, person.getId());
         return new ResponseEntity<>(prepareAllPersonDialogResponse(dialogData,
                 allUserDialog.size(), offset, perPage), HttpStatus.OK);
     }
@@ -57,13 +57,28 @@ public class DialogsService {
                 allDialogMessages.size(), offset, perPage), HttpStatus.OK);
     }
 
-    public ResponseEntity<UnreadedCountResponse> getUnreadedCount(String email){
-        UnreadedCountResponse unreadedCountResponse = new UnreadedCountResponse(
-                "string",
-                Time.getTime(),
-                new UnreadedCountData(0)
-        );
+    public ResponseEntity<UnreadedCountResponse> getUnreadCount(String personEmail){
+        int unreadCount = 0;
+        UnreadedCountResponse unreadedCountResponse = new UnreadedCountResponse();
+        Person person = personRepository.findByEmail(personEmail);
+        List<Dialog> allPersonDialogs = dialogRepository.findAllPersonDialogs(person.getId());
+        if (allPersonDialogs != null) {
+            for (Dialog dialog : allPersonDialogs) {
+                unreadCount += getUnreadCountMessageInDialog(dialog, person.getId());
+            }
+            unreadedCountResponse = new UnreadedCountResponse(
+                    "string",
+                    Time.getTime(),
+                    new UnreadedCountData(unreadCount)
+            );
+        }
         return new ResponseEntity<>(unreadedCountResponse, HttpStatus.OK);
+    }
+
+    private Integer getUnreadCountMessageInDialog(Dialog dialog, Integer personId){
+        return (int) dialog.getDialogMessageList().stream()
+                                     .filter(dialogMessage -> (dialogMessage.getAuthorId().getId() != personId) && (dialogMessage.getReadStatus().equals("SENT")))
+                                     .count();
     }
 
     private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
@@ -89,7 +104,7 @@ public class DialogsService {
         return dialogMessagesResponse;
     }
 
-    private List<DialogData> prepareDialogData(List<Dialog> allUserDialog){
+    private List<DialogData> prepareDialogData(List<Dialog> allUserDialog, Integer personId){
         List<DialogData> dialogDataList = new ArrayList<>();
         List<DialogMessage> dialogMessages;
         for (Dialog dialog : allUserDialog) {
@@ -101,7 +116,7 @@ public class DialogsService {
             recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
             recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
             recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
-            dialogDataList.add(new DialogData(dialog.getId(), 0,
+            dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
                     new DialogMessageDTO(lastDialogMessage.getId(),
                             lastDialogMessage.getTime().getTime(),
                             lastDialogMessage.getAuthorId().getId(),
