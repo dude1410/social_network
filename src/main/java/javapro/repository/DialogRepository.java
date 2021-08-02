@@ -15,4 +15,10 @@ public interface DialogRepository extends JpaRepository<Dialog, Integer> {
             "join Person as p on p.id = dp.id.person.id " +
             "where p.id = :personId")
     List<Dialog> findAllPersonDialogs(Pageable pageable, @Param("personId") Integer personId);
+
+    @Query("select d from Dialog as d " +
+            "join Dialog2person as dp on d.id = dp.id.dialog.id " +
+            "join Person as p on p.id = dp.id.person.id " +
+            "where p.id = :personId")
+    List<Dialog> findAllPersonDialogs(@Param("personId") Integer personId);
 }
