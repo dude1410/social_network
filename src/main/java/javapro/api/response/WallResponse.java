@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MyWallResponse {
+public class WallResponse {
 
     @Schema(description = "ошибка", example = "invalid_request")
     private String error;
