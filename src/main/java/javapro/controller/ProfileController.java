@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.EditMyProfileRequest;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.LoginResponse;
-import javapro.api.response.MyWallResponse;
+import javapro.api.response.WallResponse;
 import javapro.api.response.PostShortResponse;
 import javapro.api.response.Response;
 import javapro.config.Config;
@@ -51,10 +51,10 @@ public class ProfileController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка открыть стену пользователя"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "id пользователя не задан")})
-    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id,
-                                                 @RequestParam(name = "offset", defaultValue = "0") Integer offset,
-                                                 @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws NotFoundException {
-        return postService.getPostsByUser(offset, itemPerPage);
+    public ResponseEntity<WallResponse> myWall(@PathVariable Integer id,
+                                               @RequestParam(name = "offset", defaultValue = "0") Integer offset,
+                                               @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws BadRequestException {
+        return postService.getPostsByUser(id, offset, itemPerPage);
     }
 
 
