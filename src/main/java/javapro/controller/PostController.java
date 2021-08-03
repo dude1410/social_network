@@ -107,7 +107,7 @@ public class PostController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Комментарии получены успешно"),
             @ApiResponse(responseCode = "400", description = "id поста не задан"),
             @ApiResponse(responseCode = "404", description = "Комменты не найдены в БД")})
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(@PathVariable Integer id) throws BadRequestException, NotFoundException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(@PathVariable Integer id) throws BadRequestException {
         return postCommentService.getCommentsByPostID(id);
     }
 

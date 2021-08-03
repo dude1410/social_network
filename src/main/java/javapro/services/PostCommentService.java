@@ -106,17 +106,13 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException, NotFoundException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException {
 
         if (postID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
         List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
-
-        if (comments.isEmpty()) {
-            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
-        }
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
