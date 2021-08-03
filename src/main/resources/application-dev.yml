@@ -15,7 +15,7 @@ spring:
     url: jdbc:postgresql://31.40.251.201:5432/javapro
     user: javapro
     password: iddqd
-    enabled: false
+    enabled: true
     contexts: dev
     change-log: classpath:db.changelog/db.changelog-master.yml
   mail:
