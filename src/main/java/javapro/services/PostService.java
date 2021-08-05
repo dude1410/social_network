@@ -51,13 +51,19 @@ public class PostService {
         this.postToDTOMapper = postToDTOMapper;
     }
 
-    public ResponseEntity<MyWallResponse> getPostsByUser(Integer offset, Integer itemPerPage) throws NotFoundException {
+    public ResponseEntity<WallResponse> getPostsByUser(Integer personID,
+                                                       Integer offset,
+                                                       Integer itemPerPage) throws BadRequestException {
 
-        Person person = getCurrentUser();
+        if (personID == null) {
+            throw new BadRequestException(Config.STRING_NO_USER_ID);
+        }
+
+        Person person = personRepository.findPersonById(personID);
 
         if (deletedPersonRepository.findByPersonId(person.getId()).isPresent()) {
             return ResponseEntity
-                    .ok(new MyWallResponse("successfully",
+                    .ok(new WallResponse("successfully",
                             Time.getTime(),
                             0,
                             0,
@@ -78,7 +84,7 @@ public class PostService {
         postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
 
         return ResponseEntity
-                .ok(new MyWallResponse("successfully",
+                .ok(new WallResponse("successfully",
                         Time.getTime(),
                         (int) postList.getTotalElements(),
                         offset,

@@ -1,0 +1,56 @@
+"id","is_blocked","post_text","time","title","author_id","is_deleted"
+"200","false","Работает Liquibase так: программист записывает все SQL-изменения базы данных в специальном Liquibase-формате (xml, yaml, json, sql – на выбор). А библиотека Liquibase (у нас это  maven-зависимость) запускает эти изменения. При этом Liquibase отслеживает саму себя – какие скрипты она уже запускала, а какие еще нет. Для этого она создает в нашей базе две служебные таблицы, в которых хранятся идентификаторы скриптов с датой запуска и т.п.  И при запуске Spring Boot приложения Liquibase  сама решает, какие скрипты выполнять, а какие нет.","2021-06-21T10:42:23","Как работает Liquibase","126","false"
+"201","false","Это можно сделать с помощью maven-плагина, но мы рассмотрим, как сгенерировать файл со скриптами (у нас он будет называться master.yaml) из командной строки. Для этого нужно установить на компьютер Liquibase.","2021-07-21T10:42:23","Перенос существующей базы данных в Liquibase-формат","123","false"
+"202","false","databaseChangeLog:
+- changeSet:
+    id: 1596784098744-1
+    author: myluc (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: animal_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: animal
+- changeSet:
+    id: 1596784098744-2
+    author: myluc (generated)
+    changes:
+    - loadData:
+        columns:
+        - column:
+            header: id
+            name: id
+            type: NUMERIC
+        - column:
+            header: name
+            name: name
+            type: STRING
+        commentLineStartsWith: #
+        encoding: UTF-8
+        file: data/animal.csv
+        quotchar: 
+        separator: ,
+        tableName: animal
+- changeSet:
+    id: 1596784098744-3
+    author: myluc (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: hibernate_sequence
+        startValue: 3","2021-07-20T10:42:23","Пример сгенерированного скрипта","124","false"
+"203","false","Теперь приложение можно запускать на новой пустой базе. (Предварительно нужно только создать саму базу с нужным именем и прописать к ней spring.datasource настройки в application.yml).
+При первом запуске Spring Boot приложения Liquibase заполнит базу, а также создаст две служебные таблицы Liquibase. В них сохранится сам факт запуска скриптов с данными идентификаторами. Поэтому при втором запуске Spring Boot приложения на этой базе Liquibase не будет повторно выполнять скрипты.","2021-07-10T10:42:23","Запуск Spring Boot приложения","123","false"

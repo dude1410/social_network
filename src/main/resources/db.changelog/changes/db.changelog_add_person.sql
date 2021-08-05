@@ -1,4 +1,7 @@
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
+(1, 'User', 'Deleted', '2021-06-21 10:40:23' , 'ud@ud.com', '$2y$12$M87fse/9tCoK0Qk.GjRKFeLZBw111bjRqxoAUJuddZuL6u.EnA3wC', 'true', 'ALL', '2021-06-21 10:40:23' , 'true', '0');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
 (108, 'Owen', 'Ugo', '2021-06-21 10:40:23', 'ougo0@mac.com', '$2y$12$v5spPzqiYnsYwd/0UFqILuPJJQhEbYoAFaOpCK7ceUnD49AbMY/3e', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
@@ -42,3 +45,18 @@ insert into person (id, first_name, last_name, reg_date, e_mail, password, is_ap
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
 (122, 'Арнольд', 'Терминатор', '2021-06-21 10:40:23', 'arni@tinyurl.com', '$2y$12$srrgvQjGI7FwcZILsLNvkuR1bIpCVmDJbZtqFcF0yD0/90D9mA/Ki', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(123, 'Антон', 'Иванов', '2021-06-10 10:40:23', 'anton-van@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 111, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(124, 'Ольга', 'Ананасова', '2021-07-10 10:40:23', 'olga-ana@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 143, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(125, 'Степан', 'Михайлов', '2021-05-10 10:40:23', 'stepan-mih@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 145, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(126, 'Аня', 'Пак', '2021-09-10 10:40:23', 'ania-pak@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 180, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(127, 'Роза', 'Сябитова', '2021-10-10 10:40:23', 'roza-badass@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');

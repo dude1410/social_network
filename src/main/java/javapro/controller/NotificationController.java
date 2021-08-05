@@ -28,12 +28,22 @@ public class NotificationController {
 
     @GetMapping("/api/v1/account/notifications")
     public ResponseEntity<Response> getAccountNotification() throws NotFoundException, AuthenticationException {
-        return notificationService.getAccountNotification();
+        return notificationService.getAccountNotificationSetup();
     }
 
     @PutMapping("/api/v1/account/notifications")
     public ResponseEntity<Response<MessageDTO>> setAccountNotification(@RequestBody NotificationSetupRequest request) throws AuthenticationException, NotFoundException {
         return notificationService.setAccountNotification(request);
+    }
+
+    @DeleteMapping("/api/v1/notifications/{id}")
+    public ResponseEntity<PlatformResponse<Object>> readNotifications (@PathVariable("id") Integer id ){
+    return notificationService.readNotifications(id);
+    }
+
+    @DeleteMapping("/api/v1/notifications")
+    public ResponseEntity<PlatformResponse<Object>> readAllNotifications (){
+        return notificationService.readAllNotifications();
     }
 
 }

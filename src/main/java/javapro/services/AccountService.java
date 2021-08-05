@@ -9,6 +9,7 @@ import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
 import javapro.model.Person;
 import javapro.model.Token;
+import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.TokenRepository;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ public class AccountService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
     private final String passRecoveryMessageTemplate;
+    private final DeletedPersonRepository deletedPersonRepository;
     private final Logger logger;
     @Value("${spring.mail.address}")
     private String address;
@@ -37,20 +39,26 @@ public class AccountService {
                           TokenService tokenService, PersonRepository personRepository,
                           TokenRepository tokenRepository, PasswordEncoder passwordEncoder,
                           @Qualifier("passRecoveryLogger") Logger logger,
-                          @Qualifier("PassRecoveryTemplateMessage") String passRecoveryMessageTemplate) {
+                          @Qualifier("PassRecoveryTemplateMessage") String passRecoveryMessageTemplate,
+                          DeletedPersonRepository deletedPersonRepository) {
         this.emailService = emailService;
         this.tokenService = tokenService;
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.logger = logger;
         this.passRecoveryMessageTemplate = passRecoveryMessageTemplate;
+        this.deletedPersonRepository = deletedPersonRepository;
     }
 
     public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException, NotFoundException {
         Person person = personRepository.findByEmail(email);
+
         if (person == null) {
             logger.error(String.format("Ошибка при восстановлении пароля. Пользователь с введенным email не найден. Email: %s", email));
             throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
+        }
+        if (deletedPersonRepository.findPerson(person.getId()) != null){
+            throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
         }
         Token newToken = tokenService.setNewPersonToken(person);
         emailService.sendMail("Recovery password in social network",

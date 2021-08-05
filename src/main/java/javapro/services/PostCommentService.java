@@ -106,17 +106,13 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException, NotFoundException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException {
 
         if (postID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
         List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
-
-        if (comments.isEmpty()) {
-            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
-        }
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
@@ -355,26 +351,28 @@ public class PostCommentService {
     private void createNotificationEntity(Integer id, Person person) throws NotFoundException {
 //      create new notification_entity
         var postComment = commentRepository.findCommentByID(id);
-        NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setPerson(person);
-        if (postComment.getParentComment() != null) {
-            notificationEntity.setPostComment(postComment);
-        }
-        notificationEntity.setPost(postRepository.findPostByID(postComment.getPost().getId()));
-        var notificationEnt = notificationEntityRepository.save(notificationEntity);
-        ArrayList<Notification> postCommentArrayList = new ArrayList<>();
-        var notification = new Notification();
-        notification.setSentTime((Timestamp) postComment.getTime());
-        notification.setEntity(notificationEnt);
-        if (postComment.getParentComment() != null) {
-            notification.setNotificationType(NotificationType.COMMENT_COMMENT);
-            var parentComment = commentRepository.findCommentByID(postComment.getParentComment().getId());
-            notification.setPerson(personRepository.findPersonById(parentComment.getAuthor().getId()));
+        if (!postComment.getPost().getAuthor().getId().equals(person.getId())) {
+            NotificationEntity notificationEntity = new NotificationEntity();
+            notificationEntity.setPerson(person);
+            if (postComment.getParentComment() != null) {
+                notificationEntity.setPostComment(postComment);
+            }
+            notificationEntity.setPost(postRepository.findPostByID(postComment.getPost().getId()));
+            var notificationEnt = notificationEntityRepository.save(notificationEntity);
+            ArrayList<Notification> postCommentArrayList = new ArrayList<>();
+            var notification = new Notification();
+            notification.setSentTime((Timestamp) postComment.getTime());
+            notification.setEntity(notificationEnt);
+            if (postComment.getParentComment() != null) {
+                notification.setNotificationType(NotificationType.COMMENT_COMMENT);
+                var parentComment = commentRepository.findCommentByID(postComment.getParentComment().getId());
+                notification.setPerson(personRepository.findPersonById(parentComment.getAuthor().getId()));
+                postCommentArrayList.add(notification);
+            }
+            notification.setNotificationType(NotificationType.POST_COMMENT);
+            notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
             postCommentArrayList.add(notification);
+            notificationRepository.saveAll(postCommentArrayList);
         }
-        notification.setNotificationType(NotificationType.POST_COMMENT);
-        notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
-        postCommentArrayList.add(notification);
-        notificationRepository.saveAll(postCommentArrayList);
     }
 }

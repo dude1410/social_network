@@ -4,6 +4,7 @@ import javapro.model.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     @Query("select n " +
             "from Notification n " +
             "left join NotificationEntity ne ON ne.id = n.entity.id " +
-            "where ne.id <> :id ")
+            "where n.person.id = :id ")
     Page<Notification> findAllByPersonId(Pageable pageable, @Param("id") Integer id);
+
+    @Modifying
+    @Query("delete " +
+            "from Notification n " +
+            "where n.person.id = :personId")
+    void deleteAll(@Param("personId") Integer personId);
 }
