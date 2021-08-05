@@ -2,15 +2,19 @@ package javapro.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javapro.api.response.AllPersonDialogsResponse;
-import javapro.api.response.DialogMessagesResponse;
-import javapro.api.response.UnreadedCountResponse;
+import javapro.api.request.AddMessageInDialogRequest;
+import javapro.api.request.CreateDialogRequest;
+import javapro.api.request.MailSupportRequest;
+import javapro.api.response.*;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
+import javapro.config.exception.ValidationException;
 import javapro.services.DialogsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -34,6 +38,15 @@ public class DialogsController {
         return dialogsService.getAllPersonDialogs(principal.getName(), offset, itemPerPage);
     }
 
+    @PostMapping(value = "/api/v1/dialogs")
+    @Operation(description = "Создать диалог")
+    public ResponseEntity<CreateDialogResponse> addMessageInDialog(@Valid @RequestBody CreateDialogRequest createDialogRequest, Principal principal, Errors errors) throws BadRequestException, ValidationException {
+        if (errors.hasErrors()) {
+            throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
+        }
+        return dialogsService.createDialog(createDialogRequest, principal.getName());
+    }
+
     @GetMapping(value = "/api/v1/dialogs/{id}/messages")
     @Operation(description = "Получение сообщений в диалоге")
     public ResponseEntity<DialogMessagesResponse> getMessagesFromDialogs(@PathVariable Integer id,
@@ -43,11 +56,21 @@ public class DialogsController {
     }
 
     @GetMapping(value = "/api/v1/dialogs/unreaded")
-    @Operation(description = "Получение сообщений в диалоге")
+    @Operation(description = "Получение количества непрочитанных сообщений в диалоге")
     public ResponseEntity<UnreadedCountResponse> getMessagesFromDialogs(Principal principal) throws BadRequestException {
         if (principal == null) {
             throw new BadRequestException(Config.STRING_AUTH_ERROR);
         }
         return dialogsService.getUnreadCount(principal.getName());
+    }
+
+    @PostMapping(value = "/api/v1/dialogs/{id}/messages")
+    @Operation(description = "Отправка сообщения")
+    public ResponseEntity<AddDialogMessageResponse> addMessageInDialog(@PathVariable Integer id,
+                                                                       @Valid @RequestBody AddMessageInDialogRequest addMessageInDialogRequest, Principal principal, Errors errors) throws BadRequestException, ValidationException {
+        if (errors.hasErrors()) {
+            throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
+        }
+        return dialogsService.addDialogMessage(id, addMessageInDialogRequest.getMessage(), principal.getName());
     }
 }
