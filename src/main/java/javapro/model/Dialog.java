@@ -21,4 +21,9 @@ public class Dialog {
     @OneToMany(mappedBy = "dialog")
     private List<DialogMessage> dialogMessageList;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "dialog2person",
+            joinColumns = {@JoinColumn(name = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "person_id")})
+    private List<Person> personInDialog;
 }

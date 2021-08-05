@@ -1,12 +1,13 @@
 package javapro.services;
 
+import javapro.api.request.CreateDialogRequest;
 import javapro.api.response.*;
 import javapro.config.exception.BadRequestException;
-import javapro.model.Dialog;
-import javapro.model.DialogMessage;
-import javapro.model.Person;
+import javapro.model.*;
 import javapro.model.dto.DialogMessageDTO;
 import javapro.model.enums.ReadStatus;
+import javapro.repository.Dialog2PersonRepository;
+import javapro.repository.DialogMessageRepository;
 import javapro.repository.DialogRepository;
 import javapro.repository.PersonRepository;
 import javapro.util.Time;
@@ -15,10 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +25,14 @@ public class DialogsService {
 
     private final DialogRepository dialogRepository;
     private final PersonRepository personRepository;
+    private final DialogMessageRepository dialogMessageRepository;
+    private final Dialog2PersonRepository dialog2PersonRepository;
 
-    public DialogsService(DialogRepository dialogRepository, PersonRepository personRepository) {
+    public DialogsService(DialogRepository dialogRepository, PersonRepository personRepository, DialogMessageRepository dialogMessageRepository, Dialog2PersonRepository dialog2PersonRepository) {
         this.dialogRepository = dialogRepository;
         this.personRepository = personRepository;
+        this.dialogMessageRepository = dialogMessageRepository;
+        this.dialog2PersonRepository = dialog2PersonRepository;
     }
 
     public ResponseEntity<AllPersonDialogsResponse> getAllPersonDialogs(String personEmail, Integer offset, Integer perPage) {
@@ -75,11 +78,53 @@ public class DialogsService {
         return new ResponseEntity<>(unreadedCountResponse, HttpStatus.OK);
     }
 
+    public ResponseEntity<AddDialogMessageResponse> addDialogMessage(Integer id, String message, String authorEmail) throws BadRequestException {
+        Person author = personRepository.findByEmail(authorEmail);
+        Dialog dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
+        DialogMessage newMessage = new DialogMessage();
+        Person recipient = dialog.getPersonInDialog().stream()
+                                                     .filter(p -> !p.getId().equals(author.getId()))
+                                                     .findFirst().orElseThrow(() -> new BadRequestException("dialog not found"));
+        newMessage.setTime(new Date());
+        newMessage.setDialog(dialog);
+        newMessage.setAuthorId(author);
+        newMessage.setRecipientId(recipient);
+        newMessage.setMessageText(message);
+        newMessage.setReadStatus(ReadStatus.SENT);
+        dialogMessageRepository.save(newMessage);
+        return new ResponseEntity<>(prepareAddDialogMessageResponse(author, recipient, newMessage), HttpStatus.OK);
+    }
+
+    public ResponseEntity<CreateDialogResponse> createDialog(CreateDialogRequest createDialogRequest, String currentUserEmail){
+        Person currentPerson = personRepository.findByEmail(currentUserEmail);
+        Person addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
+        Dialog dialog = new Dialog();
+        DialogPersonPK dialogPersonPK = new DialogPersonPK();
+        dialogPersonPK.setDialog(dialog);
+        dialogPersonPK.setPerson(currentPerson);
+        DialogPersonPK dialogPersonPK1 = new DialogPersonPK();
+        dialogPersonPK.setDialog(dialog);
+        dialogPersonPK.setPerson(addingPerson);
+        Dialog2person dialog2person = new Dialog2person();
+        dialog2person.setId(dialogPersonPK);
+        Dialog2person dialog2person1 = new Dialog2person();
+        dialog2person1.setId(dialogPersonPK1);
+        dialog2PersonRepository.save(dialog2person);
+        dialog2PersonRepository.save(dialog2person1);
+        dialogRepository.save(dialog);
+        CreateDialogResponse createDialogResponse = new CreateDialogResponse();
+        createDialogResponse.setError("string");
+        createDialogResponse.setTimestamp(Time.getTime());
+        createDialogResponse.setData(new CreateDialogData(dialog.getId()));
+        return new ResponseEntity<>(createDialogResponse, HttpStatus.OK);
+    }
+
     private Integer getUnreadCountMessageInDialog(Dialog dialog, Integer personId){
         return (int) dialog.getDialogMessageList().stream()
                                      .filter(dialogMessage -> ((!dialogMessage.getAuthorId().getId().equals(personId)) && (dialogMessage.getReadStatus() != ReadStatus.READ)))
                                      .count();
     }
+
 
     private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
                                                                     Integer total, Integer offset, Integer perPage){
@@ -143,5 +188,20 @@ public class DialogsService {
                     dialogMessage.getReadStatus()));
         }
         return dialogMessageDataList;
+    }
+
+    private AddDialogMessageResponse prepareAddDialogMessageResponse(Person author, Person recipient, DialogMessage newMessage){
+        AddDialogMessageResponse addDialogMessageResponse = new AddDialogMessageResponse();
+        AddDialogMessageData addDialogMessageData= new AddDialogMessageData();
+        addDialogMessageData.setId(newMessage.getId());
+        addDialogMessageData.setTime(newMessage.getTime().getTime());
+        addDialogMessageData.setAuthorId(author.getId());
+        addDialogMessageData.setRecipientId(recipient.getId());
+        addDialogMessageData.setMessageText(newMessage.getMessageText());
+        addDialogMessageData.setReadStatus(newMessage.getReadStatus());
+        addDialogMessageResponse.setError("string");
+        addDialogMessageResponse.setTimestamp(Time.getTime());
+        addDialogMessageResponse.setData(addDialogMessageData);
+        return addDialogMessageResponse;
     }
 }
