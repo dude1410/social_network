@@ -51,8 +51,7 @@ public class TestSuiteChangeEmailInUserProfile {
     private By logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
     @Test
-    public void changeEmailToValid()
-    {
+    public void changeEmailToValid() throws InterruptedException {
         //arrange
         var email = "zerone115@mail.ru";
         var password = "Zerone115";
@@ -64,7 +63,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
+        Thread.sleep(5000);
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
@@ -124,9 +123,9 @@ public class TestSuiteChangeEmailInUserProfile {
     public void changeEmailToInvalid()
     {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
-        var newEmail = "zerone0114@mail";
+        var email = "zerone0115@mail.ru";
+        var password = "Zerone115";
+        var newEmail = "zerone115@mail";
         var expectedResult = "Введите корректный E-mail";
 
         //act
@@ -152,11 +151,10 @@ public class TestSuiteChangeEmailInUserProfile {
     }
 
     @Test
-    public void changeEmailToRegistered()
-    {
+    public void changeEmailToRegistered() throws InterruptedException {
         //arrange
-        var email = "zerone114@mail.ru";
-        var password = "Zerone114";
+        var email = "zerone0115@mail.ru";
+        var password = "Zerone115";
         var newEmail = "zerone201@mail";
         var errorMessage = By.cssSelector(".v-snack__content");
         var expectedResult = "Пользователь с таким Email уже зарегистрирован";
@@ -165,7 +163,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
+        Thread.sleep(10000);
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
