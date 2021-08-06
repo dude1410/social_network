@@ -56,7 +56,7 @@ public class FriendsService {
                                                       Long itemPerPage) throws AuthenticationException,
             NotFoundException {
 
-        int userId = checkPersonByEmail();
+        int userId = checkPersonByEmail().getId();
         List<Person> allFriends;
         if (name == null) {
             allFriends = personRepository.findAllFriends(userId);
@@ -90,7 +90,7 @@ public class FriendsService {
             NotFoundException,
             BadRequestException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
         checkPersonById(id);
 
         Friendship friendship = friendshipRepository.findFriendshipByUsers(userId, id);
@@ -112,7 +112,7 @@ public class FriendsService {
             NotFoundException,
             BadRequestException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
         checkPersonById(id);
 
         Friendship friendshipInDB = friendshipRepository.findFriendshipRequest(userId, id);
@@ -129,16 +129,16 @@ public class FriendsService {
     }
 
 
-    private Integer checkPersonByEmail() throws AuthenticationException, NotFoundException {
+    private Person checkPersonByEmail() throws AuthenticationException, NotFoundException {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (userEmail == null) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
-        Integer userId = personRepository.findUserIdByEmail(userEmail).getId();
-        if (userId == null) {
+        Person person = personRepository.findUserIdByEmail(userEmail);
+        if (person == null) {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
-        return userId;
+        return person;
     }
 
     private void checkPersonById(Integer id) throws BadRequestException,
@@ -157,7 +157,7 @@ public class FriendsService {
                                                           Long itemPerPage)
             throws AuthenticationException, NotFoundException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
         if (offset == null) {
             offset = 0L;
         }
@@ -202,7 +202,7 @@ public class FriendsService {
     public ResponseEntity<IsFriendResponse> checkFriendStatus(IsFriendRequest request)
             throws AuthenticationException, NotFoundException, BadRequestException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
 
         List<Integer> idsToCheck = request.getUserIds();
 
@@ -234,7 +234,7 @@ public class FriendsService {
     public ResponseEntity<FriendsResponse> getRecommendations(Long offset, Long itemPerPage)
             throws AuthenticationException, NotFoundException, BadRequestException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
 
         if (offset == null) {
             offset = 0L;
@@ -267,7 +267,7 @@ public class FriendsService {
     public ResponseEntity<OkResponse> sendRequest(Integer id)
             throws BadRequestException, NotFoundException, AuthenticationException {
 
-        Integer userId = checkPersonByEmail();
+        Integer userId = checkPersonByEmail().getId();
         checkPersonById(id);
 
         var authorN = personRepository.findByEmail(SecurityContextHolder
