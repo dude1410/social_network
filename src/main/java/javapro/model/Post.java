@@ -50,7 +50,9 @@ public class Post implements Serializable {
     private List<PostComment> postCommentList = new ArrayList<>();
 
     public List<PostComment> getPostCommentList() {
-        Collections.sort(postCommentList);
+        if(postCommentList != null){
+            Collections.sort(postCommentList);
+        }
         return postCommentList;
     }
 }
