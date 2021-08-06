@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
@@ -18,7 +20,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     @Query("select n " +
             "from Notification n " +
             "left join NotificationEntity ne ON ne.id = n.entity.id " +
-            "where n.person.id = :id ")
+            "where n.person.id = :id " +
+            "and n.sentTime <= CURRENT_TIMESTAMP ")
     Page<Notification> findAllByPersonId(Pageable pageable, @Param("id") Integer id);
 
     @Modifying
@@ -26,4 +29,16 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
             "from Notification n " +
             "where n.person.id = :personId")
     void deleteAll(@Param("personId") Integer personId);
+
+    @Query("select n " +
+            "from Notification n " +
+            "left join NotificationEntity ne ON ne.id = n.entity.id " +
+            "where n.person.id = :id ")
+    List<Notification> findAllByPId(@Param("id") Integer id);
+
+    @Modifying
+    @Query("delete " +
+            "from Notification n " +
+            "where n.entity.person.id = :id ")
+    void deleteAllByAuthorId(@Param("id") Integer id);
 }

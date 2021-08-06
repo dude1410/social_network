@@ -14,7 +14,7 @@ insert into person (id, first_name, last_name, reg_date, e_mail, password, is_ap
 (111, 'Inger', 'Maydwell', '2021-06-21 10:40:23', 'imaydwell3@paypal.com', '$2y$12$MvTHdyseG5kTUYBrxNKJq.TbtjdKXRZd9C.9l0eLDoA2PcxNTLtyS', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
- (112, 'Iris', 'Mellor', '2021-06-21 10:40:23', 'imellor4@wikimedia.org', '$2y$12$M4VhznNTlM8ukEzRY.FAzeFWETWdl2DyXNqAdlTJvE77HALMJ/Gz6', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
+(112, 'Iris', 'Mellor', '2021-06-21 10:40:23', 'imellor4@wikimedia.org', '$2y$12$M4VhznNTlM8ukEzRY.FAzeFWETWdl2DyXNqAdlTJvE77HALMJ/Gz6', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role) values
 (113, 'Andromache', 'Hollingby', '2021-06-21 10:40:23', 'ahollingby5@wisc.edu', '$2y$12$uZ9D5TWuTmNf3l/W19MNSOJhz1B3u3WJ8QO4bF6WsDaUWAipp6Dg.', 'true', 'ALL', '2021-06-21 10:40:23', 'false', '0');

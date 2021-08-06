@@ -2,7 +2,6 @@ package javapro.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javapro.model.enums.NotificationType;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,6 +38,9 @@ public class Notification implements Serializable {
     @OneToOne
     @JoinColumn(name = "entity_id", nullable = false, foreignKey = @ForeignKey(name = "FK_entity_id"))
     private NotificationEntity entity;
+
+
+    private String info;
 
 
 }

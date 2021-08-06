@@ -15,4 +15,5 @@ public class NotificationDTO {
     private String info;
     @JsonProperty(value = "sent_time")
     private Long sentTime;
+
 }
