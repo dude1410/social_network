@@ -72,7 +72,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
 
 
-    @Query("select p.id " +
+    @Query("select p " +
             "from Person p " +
             "where p.email = :email ")
     Person findUserIdByEmail(@Param("email") String email);
