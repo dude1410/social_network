@@ -362,7 +362,8 @@ public class PostCommentService {
             if (postComment.getParentComment() != null) {
                 notificationEntity.setPostComment(postComment);
             }
-            notificationEntity.setPost(postRepository.findPostByID(postComment.getPost().getId()));
+            var post = postRepository.findPostByID(postComment.getPost().getId());
+            notificationEntity.setPost(post);
             var notificationEnt = notificationEntityRepository.save(notificationEntity);
             ArrayList<Notification> postCommentArrayList = new ArrayList<>();
             var notification = new Notification();
@@ -376,6 +377,7 @@ public class PostCommentService {
             }
             notification.setNotificationType(NotificationType.POST_COMMENT);
             notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
+            notification.setInfo(post.getTitle());
             postCommentArrayList.add(notification);
             notificationRepository.saveAll(postCommentArrayList);
         }

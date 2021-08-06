@@ -314,6 +314,7 @@ public class PostService {
                 notification.setNotificationType(NotificationType.POST);
                 notification.setEntity(notificationEnt);
                 notification.setPerson(element);
+                notification.setInfo(post.getTitle());
                 notificationList.add(notification);
             }
             notificationRepository.saveAll(notificationList);

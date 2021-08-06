@@ -96,6 +96,9 @@
             <column name="notification_type" type="CHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="info" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="eyese (generated)" id="1624711365172-5">
