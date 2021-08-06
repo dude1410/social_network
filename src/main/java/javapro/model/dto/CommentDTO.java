@@ -7,7 +7,7 @@ import lombok.Data;
 public class CommentDTO {
 
     @JsonProperty(value = "parent_id")
-    private Integer parentComment;
+    private Integer parentCommentID;
 
     @JsonProperty(value = "comment_text")
     private String commentText;

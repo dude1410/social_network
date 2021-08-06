@@ -107,8 +107,14 @@ public class PostController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Комментарии получены успешно"),
             @ApiResponse(responseCode = "400", description = "id поста не задан"),
             @ApiResponse(responseCode = "404", description = "Комменты не найдены в БД")})
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(@PathVariable Integer id) throws BadRequestException {
-        return postCommentService.getCommentsByPostID(id);
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(@PathVariable Integer id,
+                                                                @RequestParam(value = "offset",
+                                                                        required = false,
+                                                                        defaultValue = "0") Integer offset,
+                                                                @RequestParam(value = "itemPerPage",
+                                                                        required = false,
+                                                                        defaultValue = "20") Integer itemPerPage) throws BadRequestException {
+        return postCommentService.getCommentsByPostID(id, offset, itemPerPage);
     }
 
     @PutMapping(value = "/api/v1/post/{id}/comments/{comment_id}")

@@ -13,6 +13,9 @@ import javapro.repository.*;
 import javapro.util.CommentToDTOMapper;
 import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -106,13 +109,15 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID, Integer offset, Integer itemPerPage) throws BadRequestException {
 
         if (postID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+
+        Page<PostComment> comments = commentRepository.findCommentsByPostID(postID, pageable);
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
@@ -123,9 +128,9 @@ public class PostCommentService {
         return ResponseEntity
                 .ok(new CommentsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) comments.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         commentDTOs
                 ));
     }
