@@ -20,8 +20,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     @Query("select n " +
             "from Notification n " +
             "left join NotificationEntity ne ON ne.id = n.entity.id " +
-            "where n.person.id = :id " +
-            "and n.sentTime <= CURRENT_TIMESTAMP ")
+            "where n.person.id = :id ")
     Page<Notification> findAllByPersonId(Pageable pageable, @Param("id") Integer id);
 
     @Modifying
