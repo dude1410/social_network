@@ -113,7 +113,7 @@ public class SearchService {
             String town,
             Integer offset,
             Integer itemPerPage
-    ) throws UnAuthorizedException, BadRequestException {
+    ) throws UnAuthorizedException {
 
         checkAuthentication();
 
