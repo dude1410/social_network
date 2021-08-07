@@ -48,8 +48,7 @@ public class SearchController {
                                                      @RequestParam(value = "country", defaultValue = "") String country,
                                                      @RequestParam(value = "city", defaultValue = "") String town,
                                                      @RequestParam(defaultValue = "0") Integer offset,
-                                                     @RequestParam(defaultValue = "20") Integer itemPerPage) throws BadRequestException,
-            UnAuthorizedException {
+                                                     @RequestParam(defaultValue = "20") Integer itemPerPage) throws UnAuthorizedException {
 
         return searchService.searchPeopleByProperties(firstName, lastName, ageFrom, ageTo, country, town, offset, itemPerPage);
     }
