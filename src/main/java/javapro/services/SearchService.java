@@ -54,56 +54,6 @@ public class SearchService {
         this.postToDTOMapper = postToDTOMapper;
     }
 
-    public ResponseEntity<PersonsResponse> searchPeopleGeneral(String searchText,
-                                                               Integer offset,
-                                                               Integer itemPerPage) {
-
-        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<PersonView> personFound = personViewRepository.searchPersonBy(searchText, pageable);
-
-        List<Person> personList = new ArrayList<>();
-
-        personFound.forEach(personView -> {
-            try {
-                personList.add(viewToPerson(personView));
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        });
-
-        List<AuthorizedPerson> personDTOS = new ArrayList<>();
-
-        personList.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
-
-        return ResponseEntity
-                .ok(new PersonsResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
-                        (int) personFound.getTotalElements(),
-                        offset,
-                        itemPerPage,
-                        personDTOS));
-    }
-
-    public ResponseEntity<PostResponse> searchPostsGeneral(String searchText,
-                                                           Integer offset,
-                                                           Integer itemPerPage) {
-
-        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<Post> postsFound = postRepository.searchPostBy(searchText, pageable);
-
-        List<PostDTO> postDTOS = new ArrayList<>();
-
-        postsFound.forEach(post -> postDTOS.add(postToDTOMapper.convertToDTO(post)));
-
-        return ResponseEntity
-                .ok(new PostResponse("successfully",
-                        new Timestamp(System.currentTimeMillis()).getTime(),
-                        (int) postsFound.getTotalElements(),
-                        offset,
-                        itemPerPage,
-                        postDTOS));
-    }
-
     public ResponseEntity<PersonsResponse> searchPeopleByProperties(
             String firstName,
             String lastName,
