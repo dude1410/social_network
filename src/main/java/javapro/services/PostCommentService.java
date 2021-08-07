@@ -13,6 +13,9 @@ import javapro.repository.*;
 import javapro.util.CommentToDTOMapper;
 import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -106,13 +109,15 @@ public class PostCommentService {
                 ));
     }
 
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID, Integer offset, Integer itemPerPage) throws BadRequestException {
 
         if (postID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+
+        Page<PostComment> comments = commentRepository.findCommentsByPostID(postID, pageable);
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
@@ -123,9 +128,9 @@ public class PostCommentService {
         return ResponseEntity
                 .ok(new CommentsResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) comments.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         commentDTOs
                 ));
     }
@@ -357,7 +362,8 @@ public class PostCommentService {
             if (postComment.getParentComment() != null) {
                 notificationEntity.setPostComment(postComment);
             }
-            notificationEntity.setPost(postRepository.findPostByID(postComment.getPost().getId()));
+            var post = postRepository.findPostByID(postComment.getPost().getId());
+            notificationEntity.setPost(post);
             var notificationEnt = notificationEntityRepository.save(notificationEntity);
             ArrayList<Notification> postCommentArrayList = new ArrayList<>();
             var notification = new Notification();
@@ -371,6 +377,7 @@ public class PostCommentService {
             }
             notification.setNotificationType(NotificationType.POST_COMMENT);
             notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
+            notification.setInfo(post.getTitle());
             postCommentArrayList.add(notification);
             notificationRepository.saveAll(postCommentArrayList);
         }

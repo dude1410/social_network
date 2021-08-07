@@ -36,7 +36,7 @@
         commentLineStartsWith: #
         encoding: UTF-8
         file: data/animal.csv
-        quotchar: 
+        quotchar:
         separator: ,
         tableName: animal
 - changeSet:

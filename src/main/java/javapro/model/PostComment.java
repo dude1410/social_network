@@ -3,7 +3,7 @@ package javapro.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,12 +11,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "post_comment")
-public class PostComment implements Serializable {
+public class PostComment implements Serializable, Comparable<PostComment>  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,5 +50,14 @@ public class PostComment implements Serializable {
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private List<PostLike> commentLikeList;
+
+    @Override
+    public int compareTo(PostComment comment) {
+        return comment.getTime().compareTo(this.getTime());
+    }
 
 }

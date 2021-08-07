@@ -1,6 +1,7 @@
 package javapro.config;
 
 public class Config {
+    public static final String TIME_ZONE = "Europe/Moscow";
     public static final String STRING_FIELD_CANT_BE_BLANK = "Поле не может быть пустым.";
     public static final String STRING_AUTH_INVALID_EMAIL = "Адрес указан неверно.";
     public static final String STRING_AUTH_SHORT_PASSWORD = "Слишком короткий пароль.";

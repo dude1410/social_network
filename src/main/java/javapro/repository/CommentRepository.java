@@ -1,6 +1,8 @@
 package javapro.repository;
 
 import javapro.model.PostComment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +21,7 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
             "AND pc.isDeleted = false " +
             "AND pc.isBlocked = false " +
             "ORDER BY pc.time DESC")
-    List<PostComment> findCommentsByPostID(int postID);
+    Page<PostComment> findCommentsByPostID(int postID, Pageable pageable);
 
     @Query("SELECT " +
             "pc " +

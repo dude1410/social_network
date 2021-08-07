@@ -27,18 +27,4 @@
      LEFT JOIN town t ON ((p.town_id = t.id)))
   WHERE ((p.is_blocked = false) AND (p.is_approved = true));</createView>
     </changeSet>
-    <changeSet author="eyese (generated)" id="1625228846879-30">
-        <createView fullDefinition="false" viewName="vi_feed_comments">SELECT com.id,
-            com.comment_text,
-            com.is_blocked,
-            com."time",
-            com.author_id,
-            com.parent_id,
-            com.post_id,
-            count(pl.id) AS likes
-            FROM (post_comment com
-            LEFT JOIN post_like pl ON ((com.id = pl.comment_id)))
-            WHERE ((com.is_deleted = false) AND (com.is_blocked = false))
-            GROUP BY com.id, com.comment_text, com.is_blocked, com."time", com.author_id, com.parent_id, com.post_id;</createView>
-    </changeSet>
 </databaseChangeLog>

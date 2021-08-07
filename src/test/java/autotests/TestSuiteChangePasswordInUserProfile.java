@@ -54,8 +54,8 @@ public class TestSuiteChangePasswordInUserProfile {
     public void changePasswordToValid() throws InterruptedException {
         //arrange
         var email = "zerone116@mail.ru";
-        var password = "Zerone116";
-        var newPassword = "Zerone1166";
+        var password = "Zerone1166";
+        var newPassword = "Zerone116";
         var expectedResultMessage = "Пароль успешно изменён. Авторизуйтесь с новым паролем";
         var expectedResultTitle = " Моя страница";
 
@@ -63,7 +63,7 @@ public class TestSuiteChangePasswordInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
+        Thread.sleep(5000);
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
@@ -117,5 +117,31 @@ public class TestSuiteChangePasswordInUserProfile {
         Assert.assertEquals("Пароль сменился", expectedResult, actualResultEmailFieldError);
         var actualResultRepeatEmailFieldError = driver.findElement(By.xpath("(//*[@class='form__error'])[2]")).getText();
         Assert.assertEquals("Пароль сменился", expectedResult, actualResultRepeatEmailFieldError);
+    }
+
+    @Test
+    public void changePasswordToAnInappropriate() {
+        //arrange
+        var email = "zerone116@mail.ru";
+        var password = "Zerone116";
+        var newPassword = "zerone116";
+        var expectedResult = "Пароль должен состоять из латинских букв, цифр и знаков. Обязательно содержать одну заглавную букву, одну цифру и состоять из 8 символов.";
+
+        //act
+        driver.findElement(emailField).sendKeys(email);
+        driver.findElement(passwordField).sendKeys(password);
+        driver.findElement(loginButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
+        driver.findElement(profileLink).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
+        driver.findElement(editProfileButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(safety));
+        driver.findElement(safety).click();
+        driver.findElement(changeButtonInSafety).click();
+        driver.findElement(passwordFieldInChangeForm).sendKeys(newPassword);
+
+        //assert
+        var actualResult = driver.findElement(By.cssSelector(".form__password-info")).getText();
+        Assert.assertEquals("Не отображается сообщение о требованиях к паролю", expectedResult, actualResult);
     }
 }

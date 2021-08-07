@@ -6,19 +6,14 @@ import javapro.api.response.Response;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.NotFoundException;
-import javapro.model.Notification;
-import javapro.model.NotificationSetup;
-import javapro.model.Person;
+import javapro.model.*;
 import javapro.model.dto.EntityAuthorDTO;
 import javapro.model.dto.MessageDTO;
 import javapro.model.dto.NotificationDTO;
 import javapro.model.dto.NotificationTypeDTO;
+import javapro.model.enums.FriendshipStatus;
 import javapro.model.enums.NotificationType;
-import javapro.repository.DeletedPersonRepository;
-import javapro.repository.NotificationRepository;
-import javapro.repository.NotificationSetupRepository;
-import javapro.repository.PersonRepository;
-import javapro.util.NotificationToNotificationDTOMaper;
+import javapro.repository.*;
 import javapro.util.Time;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +21,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,16 +40,22 @@ public class NotificationService {
     private final PersonRepository personRepository;
     private final NotificationSetupRepository notificationSetupRepository;
     private final NotificationRepository notificationRepository;
-
+    private final FriendshipRepository friendshipRepository;
+    private final NotificationEntityRepository notificationEntityRepository;
+    private final DeletedPersonRepository deletedPersonRepository;
 
     public NotificationService(PersonRepository personRepository,
                                NotificationSetupRepository notificationSetupRepository,
-                               DeletedPersonRepository deletedPersonRepository,
                                NotificationRepository notificationRepository,
-                               NotificationToNotificationDTOMaper maper) {
+                               FriendshipRepository friendshipRepository,
+                               NotificationEntityRepository notificationEntityRepository,
+                               DeletedPersonRepository deletedPersonRepository) {
         this.personRepository = personRepository;
         this.notificationSetupRepository = notificationSetupRepository;
         this.notificationRepository = notificationRepository;
+        this.friendshipRepository = friendshipRepository;
+        this.notificationEntityRepository = notificationEntityRepository;
+        this.deletedPersonRepository = deletedPersonRepository;
     }
 
     public ResponseEntity<PlatformResponse<Object>> getNotification(Integer offset, Integer itemPerPage) throws AuthenticationException, NotFoundException {
@@ -78,7 +84,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<Response> getAccountNotificationSetup() throws AuthenticationException, NotFoundException {
+    public ResponseEntity<Response<Object>> getAccountNotificationSetup() throws AuthenticationException, NotFoundException {
 
         int personId;
         var person = isAuthorize();
@@ -199,15 +205,16 @@ public class NotificationService {
         var notificationSetup = notificationSetupRepository.findAllByPersonId(personId);
         HashMap<String, Boolean> setupData = new HashMap<>();
         notificationSetup.forEach(element -> setupData.put(element.getNotificationtype(), element.getEnable()));
-        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
+//        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
 
-        Pageable pageable = PageRequest.of(0, 20, Sort.by("sentTime").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("sentTime").descending());
 
         Page<Notification> entity = notificationRepository.findAllByPersonId(pageable, personId);
+//        List<Notification> entity = notificationRepository.findAllByPId(personId);
 
         ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
         entity.forEach(el -> {
-            if (el.getEntity().getPerson().getId() != personId) {
+            if (!el.getEntity().getPerson().getId().equals(personId)) {
                 if (setupData.get(el.getNotificationType().toString()).equals(true)) {
                     var notificationDTO = new NotificationDTO();
                     notificationDTO.setId(el.getId());
@@ -219,7 +226,7 @@ public class NotificationService {
                     notificationDTO.setEntityAuthor(entityAuthorDTO);
                     notificationDTO.setEventType(el.getNotificationType().toString());
                     notificationDTO.setSentTime(el.getSentTime().getTime());
-                    notificationDTO.setInfo("maperrr");
+                    notificationDTO.setInfo(el.getInfo());
                     notificationDTOArrayList.add(notificationDTO);
                 }
             }
@@ -241,5 +248,60 @@ public class NotificationService {
 
     private List<NotificationSetup> getNotificationSetup(Integer personId) {
         return notificationSetupRepository.findAllByPersonId(personId);
+    }
+
+
+    @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "0 */1 * ? * *")
+    private void addFriendsBirthdayNotification() {
+        var friendshipList = friendshipRepository.findAllByStatus(FriendshipStatus.FRIEND);
+        var today = LocalDate.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern("MM-dd"));
+
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for (Friendship element : friendshipList) {
+
+            if (element.getDstPersonId().getBirthDate() != null) {
+                var dstPersonBirthDay = element.getDstPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+                if (dstPersonBirthDay.equals(today) && !element.getDstPersonId().isBlocked()) {
+                    addNotification(element.getDstPersonId().getId(), element.getSrcPersonId().getId());
+                }
+
+
+            }
+            if (element.getSrcPersonId().getBirthDate() != null) {
+                var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+                if (srcPersonBirthDay.equals(today) && !element.getSrcPersonId().isBlocked()) {
+                    addNotification(element.getSrcPersonId().getId(), element.getDstPersonId().getId());
+                }
+
+            }
+        }
+
+    }
+
+    private void addNotification(Integer authorPerson, Integer targetPerson) {
+        var notification = new Notification();
+        var author = personRepository.findPersonById(authorPerson);
+        var target = personRepository.findPersonById(targetPerson);
+
+        if (deletedPersonRepository.findByPersonId(targetPerson).isEmpty() ||
+                deletedPersonRepository.findByPersonId(authorPerson).isEmpty()) {
+            return;
+        }
+
+        var notificationEntity = new NotificationEntity();
+        notificationEntity.setPerson(author);
+        var entity = notificationEntityRepository.save(notificationEntity);
+        notification.setEntity(entity);
+        notification.setPerson(target);
+        notification.setInfo("Не забудьте поздравить его");
+        notification.setNotificationType(NotificationType.FRIEND_BIRTHDAY);
+        notification.setSentTime(new Timestamp(Time.getTime()));
+
+        notificationRepository.save(notification);
+
+
     }
 }
