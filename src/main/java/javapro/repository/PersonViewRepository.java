@@ -18,4 +18,11 @@ public interface PersonViewRepository extends JpaRepository<PersonView, Integer>
             "AND LOWER(COALESCE(pv.townName,''))        LIKE %:town% "
     )
     Page<PersonView> findPersonsByProperties(String firstName, String lastName, Integer ageFrom, Integer ageTo, String country, String town, Pageable pageable);
+
+    @Query("SELECT " +
+            "pv " +
+            "FROM PersonView pv " +
+            "WHERE LOWER(COALESCE(pv.firstName,pv.lastName,'')) LIKE %:searchText% "
+    )
+    Page<PersonView> searchPersonBy(String searchText, Pageable pageable);
 }
