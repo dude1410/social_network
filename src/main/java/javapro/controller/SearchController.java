@@ -38,7 +38,7 @@ public class SearchController {
 
     @GetMapping(value = "/api/v1/users/search")
     @Operation(description = "Поиск пользователей")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту"),
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
     public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name", defaultValue = "") String firstName,
@@ -52,33 +52,5 @@ public class SearchController {
             UnAuthorizedException {
 
         return searchService.searchPeopleByProperties(firstName, lastName, ageFrom, ageTo, country, town, offset, itemPerPage);
-    }
-
-    //searchBarPeople
-    @GetMapping(value = "/api/v1/users/searchbar")
-    @Operation(description = "Основная строка | Поиск пользователей")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PersonsResponse> getPeopleGeneral(@RequestParam(value = "searchtext", defaultValue = "") String searchText,
-                                                            @RequestParam(defaultValue = "0", required = false) Integer offset,
-                                                            @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) throws BadRequestException,
-            UnAuthorizedException {
-
-        return searchService.searchPeopleGeneral(searchText, offset, itemPerPage);
-    }
-
-    //searchBarPosts
-    @GetMapping(value = "/api/v1/posts/searchbar")
-    @Operation(description = "Основная строка | Поиск постов")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PostResponse> getPostsGeneral(@RequestParam(value = "searchtext", defaultValue = "") String searchText,
-                                                        @RequestParam(defaultValue = "0", required = false) Integer offset,
-                                                        @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) throws BadRequestException,
-            UnAuthorizedException {
-
-        return searchService.searchPostsGeneral(searchText, offset, itemPerPage);
     }
 }

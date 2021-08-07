@@ -22,16 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND p.time BETWEEN :dateFrom AND :dateTo " +
             "ORDER BY p.time DESC "
     )
-    Page<Post> findPostsByProperties(String searchText, Date dateFrom, Date dateTo, String searchAuthor, Pageable pageable);
-
-    @Query("SELECT " +
-            "p " +
-            "FROM Post p " +
-            "WHERE p.isDeleted = false " +
-            "AND p.isBlocked = false " +
-            "AND LOWER(CONCAT(p.title, p.postText, p.author.firstName, p.author.lastName)) LIKE %:searchText% "
-    )
-    Page<Post> searchPostBy(String searchText, Pageable pageable);
+    Page<Post> findPostsByProperties(String searchText , Date dateFrom, Date dateTo, String searchAuthor, Pageable pageable);
 
     @Query("SELECT DISTINCT " +
             "p " +
