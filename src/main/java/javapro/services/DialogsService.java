@@ -80,11 +80,13 @@ public class DialogsService {
 
     public ResponseEntity<AddDialogMessageResponse> addDialogMessage(Integer id, String message, String authorEmail) throws BadRequestException {
         Person author = personRepository.findByEmail(authorEmail);
+        System.out.println("dialog id " + id);
         Dialog dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
         DialogMessage newMessage = new DialogMessage();
+        System.out.println(dialog.getPersonInDialog().get(0).getEmail() + "======" + dialog.getPersonInDialog().get(1).getEmail());
         Person recipient = dialog.getPersonInDialog().stream()
                                                      .filter(p -> !p.getId().equals(author.getId()))
-                                                     .findFirst().orElseThrow(() -> new BadRequestException("dialog not found"));
+                                                     .findFirst().orElseThrow(() -> new BadRequestException("Recipient not found"));
         newMessage.setTime(new Date());
         newMessage.setDialog(dialog);
         newMessage.setAuthorId(author);
@@ -143,6 +145,7 @@ public class DialogsService {
         dialogMessagesResponse.setTotal(total);
         dialogMessagesResponse.setOffset(offset);
         dialogMessagesResponse.setPerPage(perPage);
+        dialogMessagesResponse.setData(dialogMessageDataList);
         return dialogMessagesResponse;
     }
 
