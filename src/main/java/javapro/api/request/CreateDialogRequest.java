@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateDialogRequest {
 
-    @JsonProperty("user_ids")
+    @JsonProperty("users_ids")
     private List<Integer> usersId;
 }
