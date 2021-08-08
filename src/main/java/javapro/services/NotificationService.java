@@ -172,7 +172,9 @@ public class NotificationService {
                 .getAuthentication()
                 .getName())
                 .getId();
+        var notification = notificationRepository.findById(id);
         notificationRepository.deleteById(id);
+        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -183,7 +185,14 @@ public class NotificationService {
                 .getAuthentication()
                 .getName())
                 .getId();
+        var notification = notificationRepository.findAllByPersonId(personId);
+        ArrayList<NotificationEntity> entity = new ArrayList<>();
+        notification.forEach(el -> {
+            var notificationEntity = notificationEntityRepository.findById(el.getEntity().getId());
+            notificationEntity.ifPresent(entity::add);
+        });
         notificationRepository.deleteAll(personId);
+        notificationEntityRepository.deleteAll(entity);
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -205,13 +214,8 @@ public class NotificationService {
         var notificationSetup = notificationSetupRepository.findAllByPersonId(personId);
         HashMap<String, Boolean> setupData = new HashMap<>();
         notificationSetup.forEach(element -> setupData.put(element.getNotificationtype(), element.getEnable()));
-//        var targetPerson = personRepository.findPersonByApprovedIsTrueAAndBlockedIsFalse(personId);
-
         Pageable pageable = PageRequest.of(0, 10, Sort.by("sentTime").descending());
-
         Page<Notification> entity = notificationRepository.findAllByPersonId(pageable, personId);
-//        List<Notification> entity = notificationRepository.findAllByPId(personId);
-
         ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
         entity.forEach(el -> {
             if (!el.getEntity().getPerson().getId().equals(personId)) {
@@ -251,13 +255,12 @@ public class NotificationService {
     }
 
 
-    @Scheduled(cron = "0 0 1 * * ?")
-//    @Scheduled(cron = "0 */1 * ? * *")
+    @Scheduled(cron = "0 0 1 * * ?") // 1 раз в день в 1-00 ночи по мск
+//    @Scheduled(cron = "0 */1 * ? * *") //каждую 1 минуту
     private void addFriendsBirthdayNotification() {
+        notificationRepository.deleteAllByNotificationType(NotificationType.FRIEND_BIRTHDAY);
         var friendshipList = friendshipRepository.findAllByStatus(FriendshipStatus.FRIEND);
         var today = LocalDate.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern("MM-dd"));
-
-        ArrayList<Notification> notifications = new ArrayList<>();
         for (Friendship element : friendshipList) {
 
             if (element.getDstPersonId().getBirthDate() != null) {
@@ -272,6 +275,7 @@ public class NotificationService {
             if (element.getSrcPersonId().getBirthDate() != null) {
                 var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
                         .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+
                 if (srcPersonBirthDay.equals(today) && !element.getSrcPersonId().isBlocked()) {
                     addNotification(element.getSrcPersonId().getId(), element.getDstPersonId().getId());
                 }
@@ -286,8 +290,8 @@ public class NotificationService {
         var author = personRepository.findPersonById(authorPerson);
         var target = personRepository.findPersonById(targetPerson);
 
-        if (deletedPersonRepository.findByPersonId(targetPerson).isEmpty() ||
-                deletedPersonRepository.findByPersonId(authorPerson).isEmpty()) {
+        if (deletedPersonRepository.findByPersonId(targetPerson).isPresent() ||
+                deletedPersonRepository.findByPersonId(authorPerson).isPresent()) {
             return;
         }
 
