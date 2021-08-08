@@ -166,7 +166,7 @@ public class NotificationService {
     }
 
 
-    public ResponseEntity<PlatformResponse<Object>> readNotifications(Integer id) {
+    public ResponseEntity<PlatformResponse<Object>> readNotifications(Integer id) throws NotFoundException {
         int personId = personRepository.findByEmailForLogin(SecurityContextHolder
                 .getContext()
                 .getAuthentication()

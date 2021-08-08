@@ -13,5 +13,4 @@ public interface NotificationEntityRepository extends JpaRepository<Notification
 
     @Override
     Optional<NotificationEntity> findById(Integer integer);
-
 }
