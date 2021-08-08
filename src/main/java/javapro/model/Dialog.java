@@ -23,7 +23,7 @@ public class Dialog{
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "dialog2person",
-            joinColumns = {@JoinColumn(name = "id")},
+            joinColumns = {@JoinColumn(name = "dialog_id")},
             inverseJoinColumns = {@JoinColumn(name = "person_id")})
     private List<Person> personInDialog;
 }

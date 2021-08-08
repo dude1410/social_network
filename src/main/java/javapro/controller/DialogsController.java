@@ -71,6 +71,7 @@ public class DialogsController {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
+        System.out.println("dialog id " + id);
         return dialogsService.addDialogMessage(id, addMessageInDialogRequest.getMessage(), principal.getName());
     }
 }
