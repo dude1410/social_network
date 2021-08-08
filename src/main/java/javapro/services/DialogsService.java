@@ -83,7 +83,6 @@ public class DialogsService {
         System.out.println("dialog id " + id);
         Dialog dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
         DialogMessage newMessage = new DialogMessage();
-        System.out.println(dialog.getPersonInDialog().get(0).getEmail() + "======" + dialog.getPersonInDialog().get(1).getEmail());
         Person recipient = dialog.getPersonInDialog().stream()
                                                      .filter(p -> !p.getId().equals(author.getId()))
                                                      .findFirst().orElseThrow(() -> new BadRequestException("Recipient not found"));
