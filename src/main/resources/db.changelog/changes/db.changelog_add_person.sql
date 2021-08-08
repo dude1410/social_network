@@ -60,3 +60,15 @@ insert into person (id, first_name, last_name, reg_date, e_mail, password, is_ap
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
 (127, 'Роза', 'Сябитова', '2021-10-10 10:40:23', 'roza-badass@pepegamail.com', '$2a$12$5S6hFUTBhdO2cYylIZ3/Pu.64MdwWGEXueqxZ6sUeXStJJTtKd/f2', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(128, 'Марк', 'Цукерберг', '2021-10-10 10:40:23', 'zerone115@mail.ru', 'Zerone115', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(129, 'Павел', 'Дуров', '2021-10-10 10:40:23', 'zerone116@mail.ru', 'Zerone116', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(130, 'Илон', 'Маск', '2021-10-10 10:40:23', 'zerone117@mail.ru', 'Zerone117', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(131, 'Алексей', 'Симаков', '2021-10-10 10:40:23', 'zerone201@mail.ru', 'Zerone201', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
