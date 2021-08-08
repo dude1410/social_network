@@ -173,8 +173,8 @@ public class NotificationService {
                 .getName())
                 .getId();
         var notification = notificationRepository.findById(id);
-        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         notificationRepository.deleteById(id);
+        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         return ResponseEntity.ok(createResponse(personId));
     }
 
