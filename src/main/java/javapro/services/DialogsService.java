@@ -99,24 +99,21 @@ public class DialogsService {
         Person currentPerson = personRepository.findByEmail(currentUserEmail);
         Person addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
         Dialog dialog = new Dialog();
-        DialogPersonPK dialogPersonPK = new DialogPersonPK();
-        dialogPersonPK.setDialog(dialog);
-        dialogPersonPK.setPerson(currentPerson);
-        DialogPersonPK dialogPersonPK1 = new DialogPersonPK();
-        dialogPersonPK.setDialog(dialog);
-        dialogPersonPK.setPerson(addingPerson);
-        Dialog2person dialog2person = new Dialog2person();
-        dialog2person.setId(dialogPersonPK);
-        Dialog2person dialog2person1 = new Dialog2person();
-        dialog2person1.setId(dialogPersonPK1);
-        dialog2PersonRepository.save(dialog2person);
-        dialog2PersonRepository.save(dialog2person1);
         dialogRepository.save(dialog);
+        addInDialog2Person(dialog, currentPerson);
+        addInDialog2Person(dialog, addingPerson);
         CreateDialogResponse createDialogResponse = new CreateDialogResponse();
         createDialogResponse.setError("string");
         createDialogResponse.setTimestamp(Time.getTime());
         createDialogResponse.setData(new CreateDialogData(dialog.getId()));
         return new ResponseEntity<>(createDialogResponse, HttpStatus.OK);
+    }
+
+    private void addInDialog2Person(Dialog dialog, Person person){
+        Dialog2person dialog2person = new Dialog2person();
+        dialog2person.setDialog(dialog);
+        dialog2person.setPerson(person);
+        dialog2PersonRepository.save(dialog2person);
     }
 
     private Integer getUnreadCountMessageInDialog(Dialog dialog, Integer personId){
@@ -154,20 +151,22 @@ public class DialogsService {
         List<DialogMessage> dialogMessages;
         for (Dialog dialog : allUserDialog) {
             dialogMessages = dialog.getDialogMessageList();
-            Collections.sort(dialogMessages);
-            DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
-            RecipientData recipientData = new RecipientData();
-            recipientData.setId(lastDialogMessage.getRecipientId().getId());
-            recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
-            recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
-            recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
-            dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
-                    new DialogMessageDTO(lastDialogMessage.getId(),
-                            lastDialogMessage.getTime().getTime(),
-                            lastDialogMessage.getAuthorId().getId(),
-                            recipientData,
-                            lastDialogMessage.getMessageText(),
-                            lastDialogMessage.getReadStatus())));
+            if (dialogMessages.size() != 0) {
+                Collections.sort(dialogMessages);
+                DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
+                RecipientData recipientData = new RecipientData();
+                recipientData.setId(lastDialogMessage.getRecipientId().getId());
+                recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
+                recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
+                recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
+                dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
+                        new DialogMessageDTO(lastDialogMessage.getId(),
+                                lastDialogMessage.getTime().getTime(),
+                                lastDialogMessage.getAuthorId().getId(),
+                                recipientData,
+                                lastDialogMessage.getMessageText(),
+                                lastDialogMessage.getReadStatus())));
+            }
         }
         return dialogDataList;
     }

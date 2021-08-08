@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db.changelog/changes/db.changelog_add_friendship.sql
   - include:
       file: db.changelog/changes/db.changelog_posts_data.xml
+  - include:
+      file: db.changelog/changes/db.changelog_add_dialogs.xml

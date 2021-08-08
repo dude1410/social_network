@@ -38,6 +38,9 @@
     <!--создание таблицы свзязи пользователей с диалогами-->
     <changeSet author="karachun_maks" id="1624711365174-3">
         <createTable tableName="dialog2person">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dialog2person_pkey"/>
+            </column>
             <column name="dialog_id" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
