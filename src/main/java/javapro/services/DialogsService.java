@@ -83,7 +83,6 @@ public class DialogsService {
         System.out.println("dialog id " + id);
         Dialog dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
         DialogMessage newMessage = new DialogMessage();
-        System.out.println(dialog.getPersonInDialog().get(0).getEmail() + "======" + dialog.getPersonInDialog().get(1).getEmail());
         Person recipient = dialog.getPersonInDialog().stream()
                                                      .filter(p -> !p.getId().equals(author.getId()))
                                                      .findFirst().orElseThrow(() -> new BadRequestException("Recipient not found"));
@@ -100,15 +99,20 @@ public class DialogsService {
     public ResponseEntity<CreateDialogResponse> createDialog(CreateDialogRequest createDialogRequest, String currentUserEmail){
         Person currentPerson = personRepository.findByEmail(currentUserEmail);
         Person addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
+        List<Dialog> dialogList = currentPerson.getPersonsDialogs();
+        if (dialogList != null) {
+            for (Dialog dialog : dialogList) {
+                Dialog2person dialog2person = dialog2PersonRepository.findByDialogIdAndPersonId(dialog.getId(), addingPerson.getId());
+                if (dialog2person != null) {
+                    return new ResponseEntity<>(prepareCreateDialogResponse(dialog2person.getDialog().getId()), HttpStatus.OK);
+                }
+            }
+        }
         Dialog dialog = new Dialog();
         dialogRepository.save(dialog);
         addInDialog2Person(dialog, currentPerson);
         addInDialog2Person(dialog, addingPerson);
-        CreateDialogResponse createDialogResponse = new CreateDialogResponse();
-        createDialogResponse.setError("string");
-        createDialogResponse.setTimestamp(Time.getTime());
-        createDialogResponse.setData(new CreateDialogData(dialog.getId()));
-        return new ResponseEntity<>(createDialogResponse, HttpStatus.OK);
+        return new ResponseEntity<>(prepareCreateDialogResponse(dialog.getId()), HttpStatus.OK);
     }
 
     private void addInDialog2Person(Dialog dialog, Person person){
@@ -122,6 +126,14 @@ public class DialogsService {
         return (int) dialog.getDialogMessageList().stream()
                                      .filter(dialogMessage -> ((!dialogMessage.getAuthorId().getId().equals(personId)) && (dialogMessage.getReadStatus() != ReadStatus.READ)))
                                      .count();
+    }
+
+    private CreateDialogResponse prepareCreateDialogResponse(Integer dialogId) {
+        CreateDialogResponse createDialogResponse = new CreateDialogResponse();
+        createDialogResponse.setError("string");
+        createDialogResponse.setTimestamp(Time.getTime());
+        createDialogResponse.setData(new CreateDialogData(dialogId));
+        return createDialogResponse;
     }
 
 
