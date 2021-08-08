@@ -1,6 +1,7 @@
 package javapro.repository;
 
 import javapro.model.Notification;
+import javapro.model.enums.NotificationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +41,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
             "from Notification n " +
             "where n.entity.person.id = :id ")
     void deleteAllByAuthorId(@Param("id") Integer id);
+
+    @Modifying
+    void deleteAllByNotificationType(NotificationType notificationType);
+
+    List<Notification> findAllByPersonId(Integer personId);
 }
