@@ -55,7 +55,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")})
     @Operation(description = "Прочтение единичного уведомления пользователя")
     @DeleteMapping("/api/v1/notifications/{id}")
-    public ResponseEntity<PlatformResponse<Object>> readNotifications (@PathVariable("id") Integer id ){
+    public ResponseEntity<PlatformResponse<Object>> readNotifications (@PathVariable("id") Integer id ) throws NotFoundException {
     return notificationService.readNotifications(id);
     }
 
