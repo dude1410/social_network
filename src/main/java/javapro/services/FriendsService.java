@@ -190,8 +190,8 @@ public class FriendsService {
                 personDTOS));
     }
 
-    private List<PersonDTO> personToPersonDTO(List<Person> personList) {
-        List<PersonDTO> personDTOList = new ArrayList<>();
+    private ArrayList<PersonDTO> personToPersonDTO(List<Person> personList) {
+        ArrayList<PersonDTO> personDTOList = new ArrayList<>();
         for (Person person : personList) {
             var convertedPerson = personToPersonDTOMapper.convertToDto(person);
             personDTOList.add(convertedPerson);
@@ -230,7 +230,7 @@ public class FriendsService {
 
         return ResponseEntity.ok(new IsFriendResponse(response));
     }
-
+//    рекомендации
     public ResponseEntity<FriendsResponse> getRecommendations(Long offset, Long itemPerPage)
             throws AuthenticationException, NotFoundException, BadRequestException {
 
@@ -246,7 +246,7 @@ public class FriendsService {
         List<Person> allRecommendations = personRepository.findRecommendations(userId);
         if (allRecommendations.isEmpty()) {
             List<PersonDTO> personDTOS = new ArrayList<>();
-//            throw new BadRequestException(Config.STRING_NO_RECOMMENDATIONS);
+
             return ResponseEntity.ok(new FriendsResponse("successfully",
                     new Timestamp(System.currentTimeMillis()).getTime(),
                     (long) personDTOS.size(),
@@ -254,14 +254,29 @@ public class FriendsService {
                     itemPerPage,
                     personDTOS));
         }
-        List<PersonDTO> personDTOS = personToPersonDTO(allRecommendations);
+        ArrayList<PersonDTO> personDTOS = personToPersonDTO(allRecommendations);
+        var currentFriends = personRepository.findAllFriends(userId);
+        var size = personDTOS.size();
+        ArrayList<PersonDTO> returnPersonList = new ArrayList<>();
+        for( int i = 0; i < size; i++){
+            int n = 0;
+            var pers = personDTOS.get(i);
+            for(Person element: currentFriends){
+                if(pers.getId() == (long)element.getId()){
+                    n++;
+                }
+            }
+            if(n == 0){
+              returnPersonList.add(pers);
+            }
+        }
 
         return ResponseEntity.ok(new FriendsResponse("successfully",
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 (long) personDTOS.size(),
                 offset,
                 itemPerPage,
-                personDTOS));
+                returnPersonList));
     }
 
     public ResponseEntity<OkResponse> sendRequest(Integer id)
