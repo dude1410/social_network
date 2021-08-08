@@ -21,7 +21,7 @@ spring:
     #password: admin
     user: javapro
     password: iddqd
-    enabled: true
+    enabled: false
     contexts: dev
     change-log: classpath:db.changelog/db.changelog-master.yml
   mail:
