@@ -49,6 +49,7 @@ public class Config {
     public static final String STRING_PERSON_ISDELETED = "Пользователь удален";
     public static final String STRING_PERSON_EMPTY_FISTNAME = "Поле с именем не может быть пустым";
     public static final String STRING_PERSON_EMPTY_LASTNAME = "Поле с фамилией не может быть пустым";
+    public static final String STRING_NOTIFICATION_ISDELETED = "Уведомление отсутствует или уже удалено";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }

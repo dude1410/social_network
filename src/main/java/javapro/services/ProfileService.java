@@ -119,7 +119,7 @@ public class ProfileService {
             if (editMyProfileRequest.getBirthDate().after(new Timestamp(System.currentTimeMillis()))) {
                 throw new BadRequestException(Config.STRING_WRONG_DATA);
             }
-            person.setBirthDate(editMyProfileRequest.getBirthDate());
+            person.setBirthDate(new Timestamp(editMyProfileRequest.getBirthDate().getTime()+ 14400000L));
         }
         //country
         if (editMyProfileRequest.getCountryId() != null) {
