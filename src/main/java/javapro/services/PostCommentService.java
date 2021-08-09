@@ -376,7 +376,7 @@ public class PostCommentService {
                 postCommentArrayList.add(notification);
             }
             notification.setNotificationType(NotificationType.POST_COMMENT);
-            notification.setPerson(personRepository.findPersonById(postComment.getPost().getId()));
+            notification.setPerson(personRepository.findPersonById(postComment.getPost().getAuthor().getId()));
             notification.setInfo(post.getTitle());
             postCommentArrayList.add(notification);
             notificationRepository.saveAll(postCommentArrayList);
