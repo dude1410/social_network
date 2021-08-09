@@ -133,10 +133,7 @@ public class AuthService {
 
 //    @Scheduled(cron = "0 */1 * ? * *")
     private void deleteAllNotApprovedPerson() throws InterruptedException {
-        System.out.println("scheduling started");
-
         var time = LocalDateTime.now().minusDays(1);
-
         Instant instant =  time.toInstant(ZoneOffset.UTC);
         Date date = Date.from(instant);
         tokenRepository.deleteAllByDateBefore(date);

@@ -177,7 +177,7 @@ public class NotificationService {
              throw new NotFoundException(Config.STRING_NOTIFICATION_ISDELETED);
          }
         notificationRepository.deleteById(id);
-        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
+//        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -195,7 +195,7 @@ public class NotificationService {
             notificationEntity.ifPresent(entity::add);
         });
         notificationRepository.deleteAll(personId);
-        notificationEntityRepository.deleteAll(entity);
+//        notificationEntityRepository.deleteAll(entity);
         return ResponseEntity.ok(createResponse(personId));
     }
 
