@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,5 +22,7 @@ public class Tag implements Serializable {
     @Column(name = "tag", nullable = false)
     private String tag;
 
+    @ManyToMany(mappedBy = "postTagList")
+    List<Post> tagList = new ArrayList<>();
 
 }

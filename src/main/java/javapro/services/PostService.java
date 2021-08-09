@@ -1,8 +1,8 @@
 package javapro.services;
 
+import javapro.api.request.TagRequest;
 import javapro.model.enums.NotificationType;
 import javapro.repository.*;
-import javapro.util.PostToDTOMapper;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
 import javapro.config.Config;
@@ -11,8 +11,10 @@ import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
 import javapro.model.*;
 import javapro.model.dto.*;
+import javapro.util.PostToDtoCustomMapper;
 import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,27 +30,24 @@ import java.util.*;
 public class PostService {
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
-    private final LikeRepository likeRepository;
+
     private final DeletedPersonRepository deletedPersonRepository;
     private final NotificationEntityRepository notificationEntityRepository;
     private final NotificationRepository notificationRepository;
 
-    private final PostToDTOMapper postToDTOMapper;
+    private final PostToDtoCustomMapper postToDTOCustomMapper;
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
-                       LikeRepository likeRepository,
                        DeletedPersonRepository deletedPersonRepository,
                        NotificationEntityRepository notificationEntityRepository,
-                       NotificationRepository notificationRepository,
-                       PostToDTOMapper postToDTOMapper) {
+                       NotificationRepository notificationRepository) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
-        this.likeRepository = likeRepository;
         this.deletedPersonRepository = deletedPersonRepository;
         this.notificationEntityRepository = notificationEntityRepository;
         this.notificationRepository = notificationRepository;
-        this.postToDTOMapper = postToDTOMapper;
+        this.postToDTOCustomMapper = Mappers.getMapper(PostToDtoCustomMapper.class);
     }
 
     public ResponseEntity<WallResponse> getPostsByUser(Integer personID,
@@ -78,10 +77,7 @@ public class PostService {
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
-        postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-
-        postDTOList.forEach(PostDTO::setPostStatus);
-        postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
+        postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
                 .ok(new WallResponse("successfully",
@@ -100,10 +96,9 @@ public class PostService {
 
         Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);
 
-        var postDTOList = new ArrayList<PostDTO>();
+        List<PostDTO> postDTOList = new ArrayList<>();
 
-        postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-        postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
+        postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
                 .ok(new PostResponse("successfully",
@@ -161,13 +156,14 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
+
         post.setPostText(postDataRequest.getPost_text());
         post.setTitle(postDataRequest.getTitle());
 
+
         postRepository.save(post);
 
-        PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        postDTO.setLikes(likeRepository.getLikes(postDTO.getId()));
+        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
 
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
@@ -188,8 +184,8 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        postDTO.setLikes(likeRepository.getLikes(postDTO.getId()));
+        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
                         Time.getTime(),
@@ -213,11 +209,11 @@ public class PostService {
         post.setTitle(postDataRequest.getTitle());
         post.setBlocked(false);
         post.setAuthor(currentUser);
+        post.setDeleted(false);
 
         var newPost = postRepository.save(post);
 
-        PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        post.setDeleted(false);
+        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
 
 //      create notifications
         Runnable task = () -> {
@@ -249,11 +245,10 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-
         postRepository.save(post);
 
-        PostDTO postDTO = postToDTOMapper.convertToDTO(post);
-        postDTO.setLikes(likeRepository.getLikes(postDTO.getId()));
+        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+
         return ResponseEntity
                 .ok(new PostShortResponse("successfully",
                         Time.getTime(),
