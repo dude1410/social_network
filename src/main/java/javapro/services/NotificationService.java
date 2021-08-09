@@ -173,9 +173,6 @@ public class NotificationService {
                 .getName())
                 .getId();
         var notification = notificationRepository.findById(id);
-         if(notification.isEmpty()){
-             throw new NotFoundException(Config.STRING_NOTIFICATION_ISDELETED);
-         }
         notificationRepository.deleteById(id);
 //        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         return ResponseEntity.ok(createResponse(personId));
@@ -278,6 +275,7 @@ public class NotificationService {
             if (element.getSrcPersonId().getBirthDate() != null) {
                 var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
                         .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+
                 if (srcPersonBirthDay.equals(today) && !element.getSrcPersonId().isBlocked()) {
                     addNotification(element.getSrcPersonId().getId(), element.getDstPersonId().getId());
                 }

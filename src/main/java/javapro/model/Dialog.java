@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "dialogs")
-public class Dialog {
+public class Dialog{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
