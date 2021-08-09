@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.response.AllPersonDialogsResponse;
 import javapro.api.response.DialogMessagesResponse;
+import javapro.api.response.UnreadedCountResponse;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.services.DialogsService;
@@ -39,5 +40,14 @@ public class DialogsController {
                                                          @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                                          @RequestParam(value = "itemPerPage", required = false, defaultValue = "20") Integer itemPerPage) throws BadRequestException {
         return dialogsService.getDialogMessages(id, offset, itemPerPage);
+    }
+
+    @GetMapping(value = "/api/v1/dialogs/unreaded")
+    @Operation(description = "Получение сообщений в диалоге")
+    public ResponseEntity<UnreadedCountResponse> getMessagesFromDialogs(Principal principal) throws BadRequestException {
+        if (principal == null) {
+            throw new BadRequestException(Config.STRING_AUTH_ERROR);
+        }
+        return dialogsService.getUnreadedCount(principal.getName());
     }
 }
