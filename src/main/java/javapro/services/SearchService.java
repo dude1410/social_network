@@ -1,7 +1,6 @@
 package javapro.services;
 
 import javapro.util.PersonToDtoMapper;
-import javapro.util.PostToDTOMapper;
 import javapro.api.response.PersonsResponse;
 import javapro.api.response.PostResponse;
 import javapro.config.Config;
@@ -13,11 +12,12 @@ import javapro.model.dto.PostDTO;
 import javapro.model.Person;
 import javapro.model.PersonView;
 import javapro.model.Post;
-import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.PersonViewRepository;
 import javapro.repository.PostRepository;
+import javapro.util.PostToDtoCustomMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,23 +35,20 @@ public class SearchService {
     private final PostRepository postRepository;
     private final PersonRepository personRepository;
     private final PersonViewRepository personViewRepository;
-    private final LikeRepository likeRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
-    private final PostToDTOMapper postToDTOMapper;
+    private final PostToDtoCustomMapper postToDTOCustomMapper;
 
     public SearchService(PostRepository postRepository,
                          PersonRepository personRepository,
                          PersonViewRepository personViewRepository,
-                         LikeRepository likeRepository,
-                         PersonToDtoMapper personToDtoMapper,
-                         PostToDTOMapper postToDTOMapper) {
+                         PersonToDtoMapper personToDtoMapper) {
         this.postRepository = postRepository;
         this.personRepository = personRepository;
         this.personViewRepository = personViewRepository;
-        this.likeRepository = likeRepository;
         this.personToDtoMapper = personToDtoMapper;
-        this.postToDTOMapper = postToDTOMapper;
+
+        this.postToDTOCustomMapper = Mappers.getMapper(PostToDtoCustomMapper.class);
     }
 
     public ResponseEntity<PersonsResponse> searchPeopleGeneral(String searchText,
@@ -93,7 +90,7 @@ public class SearchService {
 
         List<PostDTO> postDTOS = new ArrayList<>();
 
-        postsFound.forEach(post -> postDTOS.add(postToDTOMapper.convertToDTO(post)));
+        postsFound.forEach(post -> postDTOS.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
                 .ok(new PostResponse("successfully",
@@ -126,7 +123,8 @@ public class SearchService {
         town = stringFix(town);
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<PersonView> personFound = personViewRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town, pageable);
+        Page<PersonView> personFound =
+                personViewRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town, pageable);
 
         List<Person> personList = new ArrayList<>();
 
@@ -174,8 +172,7 @@ public class SearchService {
 
         List<PostDTO> postDTOList = new ArrayList();
 
-        postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-        postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
+        postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
                 .ok(new PostResponse("successfully",
@@ -248,15 +245,12 @@ public class SearchService {
     }
 
     private Date dateToFix(Long dateToLong) {
-        Date dateTo = null;
 
         if (dateToLong != null) {
-            dateTo = new Timestamp(dateToLong);
+            return new Timestamp(dateToLong);
         } else {
             //верхняя граница - сейчас, т.к. посты из будущего мы не видим
-            dateTo = new Date();
+            return new Date();
         }
-
-        return dateTo;
     }
 }

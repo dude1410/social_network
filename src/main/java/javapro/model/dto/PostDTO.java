@@ -1,10 +1,9 @@
 package javapro.model.dto;
 
-import javapro.model.enums.PostStatus;
+import javapro.model.dto.auth.AuthorizedPerson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -17,7 +16,7 @@ public class PostDTO {
     private Long time;
 
     @JsonProperty(value = "author")
-    private PersonDTO author;
+    private AuthorizedPerson author;
 
     @JsonProperty(value = "title")
     private String title;
@@ -32,13 +31,12 @@ public class PostDTO {
     private Integer likes ;
 
     @JsonProperty(value = "comments")
-    private List<CommentDTO> postComment;
+    private List<CommentDTO> postComments;
 
     @JsonProperty(value = "type")
     private String postStatus;
 
-    public void setPostStatus() {
-        postStatus = (time > new Timestamp(System.currentTimeMillis()).getTime() ? PostStatus.QUEUED : PostStatus.POSTED).toString();
-    }
+    @JsonProperty(value = "tags")
+    private List<TagDTO> tags;
 
 }

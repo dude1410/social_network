@@ -49,8 +49,19 @@ public class Post implements Serializable {
     @OneToMany(mappedBy = "post")
     private List<PostComment> postCommentList = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikeList = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "post2tag",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    List<Tag> postTagList = new ArrayList<>();
+
     public List<PostComment> getPostCommentList() {
-        if(postCommentList != null){
+        if (postCommentList != null) {
             Collections.sort(postCommentList);
         }
         return postCommentList;
