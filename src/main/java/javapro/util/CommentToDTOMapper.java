@@ -5,6 +5,9 @@ import javapro.model.PostComment;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class CommentToDTOMapper {
 
@@ -19,4 +22,9 @@ public class CommentToDTOMapper {
         return modelMapper.map(comment, CommentDTO.class);
     }
 
+    public List<CommentDTO> convertToDTO(List<PostComment> comments) {
+        List<CommentDTO> commentDTOs = new ArrayList<>();
+        comments.forEach(comment -> commentDTOs.add(modelMapper.map(comment, CommentDTO.class)));
+        return commentDTOs;
+    }
 }

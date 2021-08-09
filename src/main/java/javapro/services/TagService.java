@@ -54,7 +54,7 @@ public class TagService {
 
         tagRepository.save(newTag);
 
-        TagDTO tagDTO = tagToDTOMapper.convertToDto(newTag);
+        TagDTO tagDTO = tagToDTOMapper.convertToDTO(newTag);
 
         return ResponseEntity
                 .ok(new TagResponse("successfully",
@@ -67,16 +67,12 @@ public class TagService {
                                                 Integer offset,
                                                 Integer itemPerPage) throws BadRequestException {
 
-        if (tagText.isEmpty() || tagText.isBlank()){
-            throw new BadRequestException(Config.STRING_NO_TAG_NAME);
-        }
-
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         Page<Tag> tagsList = tagRepository.findTagsByText(tagText.toLowerCase(Locale.ROOT), pageable);
 
         List<TagDTO> tagDTOs = new ArrayList<>();
 
-        tagsList.forEach(tag -> tagDTOs.add(tagToDTOMapper.convertToDto(tag)));
+        tagsList.forEach(tag -> tagDTOs.add(tagToDTOMapper.convertToDTO(tag)));
 
         return ResponseEntity
                 .ok(new TagsResponse("successfully",

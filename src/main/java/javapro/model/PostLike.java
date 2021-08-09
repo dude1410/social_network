@@ -1,5 +1,6 @@
 package javapro.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class PostLike implements Serializable {
     private Person person;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
     private Post post;
 
