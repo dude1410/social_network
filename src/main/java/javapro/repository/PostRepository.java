@@ -15,14 +15,20 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT " +
             "p " +
             "FROM Post p " +
+            "LEFT JOIN PostToTag ptt " +
+            "ON p.id = ptt.post.id " +
+            "LEFT JOIN Tag t " +
+            "ON ptt.tag.id = t.id " +
             "WHERE p.isDeleted = false " +
             "AND p.isBlocked = false " +
             "AND LOWER(CONCAT(p.title, p.postText)) LIKE %:searchText% " +
             "AND LOWER(CONCAT(p.author.firstName, p.author.lastName)) LIKE %:searchAuthor% " +
             "AND p.time BETWEEN :dateFrom AND :dateTo " +
+            "AND (t.tag LIKE :searchTag OR :searchTag LIKE '')" +
+            "GROUP BY p.id " +
             "ORDER BY p.time DESC "
     )
-    Page<Post> findPostsByProperties(String searchText, Date dateFrom, Date dateTo, String searchAuthor, Pageable pageable);
+    Page<Post> findPostsByProperties(String searchText, Date dateFrom, Date dateTo, String searchAuthor, String searchTag, Pageable pageable);
 
     @Query("SELECT " +
             "p " +
