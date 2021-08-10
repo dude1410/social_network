@@ -26,6 +26,15 @@ public class DefaultController {
         return "personal-data";
     }
 
+    @GetMapping(value = "en/policy.html")
+    public String enPolicy(){
+        return "en-policy";
+    }
+
+    @GetMapping(value = "en/personal-data.html")
+    public String enPersonalData(){
+        return "en-personal-data";
+    }
 
 
     @RequestMapping(
