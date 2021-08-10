@@ -174,6 +174,7 @@ public class DialogsService {
                 recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
                 recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
                 recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
+                recipientData.setPhoto(lastDialogMessage.getRecipientId().getPhoto());
                 dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
                         new DialogMessageDTO(lastDialogMessage.getId(),
                                 lastDialogMessage.getTime().getTime(),
