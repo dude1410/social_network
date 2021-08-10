@@ -51,7 +51,9 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter implements 
                 .headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(new WhiteListedAllowFromStrategy(Arrays
                         .asList("http://31.40.251.201:8086/policy.html",
-                                "http://31.40.251.201:8086/personal-data.html"))))
+                                "http://31.40.251.201:8086/personal-data.html",
+                                "http://31.40.251.201:8086/en/policy.html",
+                                "http://31.40.251.201:8086/en/personal-data.html"))))
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/logs").permitAll()
