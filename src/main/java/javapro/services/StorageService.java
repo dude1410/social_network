@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.time.LocalDate;
 
 @Service
 public class StorageService {
@@ -39,7 +38,7 @@ public class StorageService {
     }
 
 
-    public ResponseEntity<Response> fileStore(MultipartFile file) throws BadRequestException,
+    public ResponseEntity<Response<FileStorageResponse>> fileStore(MultipartFile file) throws BadRequestException,
             NotFoundException,
             AuthenticationException {
 
@@ -50,6 +49,9 @@ public class StorageService {
         if (file == null) {
             throw new BadRequestException(Config.STRING_BAD_REQUEST);
         }
+        if(file.getSize() > 500000L){
+            throw new BadRequestException(Config.STRING_FILE_TOO_BIG);
+        }
         var person = personRepository.findByEmail(SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -59,16 +61,21 @@ public class StorageService {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
 
-        String originalImagePath = uploadPath + "/storage/"; //+ "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/";
-        String thumbImagePath = uploadPath + "/storage/thumb/";//+ "/storage/" + LocalDate.now().toString() + "/" + person.getId().toString() + "/thumb/";
+
+
+        String thumbImagePath = uploadPath + "/storage/thumb/";
         String relative = "/" + new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
+        var photoFromDataBase = person.getPhoto();
+        if(photoFromDataBase != null){
+            fileStorage.fileDelete(photoFromDataBase , thumbImagePath);
+        }
 
-
-        person.setPhoto(baseURL + relative + file.getOriginalFilename());
+        person.setPhoto(relative + file.getOriginalFilename());
         personRepository.save(person);
+
         Runnable task = () -> {
             try {
-                fileStorage.fileWriter(file, originalImagePath);
+                fileStorage.fileWriter(file, thumbImagePath);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
@@ -87,9 +94,7 @@ public class StorageService {
         fileStorageResponse.setRawFileURL(thumbImagePath +  file.getOriginalFilename());
         fileStorageResponse.setRelativeFilePath(relative + "/" + file.getOriginalFilename());
 
-        System.out.println(thumbImagePath);
-        System.out.println(relative);
-        Response response = new Response();
+        Response<FileStorageResponse> response = new Response();
         response.setError("ok");
         response.setTimestamp(Time.getTime());
         response.setData(fileStorageResponse);
