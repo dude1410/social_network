@@ -26,14 +26,15 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PostResponse> getPost(@RequestParam("text") String searchText,
-                                                @RequestParam(value = "date_from", defaultValue = "") Long dateFrom,
-                                                @RequestParam(value = "date_to", defaultValue = "") Long dateTo,
-                                                @RequestParam(value = "author", defaultValue = "") String author,
+    public ResponseEntity<PostResponse> getPost(@RequestParam(value = "text") String searchText,
+                                                @RequestParam(value = "date_from", required = false) Long dateFrom,
+                                                @RequestParam(value = "date_to", required = false) Long dateTo,
+                                                @RequestParam(value = "author", required = false) String author,
+                                                @RequestParam(value = "tag", required = false) String tag,
                                                 @RequestParam(defaultValue = "0") Integer offset,
                                                 @RequestParam(defaultValue = "20") Integer itemPerPage) throws BadRequestException,
             UnAuthorizedException {
-        return searchService.searchPosts(searchText, dateFrom, dateTo, author, offset, itemPerPage);
+        return searchService.searchPostsByProperties(searchText, dateFrom, dateTo, author, tag, offset, itemPerPage);
     }
 
     @GetMapping(value = "/api/v1/users/search")
@@ -41,12 +42,12 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name", defaultValue = "") String firstName,
-                                                     @RequestParam(value = "last_name", defaultValue = "") String lastName,
-                                                     @RequestParam(value = "age_from", defaultValue = "") Integer ageFrom,
-                                                     @RequestParam(value = "age_to", defaultValue = "") Integer ageTo,
-                                                     @RequestParam(value = "country", defaultValue = "") String country,
-                                                     @RequestParam(value = "city", defaultValue = "") String town,
+    public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name") String firstName,
+                                                     @RequestParam(value = "last_name", required = false) String lastName,
+                                                     @RequestParam(value = "age_from", required = false) Integer ageFrom,
+                                                     @RequestParam(value = "age_to", required = false) Integer ageTo,
+                                                     @RequestParam(value = "country", required = false) String country,
+                                                     @RequestParam(value = "city", required = false) String town,
                                                      @RequestParam(defaultValue = "0") Integer offset,
                                                      @RequestParam(defaultValue = "20") Integer itemPerPage) throws UnAuthorizedException {
 
@@ -59,7 +60,7 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PersonsResponse> getPeopleGeneral(@RequestParam(value = "searchtext", defaultValue = "") String searchText,
+    public ResponseEntity<PersonsResponse> getPeopleGeneral(@RequestParam(value = "search_text") String searchText,
                                                             @RequestParam(defaultValue = "0", required = false) Integer offset,
                                                             @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) throws BadRequestException,
             UnAuthorizedException {
@@ -73,7 +74,7 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PostResponse> getPostsGeneral(@RequestParam(value = "searchtext", defaultValue = "") String searchText,
+    public ResponseEntity<PostResponse> getPostsGeneral(@RequestParam(value = "search_text") String searchText,
                                                         @RequestParam(defaultValue = "0", required = false) Integer offset,
                                                         @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) throws BadRequestException,
             UnAuthorizedException {
