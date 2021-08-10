@@ -93,9 +93,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .allowedMethods("*");
     }
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/storage/thumb/**")
-                .addResourceLocations("file:/Users/codewizard/Desktop/storage/thumb/");
+                .addResourceLocations("file:/Users/olegprokhorov/IdeaProjects/storage/thumb/");
     }
+
 }

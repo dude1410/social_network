@@ -1,5 +1,6 @@
 package javapro.controller;
 
+import javapro.api.response.FileStorageResponse;
 import javapro.api.response.Response;
 import javapro.services.StorageService;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class StorageController {
     }
 
     @PostMapping(value = "/api/v1/storage")
-    public ResponseEntity<Response> storage(MultipartFile file) throws Exception {
+    public ResponseEntity<Response<FileStorageResponse>> storage(MultipartFile file) throws Exception {
         return storageService.fileStore(file);
     }
 }
