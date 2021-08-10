@@ -112,6 +112,14 @@ public class DialogsService {
         dialogRepository.save(dialog);
         addInDialog2Person(dialog, currentPerson);
         addInDialog2Person(dialog, addingPerson);
+        DialogMessage newMessage = new DialogMessage();
+        newMessage.setTime(new Date());
+        newMessage.setDialog(dialog);
+        newMessage.setAuthorId(currentPerson);
+        newMessage.setRecipientId(addingPerson);
+        newMessage.setMessageText(String.format("Create new dialog with %s %s!", currentPerson.getFirstName(), currentPerson.getLastName()));
+        newMessage.setReadStatus(ReadStatus.SENT);
+        dialogMessageRepository.save(newMessage);
         return new ResponseEntity<>(prepareCreateDialogResponse(dialog.getId()), HttpStatus.OK);
     }
 
@@ -189,7 +197,6 @@ public class DialogsService {
 
     private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList){
         List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
-
         for (DialogMessage dialogMessage : dialogMessageList) {
             RecipientData recipientData = new RecipientData();
             recipientData.setId(dialogMessage.getRecipientId().getId());
