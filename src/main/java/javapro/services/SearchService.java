@@ -149,12 +149,13 @@ public class SearchService {
                         personDTOS));
     }
 
-    public ResponseEntity<PostResponse> searchPosts(String searchText,
-                                                    Long dateFromLong,
-                                                    Long dateToLong,
-                                                    String searchAuthor,
-                                                    Integer offset,
-                                                    Integer itemPerPage) throws BadRequestException, UnAuthorizedException {
+    public ResponseEntity<PostResponse> searchPostsByProperties(String searchText,
+                                                                Long dateFromLong,
+                                                                Long dateToLong,
+                                                                String searchAuthor,
+                                                                String searchTag,
+                                                                Integer offset,
+                                                                Integer itemPerPage) throws BadRequestException, UnAuthorizedException {
 
         checkAuthentication();
 
@@ -164,11 +165,13 @@ public class SearchService {
 
         searchText = stringFix(searchText);
         searchAuthor = stringFix(searchAuthor);
+        searchTag = stringFix(searchTag);
         Date dateFrom = dateFromFix(dateFromLong);
         Date dateTo = dateToFix(dateToLong);
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, pageable);
+
+        Page<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, searchTag, pageable);
 
         List<PostDTO> postDTOList = new ArrayList();
 
@@ -210,11 +213,10 @@ public class SearchService {
 
     private String stringFix(String variable) {
         if (variable == null || variable.length() == 0) {
-            variable = "";
+            return "";
         } else {
-            variable = variable.toLowerCase(Locale.ROOT);
+            return variable.toLowerCase(Locale.ROOT);
         }
-        return variable;
     }
 
     private Integer ageFromFix(Integer ageFrom) {
@@ -232,16 +234,13 @@ public class SearchService {
     }
 
     private Date dateFromFix(Long dateFromLong) {
-        Date dateFrom = null;
 
         if (dateFromLong != null) {
-            dateFrom = new Date(dateFromLong);
+            return new Date(dateFromLong);
         } else {
             //нижняя граница 18.06.1970, 07:36:56
-            dateFrom = new Timestamp(14531816);
+            return new Timestamp(14531816);
         }
-
-        return dateFrom;
     }
 
     private Date dateToFix(Long dateToLong) {
