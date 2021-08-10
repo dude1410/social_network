@@ -196,6 +196,7 @@ public class DialogsService {
             recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
             recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
             recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
+            recipientData.setPhoto(dialogMessage.getRecipientId().getPhoto());
             dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
                     dialogMessage.getAuthorId().getId(),
                     recipientData,
