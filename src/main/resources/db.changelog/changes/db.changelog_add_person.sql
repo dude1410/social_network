@@ -72,3 +72,6 @@ insert into person (id, first_name, last_name, reg_date, e_mail, password, is_ap
 
 insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
 (131, 'Алексей', 'Симаков', '2021-10-10 10:40:23', 'zerone201@mail.ru', 'Zerone201', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
+
+insert into person (id, first_name, last_name, reg_date, e_mail, password, is_approved, messages_permission, last_online_time, is_blocked, role, country_id, town_id, confirmation_code) values
+(132, 'Билл', 'Гейтс', '2021-10-10 10:40:23', 'zerone118@mail.ru', 'Zerone118', 'true', 'ALL', '2021-06-21 10:42:23', 'false', '0', 1, 154, 'token');
