@@ -67,7 +67,8 @@ public class StorageService {
         }
 
 
-        var fileName = passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]);
+        var fileName = (passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]))
+                .substring(8);
         var fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
