@@ -22,7 +22,7 @@ public interface PersonViewRepository extends JpaRepository<PersonView, Integer>
     @Query("SELECT " +
             "pv " +
             "FROM PersonView pv " +
-            "WHERE LOWER(COALESCE(pv.firstName,pv.lastName,'')) LIKE %:searchText% "
+            "WHERE LOWER(COALESCE(pv.firstName, pv.lastName,'')) LIKE %:searchText% "
     )
     Page<PersonView> searchPersonBy(String searchText, Pageable pageable);
 }

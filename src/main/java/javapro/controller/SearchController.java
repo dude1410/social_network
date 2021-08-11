@@ -26,7 +26,7 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PostResponse> getPost(@RequestParam(value = "text") String searchText,
+    public ResponseEntity<PostResponse> getPost(@RequestParam(value = "text", required = false) String searchText,
                                                 @RequestParam(value = "date_from", required = false) Long dateFrom,
                                                 @RequestParam(value = "date_to", required = false) Long dateTo,
                                                 @RequestParam(value = "author", required = false) String author,
@@ -42,7 +42,7 @@ public class SearchController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
-    public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name") String firstName,
+    public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name", required = false) String firstName,
                                                      @RequestParam(value = "last_name", required = false) String lastName,
                                                      @RequestParam(value = "age_from", required = false) Integer ageFrom,
                                                      @RequestParam(value = "age_to", required = false) Integer ageTo,

@@ -21,10 +21,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "ON ptt.tag.id = t.id " +
             "WHERE p.isDeleted = false " +
             "AND p.isBlocked = false " +
-            "AND LOWER(CONCAT(p.title, p.postText)) LIKE %:searchText% " +
-            "AND LOWER(CONCAT(p.author.firstName, p.author.lastName)) LIKE %:searchAuthor% " +
+            "AND (LOWER(CONCAT(p.title, p.postText)) LIKE %:searchText% OR :searchText LIKE '') " +
+            "AND (LOWER(CONCAT(p.author.firstName, p.author.lastName)) LIKE %:searchAuthor% OR :searchAuthor LIKE '') " +
             "AND p.time BETWEEN :dateFrom AND :dateTo " +
-            "AND (t.tag LIKE :searchTag OR :searchTag LIKE '')" +
+            "AND (t.tag LIKE :searchTag OR :searchTag LIKE '') " +
             "GROUP BY p.id " +
             "ORDER BY p.time DESC "
     )
