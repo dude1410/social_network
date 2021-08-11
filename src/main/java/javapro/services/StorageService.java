@@ -67,7 +67,8 @@ public class StorageService {
         }
 
 
-        var fileName = passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]);
+        var fileName = (passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]))
+                .substring(8);
         var fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
@@ -94,11 +95,11 @@ public class StorageService {
         fileStorageResponse.setOwnerId(person.getId());
         fileStorageResponse.setBytes(file.getSize());
         fileStorageResponse.setFileFormat(file.getContentType());
-        fileStorageResponse.setFileName(file.getOriginalFilename());
+        fileStorageResponse.setFileName(fullFileName);
         fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
         fileStorageResponse.setRawFileURL(full);
-        fileStorageResponse.setRelativeFilePath(relative + "/" + fullFileName);
+        fileStorageResponse.setRelativeFilePath(relative  + fullFileName);
 
         Response<FileStorageResponse> response = new Response<>();
         response.setError("ok");
