@@ -40,7 +40,8 @@ public class TestSuiteForPasswordChange {
     private By buttonSend = By.cssSelector(".btn--white");
 
     @Test
-    public void changingPasswordToValid() throws InterruptedException {
+    public void changingPasswordToValid()
+    {
         //arrange
         var password = "Qwertyui1";
         var expectedResultTitle = "Пароль успешно изменён!";
