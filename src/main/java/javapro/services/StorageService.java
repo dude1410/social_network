@@ -80,7 +80,7 @@ public class StorageService {
             FileUtils.deleteQuietly(FileUtils
                     .getFile(imagePath + fileFromDb.substring(fileFromDb.lastIndexOf('/') + 1)));
         }
-        person.setPhoto(relative + file.getOriginalFilename());
+        person.setPhoto(full);
         personRepository.save(person);
 
         try {
