@@ -72,7 +72,7 @@ public class StorageService {
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
         String imagePath = uploadPath + "/storage/thumb/";
-        String relative =  new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
+        String relative = "/" + new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
 
         var fileFromDb = person.getPhoto();
         if (fileFromDb != null) {
