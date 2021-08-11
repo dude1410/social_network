@@ -40,7 +40,7 @@ public class TestSuiteChangeEmailInUserProfile {
     private By loginButton = By.cssSelector(".btn--white");
     private By profileLink = By.cssSelector(".main-layout__user-name");
     private By editProfileButton = By.cssSelector(".edit");
-    private By safety = By.xpath("(//*[@class='aside-filter__item'])[2]");
+    private By safety = By.xpath("(//*[@class='aside-filter__item'])[3]");
     private By changeButtonInSafety = By.xpath("(//*[@class='btn'])[1]");
     private By emailFieldInChangeForm = By.xpath("(//*[@class='form__input'])[1]");
     private By repeatEmailFieldInSChangeForm = By.xpath("(//*[@class='form__input'])[2]");
@@ -51,7 +51,8 @@ public class TestSuiteChangeEmailInUserProfile {
     private By logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
     @Test
-    public void changeEmailToValid() throws InterruptedException {
+    public void changeEmailToValidAndAothorizationWithNewEmail()
+    {
         //arrange
         var email = "zerone115@mail.ru";
         var password = "Zerone115";
@@ -63,7 +64,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
@@ -123,7 +124,7 @@ public class TestSuiteChangeEmailInUserProfile {
     public void changeEmailToInvalid()
     {
         //arrange
-        var email = "zerone0115@mail.ru";
+        var email = "zerone115@mail.ru";
         var password = "Zerone115";
         var newEmail = "zerone115@mail";
         var expectedResult = "Введите корректный E-mail";
@@ -151,11 +152,12 @@ public class TestSuiteChangeEmailInUserProfile {
     }
 
     @Test
-    public void changeEmailToRegistered() throws InterruptedException {
+    public void changeEmailToRegistered()
+    {
         //arrange
-        var email = "zerone0115@mail.ru";
+        var email = "zerone115@mail.ru";
         var password = "Zerone115";
-        var newEmail = "zerone201@mail";
+        var newEmail = "zerone118@mail.ru";
         var errorMessage = By.cssSelector(".v-snack__content");
         var expectedResult = "Пользователь с таким Email уже зарегистрирован";
 
@@ -163,7 +165,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(10000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();
@@ -173,7 +175,7 @@ public class TestSuiteChangeEmailInUserProfile {
         driver.findElement(emailFieldInChangeForm).sendKeys(newEmail);
         driver.findElement(repeatEmailFieldInSChangeForm).sendKeys(newEmail);
         driver.findElement(changeButtonInChangeForm).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(errorMessage));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
 
         //assert
         var actualResult = driver.findElement(errorMessage).getText();

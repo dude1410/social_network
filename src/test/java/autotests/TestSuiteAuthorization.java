@@ -38,13 +38,15 @@ public class TestSuiteAuthorization {
     private By emailField = By.id("login-email");
     private By passwordField = By.id("login-password");
     private By loginButton = By.cssSelector(".btn--white");
+    private By popUpMessage = By.cssSelector(".v-snack__content");
+    private By errorMessage = By.cssSelector(".form__error");
 
     @Test
     public void authorizationWithCorrectData()
     {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone115";
+        var email = "zerone117@mail.ru";
+        var password = "Zerone117";
         var expectedResult = " Моя страница";
         var logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
@@ -61,38 +63,59 @@ public class TestSuiteAuthorization {
     }
 
     @Test
-    public void authorizationWithWrongPassword() throws InterruptedException {
+    public void authorizationWithWrongPassword()
+    {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "erone115";
+        var email = "zerone117@mail.ru";
+        var password = "erone117";
         var expectedResult = "Пароль указан неверно.";
 
         //act
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(2000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popUpMessage));
 
         //assert
-        var actualResult = driver.findElement(By.cssSelector(".v-snack__content")).getText();
+        var actualResult = driver.findElement(popUpMessage).getText();
         Assert.assertEquals("Пользователь авторизован", expectedResult, actualResult);
     }
 
     @Test
-    public void authorizationWithAnUnregisteredEmail() throws InterruptedException {
+    public void authorizationWithAnUnregisteredEmail()
+    {
         //arrange
-        var email = "zerone0115@mail.ru";
-        var password = "Zerone115";
+        var email = "zerone0117@mail.ru";
+        var password = "Zerone117";
         var expectedResult = "Пользователь с таким email не найден";
 
         //act
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(2000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popUpMessage));
 
         //assert
-        var actualResult = driver.findElement(By.cssSelector(".v-snack__content")).getText();
+        var actualResult = driver.findElement(popUpMessage).getText();
+        Assert.assertEquals("Пользователь авторизован", expectedResult, actualResult);
+    }
+
+    @Test
+    public void authorizationWithAnIncorrectEmail()
+    {
+        //arrange
+        var email = "zerone117@mail";
+        var password = "Zerone117";
+        var expectedResult = "Введите корректный E-mail";
+
+        //act
+        driver.findElement(emailField).sendKeys(email);
+        driver.findElement(passwordField).sendKeys(password);
+        driver.findElement(loginButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
+
+        //assert
+        var actualResult = driver.findElement(errorMessage).getText();
         Assert.assertEquals("Пользователь авторизован", expectedResult, actualResult);
     }
 }

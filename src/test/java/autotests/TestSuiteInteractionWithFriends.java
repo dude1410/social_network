@@ -51,7 +51,8 @@ public class TestSuiteInteractionWithFriends {
     private By popUpMessage = By.cssSelector(".v-snack__content");
 
     @Test
-    public void addToFriends() throws InterruptedException {
+    public void addToFriends()
+    {
         //arrange
         var email = "zerone201@mail.ru" ;
         var password = "Zerone201";
@@ -62,7 +63,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(searchField));
         driver.findElement(searchField).click();
         driver.findElement(searchField).sendKeys(userName);
         driver.findElement(searchField).sendKeys(Keys.ENTER);
@@ -77,7 +78,8 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void resendingAFriendRequest() throws InterruptedException {
+    public void resendingAFriendRequest()
+    {
         //arrange
         var email = "zerone201@mail.ru" ;
         var password = "Zerone201";
@@ -88,7 +90,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(searchField));
         driver.findElement(searchField).click();
         driver.findElement(searchField).sendKeys(userName);
         driver.findElement(searchField).sendKeys(Keys.ENTER);
@@ -103,7 +105,8 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void acceptFriendRequest() throws InterruptedException {
+    public void acceptFriendRequest()
+    {
         //arrange
         var email = "zerone117@mail.ru" ;
         var password = "Zerone117";
@@ -113,7 +116,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(friendsLink));
         driver.findElement(friendsLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(acceptFriendRequestButton));
         driver.findElement(acceptFriendRequestButton).click();
@@ -124,7 +127,8 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void addingAFriendOfAUserWhoIsAlreadyAFriend() throws InterruptedException {
+    public void addingAFriendOfAUserWhoIsAlreadyAFriend()
+    {
         //arrange
         var email = "zerone201@mail.ru" ;
         var password = "Zerone201";
@@ -135,7 +139,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(6000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(searchField));
         driver.findElement(searchField).click();
         driver.findElement(searchField).sendKeys(userName);
         driver.findElement(searchField).sendKeys(Keys.ENTER);
@@ -150,7 +154,8 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void blockAUserWhoIsNotInFriends() throws InterruptedException {
+    public void blockAUserWhoIsNotInFriends()
+    {
         //arrange
         var email = "zerone201@mail.ru" ;
         var password = "Zerone201";
@@ -161,7 +166,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(searchField));
         driver.findElement(searchField).click();
         driver.findElement(searchField).sendKeys(userName);
         driver.findElement(searchField).sendKeys(Keys.ENTER);
@@ -176,18 +181,18 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void blockAUserWhoIsAFriend() throws InterruptedException {
+    public void blockAUserWhoIsAFriend()
+    {
         //arrange
         var email = "zerone201@mail.ru" ;
         var password = "Zerone201";
-        var userName = "Марк";
         var expectedResult = "Пользователь заблокирован";
 
         //act
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(friendsLink));
         driver.findElement(friendsLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(friendCard));
         driver.findElement(friendCard).click();
@@ -200,7 +205,8 @@ public class TestSuiteInteractionWithFriends {
     }
 
     @Test
-    public void removeFromFriends() throws InterruptedException {
+    public void removeFromFriends()
+    {
         //arrange
         var email = "zerone117@mail.ru" ;
         var password = "Zerone117";
@@ -210,7 +216,7 @@ public class TestSuiteInteractionWithFriends {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(friendsLink));
         driver.findElement(friendsLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(deleteButton));
         driver.findElement(deleteButton).click();

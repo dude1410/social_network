@@ -40,7 +40,8 @@ public class TestSuitePasswordReset {
     private By buttonSend = By.cssSelector(".btn--white");
 
     @Test
-    public void resetPasswordForRegisteredEmail() throws InterruptedException {
+    public void resetPasswordForRegisteredEmail()
+    {
         //arrange
         var email = "zerone201@mail.ru";
         var expectedResultTitle = "На ваш e-mail отправлена ссылка для восстановления пароля";
@@ -50,7 +51,6 @@ public class TestSuitePasswordReset {
         driver.findElement(forgotLink).click();
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(buttonSend).click();
-        Thread.sleep(2000);
 
         //assert
         var actualResultTitle = driver.findElement(By.cssSelector(".form-layout__title")).getText();
@@ -77,7 +77,7 @@ public class TestSuitePasswordReset {
     }
 
     @Test
-    public void resetPasswordForUnregisteredEmail() throws InterruptedException
+    public void resetPasswordForUnregisteredEmail()
     {
         //arrange
         var email = "greargeag@gagaega.wq";
@@ -88,7 +88,6 @@ public class TestSuitePasswordReset {
         driver.findElement(forgotLink).click();
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(buttonSend).click();
-        Thread.sleep(2000);
 
         //assert
         var actualResultTitle = driver.findElement(By.cssSelector(".form-layout__title")).getText();

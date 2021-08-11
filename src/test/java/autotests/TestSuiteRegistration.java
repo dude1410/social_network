@@ -47,6 +47,7 @@ public class TestSuiteRegistration {
     private By checkboxIAgree = By.cssSelector(".form__checkbox-label");
     private By backToRegistrationButton = By.cssSelector(".modal_button");
     private By registerButton = By.cssSelector(".btn--white");
+    private By popUpMessage = By.cssSelector(".v-snack__content");
 
     @Test
     public void registrationWithCorrectData()
@@ -73,7 +74,7 @@ public class TestSuiteRegistration {
         driver.findElement(checkboxIAgree).click();
         driver.findElement(backToRegistrationButton).click();
         driver.findElement(registerButton).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".v-snack__content")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popUpMessage));
 
         //assert
         var actualResultTitle = driver.findElement(By.cssSelector(".form-layout__title")).getText();
@@ -113,7 +114,8 @@ public class TestSuiteRegistration {
     }
 
     @Test
-    public void RegistrationWithRegisteredEmail() throws InterruptedException {
+    public void RegistrationWithRegisteredEmail()
+    {
         //arrange
         var email = "zerone201@mail.ru";
         var password = "Zerone1000";
@@ -136,7 +138,7 @@ public class TestSuiteRegistration {
         driver.findElement(checkboxIAgree).click();
         driver.findElement(backToRegistrationButton).click();
         driver.findElement(registerButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popUpMessage));
 
         //assert
         var actualResultTitle = driver.findElement(By.cssSelector(".form-layout__title")).getText();

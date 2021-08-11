@@ -87,7 +87,8 @@ public class TestSuitePosts {
     }
 
     @Test
-    public void editPost() throws InterruptedException {
+    public void editPost()
+    {
 
         //arrange
         String addToTitle = "Updated";

@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TestSuiteForPasswordChange {
@@ -49,7 +50,7 @@ public class TestSuiteForPasswordChange {
         driver.findElement(fieldEmail).sendKeys(password);
         driver.findElement(fieldConfirmPassword).sendKeys(password);
         driver.findElement(buttonSend).click();
-        Thread.sleep(2000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".form-layout__title")));
 
         //assert
         var actualResultTitle = driver.findElement(By.cssSelector(".form-layout__title")).getText();

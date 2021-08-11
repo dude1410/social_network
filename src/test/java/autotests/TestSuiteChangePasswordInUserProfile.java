@@ -40,7 +40,7 @@ public class TestSuiteChangePasswordInUserProfile {
     private By loginButton = By.cssSelector(".btn--white");
     private By profileLink = By.cssSelector(".main-layout__user-name");
     private By editProfileButton = By.cssSelector(".edit");
-    private By safety = By.xpath("(//*[@class='aside-filter__item'])[2]");
+    private By safety = By.xpath("(//*[@class='aside-filter__item'])[3]");
     private By changeButtonInSafety = By.xpath("(//*[@class='btn'])[2]");
     private By passwordFieldInChangeForm = By.xpath("(//*[@class='form__input'])[1]");
     private By repeatPasswordFieldInSChangeForm = By.xpath("(//*[@class='form__input'])[2]");
@@ -51,11 +51,12 @@ public class TestSuiteChangePasswordInUserProfile {
     private By logoutButton = By.xpath("(//*[@class='main-layout__link'])[4]");
 
     @Test
-    public void changePasswordToValid() throws InterruptedException {
+    public void changePasswordToValid()
+    {
         //arrange
         var email = "zerone116@mail.ru";
-        var password = "Zerone1166";
-        var newPassword = "Zerone116";
+        var password = "Zerone116";
+        var newPassword = "Zerone1166";
         var expectedResultMessage = "Пароль успешно изменён. Авторизуйтесь с новым паролем";
         var expectedResultTitle = " Моя страница";
 
@@ -63,7 +64,7 @@ public class TestSuiteChangePasswordInUserProfile {
         driver.findElement(emailField).sendKeys(email);
         driver.findElement(passwordField).sendKeys(password);
         driver.findElement(loginButton).click();
-        Thread.sleep(5000);
+        wait.until(ExpectedConditions.presenceOfElementLocated(profileLink));
         driver.findElement(profileLink).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(editProfileButton));
         driver.findElement(editProfileButton).click();

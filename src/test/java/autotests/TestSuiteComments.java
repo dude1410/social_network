@@ -75,7 +75,8 @@ public class TestSuiteComments {
 
 
     @Test
-    public void createComment() throws InterruptedException {
+    public void createComment()
+    {
         generateDefaultPost(postTitle, postBody);
 
 
@@ -93,7 +94,8 @@ public class TestSuiteComments {
     }
 
     @Test
-    public void editComment() throws InterruptedException {
+    public void editComment()
+    {
         generateDefaultPost(postTitle, postBody);
 
 
