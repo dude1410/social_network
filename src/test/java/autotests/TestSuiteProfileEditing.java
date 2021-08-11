@@ -214,9 +214,9 @@ public class TestSuiteProfileEditing {
     public void cityChange()
     {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone115";
-        var expectedResult = "Россия, Майкоп";
+        var email = "zerone118@mail.ru";
+        var password = "Zerone118";
+        var expectedResult = "Россия, Абаза";
 
         //act
         driver.findElement(emailField).sendKeys(email);
@@ -229,11 +229,11 @@ public class TestSuiteProfileEditing {
         Select city = new Select(driver.findElement(fieldCity));
         city.selectByIndex(0);
         /* Города России
-        index 0 = Майкоп, , index 1 = Горно-Алтайск, index 2 = Барнаул, index 3 = Бийск, index 4 = Рубцовск,
-        index 5 = Новоалтайск, index 6 = Заринск, index 7 = Благовещенск (Амурская область),
-        index 8 = Белогорск (Амурская область), index 9 = Свободный, index 10 = Архангельск, index 11 = Северодвинск,
-        index 12 = Котлас, index 13 = Астрахань, index 14 = Ахтубинск, index 15 = Знаменск, index 16 = Уфа,
-        index 17 = Стерлитамак, index 18 = Салават, index 19 = Нефтекамск, index 20 = ,
+        index 0 = Абаза, , index 1 = Абакан, index 2 = Абдулино, index 3 = Абинск, index 4 = Агидель,
+        index 5 = Агрыз, index 6 = Адыгейск, index 7 = Азнакаево,
+        index 8 = Азов, index 9 = Ак-Довурак, index 10 = Аксай, index 11 = Алагир,
+        index 12 = Алапаевск, index 13 = Алатырь, index 14 = Алдан, index 15 = Алейск, index 16 = Александров,
+        index 17 = Александровск, index 18 = Александровск-Сахалинский, index 19 = Алексеевка, index 20 = ,
         index 21 = , index 22 = , index 23 = , index 24 = ,
         index 25 = , index 26 = , index 27 = , index 28 = ,
         index 29= , index 30 = , index 31 = , index 32= ,
@@ -251,9 +251,9 @@ public class TestSuiteProfileEditing {
     public void CountryAndCityChange()
     {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone115";
-        var expectedResult = "Россия, Майкоп";
+        var email = "zerone118@mail.ru";
+        var password = "Zerone118";
+        var expectedResult = "USA, Chicago";
 
         //act
         driver.findElement(emailField).sendKeys(email);
@@ -264,21 +264,22 @@ public class TestSuiteProfileEditing {
         wait.until(ExpectedConditions.presenceOfElementLocated(profileName));
         driver.findElement(editProfile).click();
         Select country = new Select(driver.findElement(fieldCountry));
-        country.selectByIndex(0); //index 0 = Россия, index 1 = USA
+        country.selectByIndex(1); //index 0 = Россия, index 1 = USA
         Select city = new Select(driver.findElement(fieldCity));
-        city.selectByIndex(0);
+        city.selectByIndex(1);
         /* Города России
-        index 0 = Майкоп, , index 1 = Горно-Алтайск, index 2 = Барнаул, index 3 = Бийск, index 4 = Рубцовск,
-        index 5 = Новоалтайск, index 6 = Заринск, index 7 = Благовещенск (Амурская область),
-        index 8 = Белогорск (Амурская область), index 9 = Свободный, index 10 = Архангельск, index 11 = Северодвинск,
-        index 12 = Котлас, index 13 = Астрахань, index 14 = Ахтубинск, index 15 = Знаменск, index 16 = Уфа,
-        index 17 = Стерлитамак, index 18 = Салават, index 19 = Нефтекамск, index 20 = ,
+        index 0 = Абаза, , index 1 = Абакан, index 2 = Абдулино, index 3 = Абинск, index 4 = Агидель,
+        index 5 = Агрыз, index 6 = Адыгейск, index 7 = Азнакаево,
+        index 8 = Азов, index 9 = Ак-Довурак, index 10 = Аксай, index 11 = Алагир,
+        index 12 = Алапаевск, index 13 = Алатырь, index 14 = Алдан, index 15 = Алейск, index 16 = Александров,
+        index 17 = Александровск, index 18 = Александровск-Сахалинский, index 19 = Алексеевка, index 20 = ,
         index 21 = , index 22 = , index 23 = , index 24 = ,
         index 25 = , index 26 = , index 27 = , index 28 = ,
         index 29= , index 30 = , index 31 = , index 32= ,
 
         Города США
-        to do
+        index 0 = Boston, , index 1 = Chicago, index 2 = Minnesota, index 3 = New-York, index 4 = Utah,
+        index 5 = Washington
         */
         driver.findElement(buttonSave).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(profileName));
@@ -292,8 +293,8 @@ public class TestSuiteProfileEditing {
     public void aboutMeChange()
     {
         //arrange
-        var email = "zerone115@mail.ru";
-        var password = "Zerone115";
+        var email = "zerone118@mail.ru";
+        var password = "Zerone118";
         var text = "Новый текст для заполнения поля о себе";
         var expectedResult = "Новый текст для заполнения поля о себе";
 

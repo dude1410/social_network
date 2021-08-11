@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TestSuiteSupport {
@@ -38,9 +39,10 @@ public class TestSuiteSupport {
     private By fieldEmail = By.id("email");
     private By fieldText = By.cssSelector(".support-contacting-text--textarea");
     private By buttonSend = By.cssSelector(".btn--white");
+    private By popUpMessage = By.cssSelector(".v-snack__content");
 
     @Test
-    public void sendingAMessageToSupport() throws InterruptedException
+    public void sendingAMessageToSupport()
     {
         //arrange
         var email = "zerone201@mail.ru";
@@ -52,10 +54,10 @@ public class TestSuiteSupport {
         driver.findElement(fieldEmail).sendKeys(email);
         driver.findElement(fieldText).sendKeys(text);
         driver.findElement(buttonSend).click();
-        Thread.sleep(2000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popUpMessage));
 
         //assert
-        var actualResult = driver.findElement(By.cssSelector(".v-snack__content")).getText();
+        var actualResult = driver.findElement(popUpMessage).getText();
         Assert.assertEquals("Сообщение не отправлено", expectedResult, actualResult);
     }
 
