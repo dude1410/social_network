@@ -7,8 +7,8 @@ import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.BadRequestException;
 import javapro.repository.PersonRepository;
 import javapro.util.Time;
-import javapro.util.storage.FileStorage;
 import javassist.NotFoundException;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +50,7 @@ public class StorageService {
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
-        FileStorage fileStorage = new FileStorage();
+
         if (file == null) {
             throw new BadRequestException(Config.STRING_BAD_REQUEST);
         }
@@ -68,15 +68,16 @@ public class StorageService {
 
 
         var fileName = passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]);
-        var fileExtension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+        var fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
         String imagePath = uploadPath + "/storage/thumb/";
-        String relative = "/" + new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
+        String relative =  new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
 
-        var photoFromDataBase = person.getPhoto();
-        if (photoFromDataBase != null) {
-            fileStorage.fileDelete(photoFromDataBase, imagePath);
+        var fileFromDb = person.getPhoto();
+        if (fileFromDb != null) {
+            FileUtils.deleteQuietly(FileUtils
+                    .getFile(imagePath + fileFromDb.substring(fileFromDb.lastIndexOf('/') + 1)));
         }
         person.setPhoto(relative + file.getOriginalFilename());
         personRepository.save(person);
