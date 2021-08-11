@@ -74,7 +74,7 @@ public class TestSuiteInteractionWithFriends {
 
         //assert
         var actualResult = driver.findElement(popUpMessage).getText();
-        Assert.assertEquals("Нет сообщения о смене email", expectedResult, actualResult);
+        Assert.assertEquals("Нет сообщения об отправленной заявке в друзья", expectedResult, actualResult);
     }
 
     @Test
