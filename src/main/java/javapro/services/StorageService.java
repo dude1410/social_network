@@ -95,11 +95,11 @@ public class StorageService {
         fileStorageResponse.setOwnerId(person.getId());
         fileStorageResponse.setBytes(file.getSize());
         fileStorageResponse.setFileFormat(file.getContentType());
-        fileStorageResponse.setFileName(file.getOriginalFilename());
+        fileStorageResponse.setFileName(fullFileName);
         fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
         fileStorageResponse.setRawFileURL(full);
-        fileStorageResponse.setRelativeFilePath(relative + "/" + fullFileName);
+        fileStorageResponse.setRelativeFilePath(relative  + fullFileName);
 
         Response<FileStorageResponse> response = new Response<>();
         response.setError("ok");
