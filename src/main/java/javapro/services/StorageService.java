@@ -14,10 +14,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 @Service
 public class StorageService {
@@ -32,9 +35,11 @@ public class StorageService {
 
 
     private final PersonRepository personRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public StorageService(PersonRepository personRepository) {
+    public StorageService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -49,7 +54,7 @@ public class StorageService {
         if (file == null) {
             throw new BadRequestException(Config.STRING_BAD_REQUEST);
         }
-        if(file.getSize() > 500000L){
+        if (file.getSize() > 500000L) {
             throw new BadRequestException(Config.STRING_FILE_TOO_BIG);
         }
         var person = personRepository.findByEmail(SecurityContextHolder
@@ -62,39 +67,39 @@ public class StorageService {
         }
 
 
+        var fileName = passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]);
+        var fileExtension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+        var fullFileName = fileName + "." + fileExtension;
+        var full = uploadPath + "/storage/thumb/" + fullFileName;
+        String imagePath = uploadPath + "/storage/thumb/";
+        String relative = "/" + new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
 
-        String thumbImagePath = uploadPath + "/storage/thumb/";
-        String relative = "/" + new File(uploadPath).toURI().relativize(new File(thumbImagePath).toURI()).getPath();
         var photoFromDataBase = person.getPhoto();
-        if(photoFromDataBase != null){
-            fileStorage.fileDelete(photoFromDataBase , thumbImagePath);
+        if (photoFromDataBase != null) {
+            fileStorage.fileDelete(photoFromDataBase, imagePath);
         }
-
         person.setPhoto(relative + file.getOriginalFilename());
         personRepository.save(person);
 
-        Runnable task = () -> {
-            try {
-                fileStorage.fileWriter(file, thumbImagePath);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-        };
-        Thread thread = new Thread(task);
-        thread.start();
+        try {
+            file.transferTo(Paths.get(full));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
 
         FileStorageResponse fileStorageResponse = new FileStorageResponse();
+
         fileStorageResponse.setOwnerId(person.getId());
         fileStorageResponse.setBytes(file.getSize());
         fileStorageResponse.setFileFormat(file.getContentType());
         fileStorageResponse.setFileName(file.getOriginalFilename());
         fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
-        fileStorageResponse.setRawFileURL(thumbImagePath +  file.getOriginalFilename());
-        fileStorageResponse.setRelativeFilePath(relative + "/" + file.getOriginalFilename());
+        fileStorageResponse.setRawFileURL(full);
+        fileStorageResponse.setRelativeFilePath(relative + "/" + fullFileName);
 
-        Response<FileStorageResponse> response = new Response();
+        Response<FileStorageResponse> response = new Response<>();
         response.setError("ok");
         response.setTimestamp(Time.getTime());
         response.setData(fileStorageResponse);
