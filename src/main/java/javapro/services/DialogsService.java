@@ -42,12 +42,13 @@ public class DialogsService {
         //получение списка диалогов пользователя
         List<Dialog> allUserDialog = Optional.of(dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId()))
                 .orElse(new ArrayList<>());
+        Integer countDialogs = dialogRepository.personDialogsCount();
         dialogData = prepareDialogData(allUserDialog, person.getId());
         return new ResponseEntity<>(prepareAllPersonDialogResponse(dialogData,
-                allUserDialog.size(), offset, perPage), HttpStatus.OK);
+                countDialogs, offset, perPage), HttpStatus.OK);
     }
 
-    public ResponseEntity<DialogMessagesResponse> getDialogMessages(Integer dialogId, Integer offset, Integer perPage) throws BadRequestException {
+    public ResponseEntity<DialogMessagesResponse> getDialogMessages(Integer dialogId, Integer offset, Integer perPage, String currentUserEmail) throws BadRequestException {
         List<DialogMessageData> dialogMessageDataList;
         Dialog dialog = dialogRepository.findById(dialogId).orElseThrow(() -> new BadRequestException("dialog not found"));
         List<DialogMessage> allDialogMessages = dialog.getDialogMessageList();
@@ -56,7 +57,7 @@ public class DialogsService {
                                                                   .skip(offset)
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
-        dialogMessageDataList = prepareDialogMessageData(dialogMessagePage);
+        dialogMessageDataList = prepareDialogMessageData(dialogMessagePage, currentUserEmail);
         return new ResponseEntity<>(prepareDialogMessageResponse(dialogMessageDataList,
                 allDialogMessages.size(), offset, perPage), HttpStatus.OK);
     }
@@ -195,7 +196,7 @@ public class DialogsService {
         return dialogDataList;
     }
 
-    private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList){
+    private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList, String currentUserEmail){
         List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
         for (DialogMessage dialogMessage : dialogMessageList) {
             RecipientData recipientData = new RecipientData();
@@ -205,10 +206,11 @@ public class DialogsService {
             recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
             recipientData.setPhoto(dialogMessage.getRecipientId().getPhoto());
             dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
-                    dialogMessage.getAuthorId().getId(),
-                    recipientData,
-                    dialogMessage.getMessageText(),
-                    dialogMessage.getReadStatus()));
+                                                            dialogMessage.getAuthorId().getId(),
+                                                            recipientData,
+                                                            dialogMessage.getMessageText(),
+                                                            dialogMessage.getReadStatus(),
+                                                            dialogMessage.getAuthorId().getEmail().equals(currentUserEmail)));
         }
         return dialogMessageDataList;
     }
