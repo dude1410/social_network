@@ -67,9 +67,9 @@ public class StorageService {
         }
 
 
-        var fileName = (passwordEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0]))
-                .substring(8);
-        var fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+        var fileName = genName();
+        var fileExtension = Objects.requireNonNull(file.getOriginalFilename())
+                .substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
         String imagePath = uploadPath + "/storage/thumb/";
@@ -80,7 +80,7 @@ public class StorageService {
             FileUtils.deleteQuietly(FileUtils
                     .getFile(imagePath + fileFromDb.substring(fileFromDb.lastIndexOf('/') + 1)));
         }
-        person.setPhoto(full);
+        person.setPhoto("/storage/thumb/" + fullFileName);
         personRepository.save(person);
 
         try {
@@ -99,12 +99,22 @@ public class StorageService {
         fileStorageResponse.setCreatedAt(Time.getTime());
         fileStorageResponse.setFileType(file.getContentType());
         fileStorageResponse.setRawFileURL(full);
-        fileStorageResponse.setRelativeFilePath(relative  + fullFileName);
+        fileStorageResponse.setRelativeFilePath(relative + fullFileName);
 
         Response<FileStorageResponse> response = new Response<>();
         response.setError("ok");
         response.setTimestamp(Time.getTime());
         response.setData(fileStorageResponse);
         return ResponseEntity.ok(response);
+    }
+
+    private String genName() {
+        var alfabet = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder stringBuilder = new StringBuilder();
+        var strLenght = alfabet.length() - 1;
+        for (int i = 0; i < 10; i++) {
+            stringBuilder.append(alfabet.charAt((int) (Math.random() * strLenght)));
+        }
+        return stringBuilder.toString();
     }
 }
