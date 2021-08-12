@@ -51,8 +51,12 @@ public class DialogsController {
     @Operation(description = "Получение сообщений в диалоге")
     public ResponseEntity<DialogMessagesResponse> getMessagesFromDialogs(@PathVariable Integer id,
                                                          @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-                                                         @RequestParam(value = "itemPerPage", required = false, defaultValue = "20") Integer itemPerPage) throws BadRequestException {
-        return dialogsService.getDialogMessages(id, offset, itemPerPage);
+                                                         @RequestParam(value = "itemPerPage", required = false, defaultValue = "20") Integer itemPerPage,
+                                                         Principal principal) throws BadRequestException {
+        if (principal == null) {
+            throw new BadRequestException(Config.STRING_AUTH_ERROR);
+        }
+        return dialogsService.getDialogMessages(id, offset, itemPerPage, principal.getName());
     }
 
     @GetMapping(value = "/api/v1/dialogs/unreaded")
