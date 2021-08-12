@@ -267,6 +267,7 @@ public class PostCommentService {
         like.setPerson(getCurrentUser());
 
         PostComment likedComment = commentRepository.findCommentByID(commentID);
+
         if (likedComment == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }

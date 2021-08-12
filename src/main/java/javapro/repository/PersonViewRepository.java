@@ -1,6 +1,6 @@
 package javapro.repository;
 
-import javapro.model.PersonView;
+import javapro.model.view.PersonView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

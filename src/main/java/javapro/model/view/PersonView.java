@@ -1,5 +1,7 @@
-package javapro.model;
+package javapro.model.view;
 
+import javapro.model.Country;
+import javapro.model.Town;
 import javapro.model.enums.MessagesPermission;
 import lombok.Getter;
 import lombok.Setter;

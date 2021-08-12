@@ -2,6 +2,7 @@ package javapro.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import javapro.model.view.PostCommentView;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -47,7 +48,7 @@ public class Post implements Serializable {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "post")
-    private List<PostComment> postCommentList = new ArrayList<>();
+    private List<PostCommentView> postCommentList = new ArrayList<>();
 
     @JsonManagedReference
     @OneToMany(mappedBy = "post")
@@ -60,7 +61,7 @@ public class Post implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     List<Tag> postTagList = new ArrayList<>();
 
-    public List<PostComment> getPostCommentList() {
+    public List<PostCommentView> getPostCommentList() {
         if (postCommentList != null) {
             Collections.sort(postCommentList);
         }

@@ -335,4 +335,16 @@
             <column name="post_id"/>
         </createIndex>
     </changeSet>
+    <changeSet author="eyese (generated)" id="1628757970925-43">
+        <createView fullDefinition="false" viewName="vi_post_comment" replaceIfExists="true" schemaName="public">SELECT pc.id,
+            pc.comment_text,
+            pc.is_blocked,
+            pc."time",
+            pc.author_id,
+            pc.parent_id,
+            pc.post_id,
+            pc.is_deleted
+            FROM post_comment pc
+            WHERE ((pc.is_deleted = false) AND (pc.is_blocked = false));</createView>
+    </changeSet>
 </databaseChangeLog>

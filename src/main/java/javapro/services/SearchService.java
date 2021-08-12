@@ -10,7 +10,7 @@ import javapro.config.exception.UnAuthorizedException;
 import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.dto.PostDTO;
 import javapro.model.Person;
-import javapro.model.PersonView;
+import javapro.model.view.PersonView;
 import javapro.model.Post;
 import javapro.repository.PersonRepository;
 import javapro.repository.PersonViewRepository;
