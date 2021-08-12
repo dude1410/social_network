@@ -35,11 +35,9 @@ public class StorageService {
 
 
     private final PersonRepository personRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public StorageService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -112,7 +110,7 @@ public class StorageService {
         var alfabet = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder stringBuilder = new StringBuilder();
         var strLenght = alfabet.length() - 1;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             stringBuilder.append(alfabet.charAt((int) (Math.random() * strLenght)));
         }
         return stringBuilder.toString();

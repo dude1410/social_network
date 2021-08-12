@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.response.LoginResponse;
 import javapro.api.response.OkResponse;
 import javapro.config.exception.BadRequestException;
+import javapro.config.exception.NotFoundException;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.services.AuthService;
 import org.springframework.http.MediaType;
@@ -38,7 +39,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")})
     public ResponseEntity<LoginResponse> login(@RequestBody UnauthorizedPersonDTO user,
                                                Errors error,
-                                               HttpServletRequest httpServletRequest) throws BadRequestException {
+                                               HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
         return authService.loginUser(user, error, httpServletRequest);
     }
 
