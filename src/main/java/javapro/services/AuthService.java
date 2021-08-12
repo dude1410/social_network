@@ -5,6 +5,7 @@ import javapro.api.response.OkResponse;
 import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
+import javapro.config.exception.NotFoundException;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
@@ -15,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,7 +62,7 @@ public class AuthService {
 
     public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
                                                    Errors validationErrors,
-                                                   HttpServletRequest httpServletRequest) throws BadRequestException {
+                                                   HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
 
 
 
@@ -81,6 +81,9 @@ public class AuthService {
 
         var userFromDB = personRepository.findByEmailForLogin(email);
 
+        if(userFromDB == null){
+            throw new NotFoundException(Config.STRING_NO_PERSON_IN_DB);
+        }
 
         if(deletedPersonRepository.findPerson(userFromDB.getId()) != null){
             throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
