@@ -23,6 +23,6 @@ public class Tag implements Serializable {
     private String tag;
 
     @ManyToMany(mappedBy = "postTagList")
-    List<Post> tagList = new ArrayList<>();
+    private List<Post> tagList = new ArrayList<>();
 
 }
