@@ -16,6 +16,6 @@ public class PostDataRequest {
     @Schema(name = "post_text", description = "новый текст поста", example = "Здесь у нас новый текст поста")
     private String post_text;
 
-    @Schema(name = "tags", description = "список тэгов", example = "[ {name: \"fun\"}, {name: \"SQL\"} ]")
+    @Schema(name = "tags", description = "список тэгов")
     private List<TagRequest> tags;
 }
