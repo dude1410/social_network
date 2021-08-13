@@ -65,8 +65,7 @@ public class ProfileController {
     public ResponseEntity<PostShortResponse> publishPost(@PathVariable Integer id,
                                                          @RequestParam(name = "publish_date", required = false) Long publishDate,
                                                          @RequestBody PostDataRequest postDataRequest) throws NotFoundException {
-        return postService.publishPost(publishDate,
-                postDataRequest);
+        return postService.publishPost(publishDate, postDataRequest);
     }
 
     @PutMapping("/api/v1/users/me")

@@ -30,6 +30,7 @@ import java.util.*;
 public class PostService {
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
 
     private final DeletedPersonRepository deletedPersonRepository;
     private final NotificationEntityRepository notificationEntityRepository;
@@ -39,11 +40,13 @@ public class PostService {
 
     public PostService(PersonRepository personRepository,
                        PostRepository postRepository,
+                       TagRepository tagRepository,
                        DeletedPersonRepository deletedPersonRepository,
                        NotificationEntityRepository notificationEntityRepository,
                        NotificationRepository notificationRepository) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
+        this.tagRepository = tagRepository;
         this.deletedPersonRepository = deletedPersonRepository;
         this.notificationEntityRepository = notificationEntityRepository;
         this.notificationRepository = notificationRepository;
@@ -159,7 +162,7 @@ public class PostService {
 
         post.setPostText(postDataRequest.getPost_text());
         post.setTitle(postDataRequest.getTitle());
-
+        post.setPostTagList(createTagsIfNew(postDataRequest.getTags()));
 
         postRepository.save(post);
 
@@ -210,8 +213,9 @@ public class PostService {
         post.setBlocked(false);
         post.setAuthor(currentUser);
         post.setDeleted(false);
+        post.setPostTagList(createTagsIfNew(postDataRequest.getTags()));
 
-        var newPost = postRepository.save(post);
+        Post newPost = postRepository.save(post);
 
         PostDTO postDTO = postToDTOCustomMapper.mapper(post);
 
@@ -268,13 +272,36 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        //TODO отправляем id поста куда-то
+        //отправляем id поста куда-то
 
         return ResponseEntity
                 .ok(new ReportCommentResponse("successfully",
                         Time.getTime(),
                         new MessageDTO()
                 ));
+    }
+
+    //this method creates tags when it's new
+    private List<Tag> createTagsIfNew(List<TagRequest> tagsRequest){
+        List<Tag> tags = new ArrayList<>();
+        if (tagsRequest != null) {
+
+            for (TagRequest tagRequest : tagsRequest) {
+
+                String tagName = tagRequest.getTag();
+
+                Tag tag = tagRepository.findTagByName(tagName);
+
+                if (tag == null) {
+                    Tag newTag = new Tag();
+                    newTag.setTag(tagName);
+                    tags.add(tagRepository.save(newTag));
+                } else {
+                    tags.add(tag);
+                }
+            }
+        }
+        return tags;
     }
 
     private Person getCurrentUser() throws NotFoundException {
