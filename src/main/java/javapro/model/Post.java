@@ -59,7 +59,7 @@ public class Post implements Serializable {
             name = "post2tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    List<Tag> postTagList = new ArrayList<>();
+    private List<Tag> postTagList = new ArrayList<>();
 
     public List<PostCommentView> getPostCommentList() {
         if (postCommentList != null) {

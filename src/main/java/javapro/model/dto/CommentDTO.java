@@ -1,6 +1,7 @@
 package javapro.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javapro.model.dto.auth.AuthorizedPerson;
 import lombok.Data;
 
 @Data
@@ -22,7 +23,7 @@ public class CommentDTO {
     private Long time;
 
     @JsonProperty(value = "author")
-    private PersonDTO author;
+    private AuthorizedPerson author;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;

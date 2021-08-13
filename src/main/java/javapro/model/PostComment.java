@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class PostComment implements Serializable, Comparable<PostComment>  {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<PostLike> commentLikeList;
+    private List<PostLike> commentLikeList = new ArrayList<>();
 
     @Override
     public int compareTo(PostComment comment) {
