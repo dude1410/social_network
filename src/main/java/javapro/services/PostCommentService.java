@@ -82,12 +82,12 @@ public class PostCommentService {
         }
 
         comment.setCommentText(commentRequest.getComment_text());
-        var person = getCurrentUser();
+        Person person = getCurrentUser();
         comment.setAuthor(person);
         comment.setDeleted(false);
         comment.setBlocked(false);
 
-        var commentData = commentRepository.save(comment).getId();
+        Integer commentData = commentRepository.save(comment).getId();
 
         CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
 
