@@ -38,9 +38,9 @@ public class LoggingController {
     private ArrayList<Logs> getListLog(File file) throws IOException {
         List<String> logFile = FileUtils.readLines(file, StandardCharsets.UTF_8);
         ArrayList<Logs> logsList = new ArrayList<>();
-        for (int i = 0; i < logFile.size(); i++) {
-            Logs l = new Logs();
-            l.setLogString(logFile.get(i));
+        for (String s : logFile) {
+            var l = new Logs();
+            l.setLogString(s);
             logsList.add(l);
         }
         return logsList;

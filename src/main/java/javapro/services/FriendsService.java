@@ -134,7 +134,7 @@ public class FriendsService {
         if (userEmail == null) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
-        Person person = personRepository.findUserIdByEmail(userEmail);
+        var person = personRepository.findUserIdByEmail(userEmail);
         if (person == null) {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
@@ -330,7 +330,7 @@ public class FriendsService {
                 e.printStackTrace();
             }
         };
-        Thread thread = new Thread(task);
+        var thread = new Thread(task);
         thread.start();
 
         return ResponseEntity.ok(new OkResponse("successfully",

@@ -2,7 +2,6 @@ package javapro.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.response.LoginResponse;
 import javapro.api.response.OkResponse;
@@ -35,8 +34,8 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Вход в учетную запись")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка зайти в учетную запись"),
-            @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка зайти в учетную запись")
+    @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")
     public ResponseEntity<LoginResponse> login(@RequestBody UnauthorizedPersonDTO user,
                                                Errors error,
                                                HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
@@ -46,9 +45,9 @@ public class AuthController {
     @PostMapping(value = "/api/v1/auth/logout",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Выход из учетной записи")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка выйти из учетной записи"),
-            @ApiResponse(responseCode = "400", description = "Неуспешная попытка выйти из учетной записи")})
-    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest) throws BadRequestException {
+    @ApiResponse(responseCode = "200", description = "Успешная попытка выйти из учетной записи")
+    @ApiResponse(responseCode = "400", description = "Неуспешная попытка выйти из учетной записи")
+    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest)  {
         return authService.logout(httpServletRequest);
     }
 }

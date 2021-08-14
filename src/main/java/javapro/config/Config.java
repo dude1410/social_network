@@ -1,6 +1,11 @@
 package javapro.config;
 
 public class Config {
+//так и не понял нафига этот приватный конструктор. сонаркуб заставил :)
+    private Config(){
+        throw new IllegalStateException("Utility class");
+    }
+
     public static final String TIME_ZONE = "Europe/Moscow";
     public static final String STRING_FIELD_CANT_BE_BLANK = "Поле не может быть пустым.";
     public static final String STRING_AUTH_INVALID_EMAIL = "Адрес указан неверно.";
@@ -33,7 +38,7 @@ public class Config {
     public static final String STRING_LOGOUT_UNSUCCESSFUL = "Неудачная попытка разлогиниться";
     public static final String STRING_BAD_REQUEST = "Неверный запрос";
     public static final String STRING_INVALID_SET_PASSWORD = "Не удалось сменить пароль";
-    public static final String STRING_REPEAT_EMAIL = "На этот почтовый ящик уже зарегестрирован другой аккаунт";
+    public static final String STRING_REPEAT_EMAIL = "На этот почтовый ящик уже зарегистрирован другой аккаунт";
     public static final String STRING_INVALID_CONFIRM = "Неудачная попытка подтверждения регистрации";
     public static final String STRING_NO_FRIENDS_FOUND = "Друзей по запросу не найдено";
     public static final String STRING_USER_IS_ALREADY_YOUR_FRIEND = "Этот пользователь уже в списке ваших друзей";

@@ -94,10 +94,10 @@ public class FriendsController {
 
     @GetMapping(value = "/friends/recommendations")
     @Operation(description = "Получить список рекомендаций")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить список рекомендаций"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Список рекомендаций не удалось составить"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка получить список рекомендаций")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "400", description = "Список рекомендаций не удалось составить")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     public ResponseEntity<FriendsResponse> getRecommendations(@RequestParam(value = "offset", required = false) Long offset,
 
                                                               @RequestParam(value = "itemPerPage", required = false) Long itemPerPage)
@@ -105,13 +105,12 @@ public class FriendsController {
         return friendsService.getRecommendations(offset, itemPerPage);
     }
 
-    // todo: может измениться вариант ответа
     @PutMapping(value = "/friends/{id}")
     @Operation(description = "Принять/добавить в друзья")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка добавить в друзья"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка добавить в друзья")
+    @ApiResponse(responseCode = "400", description = "Некорректный запрос")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     public ResponseEntity<OkResponse> addFriend(@PathVariable Integer id)
             throws AuthenticationException, NotFoundException, BadRequestException {
         return friendsService.addFriend(id);

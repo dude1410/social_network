@@ -1,5 +1,8 @@
 package javapro.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.*;
 import javapro.api.response.OkResponse;
 import javapro.config.Config;
@@ -7,10 +10,6 @@ import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
 import javapro.config.exception.ValidationException;
 import javapro.services.AccountService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.services.EmailChangeService;
 import javapro.services.RegisterService;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +36,9 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Запрос на восстановление пароля")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Получена ссылка на восстановление пароля"),
-            @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")})
-    public ResponseEntity<?> passwordRecovery(@Valid @RequestBody OnlyMailRequest onlyMailRequest, Errors errors)
+    @ApiResponse(responseCode = "200", description = "Получена ссылка на восстановление пароля")
+    @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")
+    public ResponseEntity<OkResponse> passwordRecovery(@Valid @RequestBody OnlyMailRequest onlyMailRequest, Errors errors)
             throws ValidationException, BadRequestException, NotFoundException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
@@ -51,9 +50,9 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Установаить новый пароль")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Пароль изменен"),
-            @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")})
-    public ResponseEntity<?> passwordSet(@Valid @RequestBody SetPasswordRequest setPasswordRequest, Errors errors)
+    @ApiResponse(responseCode = "200", description = "Пароль изменен")
+    @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")
+    public ResponseEntity<OkResponse> passwordSet(@Valid @RequestBody SetPasswordRequest setPasswordRequest, Errors errors)
             throws BadRequestException, ValidationException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
@@ -65,9 +64,9 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Изменение пароля в настройках пользователя")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Пароль изменен"),
-            @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")})
-    public ResponseEntity<?> passwordSet(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest,
+    @ApiResponse(responseCode = "200", description = "Пароль изменен")
+    @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")
+    public ResponseEntity<OkResponse> passwordSet(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest,
                                          Principal principal,
                                          Errors errors) throws BadRequestException, ValidationException {
         if (errors.hasErrors()) {
@@ -84,10 +83,9 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Регистрация нового пользователя")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Ссылка на подтверждение регистрации направлена"),
-            @ApiResponse(responseCode = "400", description = "На этот почтовый ящик уже зарегестрирован другой аккаунт")})
-    public ResponseEntity<OkResponse> registration(@Valid @RequestBody RegisterRequest registerRequest, Errors errors) throws BadRequestException, InterruptedException, ValidationException, NotFoundException {
-        System.out.println("jffhsfhdshfkshfshfkdhskfhsjkf");
+    @ApiResponse(responseCode = "200", description = "Ссылка на подтверждение регистрации направлена")
+    @ApiResponse(responseCode = "400", description = "На этот почтовый ящик уже зарегестрирован другой аккаунт")
+    public ResponseEntity<OkResponse> registration(@Valid @RequestBody RegisterRequest registerRequest, Errors errors) throws BadRequestException, ValidationException, NotFoundException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }
@@ -98,8 +96,8 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Подтверждение регистрации нового пользователя")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Регистрация прошла успешно"),
-            @ApiResponse(responseCode = "400", description = "Неудачная попытка подтверждения регистрации")})
+    @ApiResponse(responseCode = "200", description = "Регистрация прошла успешно")
+    @ApiResponse(responseCode = "400", description = "Неудачная попытка подтверждения регистрации")
     public ResponseEntity<OkResponse> registrationConfirm(@Valid @RequestBody RegisterConfirmRequest registerConfirmRequest, Errors errors) throws BadRequestException, ValidationException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
@@ -111,9 +109,9 @@ public class AccountController {
             consumes = "application/json",
             produces = "application/json")
     @Operation(description = "Запрос на смену email (Настройки пользователя)")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная смена email"),
-            @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса")})
-    public ResponseEntity<?> passwordRecovery(@Valid @RequestBody OnlyMailRequest onlyMailRequest,
+    @ApiResponse(responseCode = "200", description = "Успешная смена email")
+    @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса")
+    public ResponseEntity<OkResponse> passwordRecovery(@Valid @RequestBody OnlyMailRequest onlyMailRequest,
                                               Principal principal,
                                               Errors errors) throws BadRequestException, ValidationException {
         if (errors.hasErrors()) {
