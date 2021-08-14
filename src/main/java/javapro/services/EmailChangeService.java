@@ -34,8 +34,4 @@ public class EmailChangeService {
             throw new BadRequestException(Config.STRING_INVALID_SET_PASSWORD);
         }
     }
-
-//    private Long getTimestamp() {
-//        return (new Date().getTime() / 1000);
-//    }
 }

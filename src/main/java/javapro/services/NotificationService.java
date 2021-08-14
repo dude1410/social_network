@@ -43,6 +43,8 @@ public class NotificationService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationEntityRepository notificationEntityRepository;
     private final DeletedPersonRepository deletedPersonRepository;
+    private final String TIMEZONE = "Europe/Moscow";
+    private final String DATEFORMAT = "MM-dd";
 
     public NotificationService(PersonRepository personRepository,
                                NotificationSetupRepository notificationSetupRepository,
@@ -96,7 +98,7 @@ public class NotificationService {
 
         var notificationSetupList = getNotificationSetup(personId);
 
-        if (notificationSetupList.size() == 0) {
+        if (notificationSetupList.isEmpty()) {
             var saveNotificationList = new ArrayList<NotificationSetup>();
             for (NotificationType element : NotificationType.values()) {
                 var notification = new NotificationSetup();
@@ -114,7 +116,7 @@ public class NotificationService {
 
         var notificationDataFromBd = notificationSetupRepository.findAllByPersonId(personId);
 
-        if (notificationDataFromBd.size() == 0) {
+        if (notificationDataFromBd.isEmpty()) {
             throw new NotFoundException(Config.STRING_NOT_FOUND_NOTIFICATION_SETUP);
         }
 
@@ -172,9 +174,9 @@ public class NotificationService {
                 .getAuthentication()
                 .getName())
                 .getId();
-        var notification = notificationRepository.findById(id);
-        notificationRepository.deleteById(id);
-//        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
+        var notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Config.STRING_NOTIFICATION_ISDELETED));
+        notificationRepository.deleteById(notification.getId());
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -192,7 +194,6 @@ public class NotificationService {
             notificationEntity.ifPresent(entity::add);
         });
         notificationRepository.deleteAll(personId);
-//        notificationEntityRepository.deleteAll(entity);
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -260,12 +261,12 @@ public class NotificationService {
     private void addFriendsBirthdayNotification() {
         notificationRepository.deleteAllByNotificationType(NotificationType.FRIEND_BIRTHDAY);
         var friendshipList = friendshipRepository.findAllByStatus(FriendshipStatus.FRIEND);
-        var today = LocalDate.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern("MM-dd"));
+        var today = LocalDate.now(ZoneId.of(TIMEZONE)).format(DateTimeFormatter.ofPattern(DATEFORMAT));
         for (Friendship element : friendshipList) {
 
             if (element.getDstPersonId().getBirthDate() != null) {
-                var dstPersonBirthDay = element.getDstPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
-                        .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+                var dstPersonBirthDay = element.getDstPersonId().getBirthDate().toInstant().atZone(ZoneId.of(TIMEZONE))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern(DATEFORMAT));
                 if (dstPersonBirthDay.equals(today) && !element.getDstPersonId().isBlocked()) {
                     addNotification(element.getDstPersonId().getId(), element.getSrcPersonId().getId());
                 }
@@ -273,8 +274,8 @@ public class NotificationService {
 
             }
             if (element.getSrcPersonId().getBirthDate() != null) {
-                var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of("Europe/Moscow"))
-                        .toLocalDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+                var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of(TIMEZONE))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern(DATEFORMAT));
 
                 if (srcPersonBirthDay.equals(today) && !element.getSrcPersonId().isBlocked()) {
                     addNotification(element.getSrcPersonId().getId(), element.getDstPersonId().getId());

@@ -134,7 +134,7 @@ public class FriendsService {
         if (userEmail == null) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
         }
-        Person person = personRepository.findUserIdByEmail(userEmail);
+        var person = personRepository.findUserIdByEmail(userEmail);
         if (person == null) {
             throw new NotFoundException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
         }
@@ -232,7 +232,7 @@ public class FriendsService {
     }
 //    рекомендации
     public ResponseEntity<FriendsResponse> getRecommendations(Long offset, Long itemPerPage)
-            throws AuthenticationException, NotFoundException, BadRequestException {
+            throws AuthenticationException, NotFoundException {
 
         Integer userId = checkPersonByEmail().getId();
 
@@ -258,16 +258,16 @@ public class FriendsService {
         var currentFriends = personRepository.findAllFriends(userId);
         var size = personDTOS.size();
         ArrayList<PersonDTO> returnPersonList = new ArrayList<>();
-        for( int i = 0; i < size; i++){
+        for (PersonDTO personDTO : personDTOS) {
             int n = 0;
-            var pers = personDTOS.get(i);
-            for(Person element: currentFriends){
-                if(pers.getId() == (long)element.getId()){
+            var pers = personDTO;
+            for (Person element : currentFriends) {
+                if (pers.getId() == (long) element.getId()) {
                     n++;
                 }
             }
-            if(n == 0){
-              returnPersonList.add(pers);
+            if (n == 0) {
+                returnPersonList.add(pers);
             }
         }
 
@@ -330,7 +330,7 @@ public class FriendsService {
                 e.printStackTrace();
             }
         };
-        Thread thread = new Thread(task);
+        var thread = new Thread(task);
         thread.start();
 
         return ResponseEntity.ok(new OkResponse("successfully",
