@@ -1,5 +1,6 @@
 package javapro.services;
 
+import javapro.repository.PostViewRepository;
 import javapro.util.PersonToDtoMapper;
 import javapro.api.response.IsLikedResponse;
 import javapro.api.response.LikeResponse;
@@ -10,11 +11,10 @@ import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.dto.IsLikedDTO;
 import javapro.model.dto.LikeDTO;
 import javapro.model.Person;
-import javapro.model.Post;
+import javapro.model.view.PostView;
 import javapro.model.PostLike;
 import javapro.repository.LikeRepository;
 import javapro.repository.PersonRepository;
-import javapro.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,12 +29,12 @@ import java.util.List;
 @Service
 public class LikesService {
     private final LikeRepository likeRepository;
-    private final PostRepository postRepository;
+    private final PostViewRepository postRepository;
     private final PersonToDtoMapper personToDtoMapper;
     private final PersonRepository personRepository;
 
     public LikesService(LikeRepository likeRepository,
-                        PostRepository postRepository,
+                        PostViewRepository postRepository,
                         PersonToDtoMapper personToDtoMapper,
                         PersonRepository personRepository) {
         this.likeRepository = likeRepository;
@@ -91,9 +91,9 @@ public class LikesService {
                     ));
         }
 
-        Post likedPost = postRepository.findPostByID(postID);
+        PostView likedPostView = postRepository.findPostByID(postID);
 
-        if (likedPost == null) {
+        if (likedPostView == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
         Integer likesCount = likeRepository.getLikes(postID);
@@ -102,7 +102,7 @@ public class LikesService {
         PostLike like = new PostLike();
         like.setTime(new Date());
         like.setPerson(currentUser);
-        like.setPost(likedPost);
+        like.setPost(likedPostView);
 
         likeRepository.save(like);
 

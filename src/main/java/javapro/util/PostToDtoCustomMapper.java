@@ -1,16 +1,17 @@
 package javapro.util;
 
-import javapro.model.Post;
+import javapro.model.view.PostView;
 import javapro.model.dto.PostDTO;
 import javapro.model.enums.PostStatus;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 import java.sql.Timestamp;
 
 @Mapper(uses = {DateToSecondsMapper.class})
 public interface PostToDtoCustomMapper {
 
-    default PostDTO mapper(Post post) {
+    default PostDTO mapper(PostView post) {
         PostDTO postDTO = new PostDTO();
 
         postDTO.setId(post.getId());
@@ -20,7 +21,7 @@ public interface PostToDtoCustomMapper {
         postDTO.setPostText(post.getPostText());
         postDTO.setIsBlocked(post.isBlocked());
         postDTO.setLikes(post.getPostLikeList().size());
-        postDTO.setPostComments(new CommentToDTOMapper().convertToDTO(post.getPostCommentList()));
+        postDTO.setPostComments(Mappers.getMapper(CommentToDTOCustomMapper.class).mapper(post.getPostCommentList()));
         postDTO.setTags(new TagToDTOMapper().convertToDTO(post.getPostTagList()));
 
         postDTO.setPostStatus((postDTO.getTime() > new Timestamp(System.currentTimeMillis()).getTime() ? PostStatus.QUEUED : PostStatus.POSTED).toString());

@@ -1,6 +1,6 @@
 package javapro.model;
 
-import lombok.Data;
+import javapro.model.view.PostView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +20,7 @@ public class PostFile implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
-    private Post post;
+    private PostView postView;
 
     @Column(name = "name", nullable = false)
     private String name;

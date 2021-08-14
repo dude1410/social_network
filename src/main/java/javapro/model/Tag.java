@@ -1,5 +1,6 @@
 package javapro.model;
 
+import javapro.model.view.PostView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,6 @@ public class Tag implements Serializable {
     private String tag;
 
     @ManyToMany(mappedBy = "postTagList")
-    private List<Post> tagList = new ArrayList<>();
+    private List<PostView> postViewList = new ArrayList<>();
 
 }

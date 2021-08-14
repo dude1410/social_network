@@ -9,6 +9,8 @@ import javapro.model.*;
 import javapro.model.dto.*;
 import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.enums.NotificationType;
+import javapro.model.view.PostCommentView;
+import javapro.model.view.PostView;
 import javapro.repository.*;
 import javapro.util.CommentToDTOCustomMapper;
 import javapro.util.PersonToDtoMapper;
@@ -30,8 +32,8 @@ import java.util.List;
 @Service
 public class PostCommentService {
     private final PersonRepository personRepository;
-    private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
+    private final PostCommentViewRepository commentRepository;
+    private final PostViewRepository postRepository;
     private final LikeRepository likeRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationEntityRepository notificationEntityRepository;
@@ -40,8 +42,8 @@ public class PostCommentService {
     private final CommentToDTOCustomMapper commentToDTOCustomMapper;
 
     public PostCommentService(PersonRepository personRepository,
-                              CommentRepository commentRepository,
-                              PostRepository postRepository,
+                              PostCommentViewRepository commentRepository,
+                              PostViewRepository postRepository,
                               LikeRepository likeRepository,
                               NotificationRepository notificationRepository,
                               NotificationEntityRepository notificationEntityRepository,
@@ -63,19 +65,19 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        PostComment comment = new PostComment();
+        PostCommentView comment = new PostCommentView();
 
         comment.setTime(new Date());
         comment.setPost(post);
 
         if (commentRequest.getParent_id() != null) {
-            PostComment parentComment = commentRepository.findCommentByID(commentRequest.getParent_id());
+            PostCommentView parentComment = commentRepository.findCommentByID(commentRequest.getParent_id());
             comment.setParentComment(parentComment);
         } else {
             comment.setParentComment(null);
@@ -117,7 +119,7 @@ public class PostCommentService {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<PostComment> comments = commentRepository.findCommentsByPostID(postID, pageable);
+        Page<PostCommentView> comments = commentRepository.findCommentsByPostID(postID, pageable);
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
@@ -139,7 +141,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        PostCommentView comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -164,7 +166,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        PostCommentView comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -189,7 +191,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        PostCommentView comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -212,7 +214,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        PostCommentView comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -263,7 +265,7 @@ public class PostCommentService {
         like.setTime(new Date());
         like.setPerson(getCurrentUser());
 
-        PostComment likedComment = commentRepository.findCommentByID(commentID);
+        PostCommentView likedComment = commentRepository.findCommentByID(commentID);
 
         if (likedComment == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -361,7 +363,7 @@ public class PostCommentService {
                 notificationEntity.setPostComment(postComment);
             }
             var post = postRepository.findPostByID(postComment.getPost().getId());
-            notificationEntity.setPost(post);
+            notificationEntity.setPostView(post);
             var notificationEnt = notificationEntityRepository.save(notificationEntity);
             ArrayList<Notification> postCommentArrayList = new ArrayList<>();
             var notification = new Notification();

@@ -2,6 +2,7 @@ package javapro.services;
 
 import javapro.api.request.TagRequest;
 import javapro.model.enums.NotificationType;
+import javapro.model.view.PostView;
 import javapro.repository.*;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
@@ -29,7 +30,7 @@ import java.util.*;
 @Service
 public class PostService {
     private final PersonRepository personRepository;
-    private final PostRepository postRepository;
+    private final PostViewRepository postRepository;
     private final TagRepository tagRepository;
 
     private final DeletedPersonRepository deletedPersonRepository;
@@ -39,7 +40,7 @@ public class PostService {
     private final PostToDtoCustomMapper postToDTOCustomMapper;
 
     public PostService(PersonRepository personRepository,
-                       PostRepository postRepository,
+                       PostViewRepository postRepository,
                        TagRepository tagRepository,
                        DeletedPersonRepository deletedPersonRepository,
                        NotificationEntityRepository notificationEntityRepository,
@@ -76,7 +77,7 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<Post> postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
+        Page<PostView> postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
@@ -97,7 +98,7 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<Post> postList = postRepository.findAllPosts(new Date(), pageable);
+        Page<PostView> postList = postRepository.findAllPosts(new Date(), pageable);
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
@@ -124,7 +125,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             log.info(String.format("ID doesn't exist"));
@@ -153,7 +154,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -181,7 +182,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -201,7 +202,7 @@ public class PostService {
                                                          PostDataRequest postDataRequest) throws NotFoundException {
         Person currentUser = getCurrentUser();
 
-        Post post = new Post();
+        PostView post = new PostView();
 
         if (publishDate == null) {
             post.setTime(new Timestamp(System.currentTimeMillis()));
@@ -215,7 +216,7 @@ public class PostService {
         post.setDeleted(false);
         post.setPostTagList(createTagsIfNew(postDataRequest.getTags()));
 
-        Post newPost = postRepository.save(post);
+        PostView newPost = postRepository.save(post);
 
         PostDTO postDTO = postToDTOCustomMapper.mapper(post);
 
@@ -243,7 +244,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -266,7 +267,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        PostView post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -319,10 +320,10 @@ public class PostService {
         return person;
     }
 
-    private void createNotificationEntity(Post post, Person person) throws NotFoundException {
+    private void createNotificationEntity(PostView postView, Person person) throws NotFoundException {
 //      create new notification_entity
         NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setPost(post);
+        notificationEntity.setPostView(postView);
         notificationEntity.setPerson(person);
         var notificationEnt = notificationEntityRepository.save(notificationEntity);
 
@@ -332,11 +333,11 @@ public class PostService {
         if (!personList.isEmpty()) {
             for (Person element : personList) {
                 var notification = new Notification();
-                notification.setSentTime((Timestamp) post.getTime());
+                notification.setSentTime((Timestamp) postView.getTime());
                 notification.setNotificationType(NotificationType.POST);
                 notification.setEntity(notificationEnt);
                 notification.setPerson(element);
-                notification.setInfo(post.getTitle());
+                notification.setInfo(postView.getTitle());
                 notificationList.add(notification);
             }
             notificationRepository.saveAll(notificationList);

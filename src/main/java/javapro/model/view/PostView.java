@@ -1,8 +1,10 @@
-package javapro.model;
+package javapro.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import javapro.model.view.PostCommentView;
+import javapro.model.Person;
+import javapro.model.PostLike;
+import javapro.model.Tag;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,8 +19,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "post")
-public class Post implements Serializable {
+@Table(name = "vi_post")
+public class PostView implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

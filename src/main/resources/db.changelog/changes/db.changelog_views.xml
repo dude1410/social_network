@@ -27,4 +27,15 @@
      LEFT JOIN town t ON ((p.town_id = t.id)))
   WHERE ((p.is_blocked = false) AND (p.is_approved = true));</createView>
     </changeSet>
+    <changeSet author="eyese (generated)" id="1628953718627-76">
+        <createView fullDefinition="false" viewName="vi_post">SELECT p.id,
+            p.is_blocked,
+            p.post_text,
+            p."time",
+            p.title,
+            p.author_id,
+            p.is_deleted
+            FROM post p
+            WHERE ((p.is_deleted = false) AND (p.is_blocked = false));</createView>
+    </changeSet>
 </databaseChangeLog>

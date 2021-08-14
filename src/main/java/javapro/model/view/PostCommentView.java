@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javapro.model.Person;
-import javapro.model.Post;
-import javapro.model.PostComment;
 import javapro.model.PostLike;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,11 +34,11 @@ public class PostCommentView implements Serializable, Comparable<PostCommentView
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
-    private Post post;
+    private PostView post;
 
     @ManyToOne
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_parent_comment_id"))
-    private PostComment parentComment;
+    private PostCommentView parentComment;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "FK_author_id"))
@@ -56,7 +55,7 @@ public class PostCommentView implements Serializable, Comparable<PostCommentView
 
     @JsonManagedReference
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<PostLike> commentLikeList;
+    private List<PostLike> commentLikeList = new ArrayList<>();
 
     @Override
     public int compareTo(PostCommentView comment) {

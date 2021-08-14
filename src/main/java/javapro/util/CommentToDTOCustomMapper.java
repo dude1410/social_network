@@ -1,13 +1,16 @@
 package javapro.util;
 
-import javapro.model.PostComment;
 import javapro.model.dto.CommentDTO;
+import javapro.model.view.PostCommentView;
 import org.mapstruct.Mapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mapper(uses = {DateToSecondsMapper.class})
 public interface CommentToDTOCustomMapper {
 
-    default CommentDTO mapper(PostComment comment) {
+    default CommentDTO mapper(PostCommentView comment) {
         CommentDTO commentDTO = new CommentDTO();
 
         commentDTO.setParentCommentID(comment.getParentComment() == null ? null : comment.getParentComment().getId());
@@ -20,5 +23,11 @@ public interface CommentToDTOCustomMapper {
         commentDTO.setLikes(comment.getCommentLikeList().size());
 
         return commentDTO;
+    }
+
+    default List<CommentDTO> mapper(List<PostCommentView> comments) {
+        List<CommentDTO> commentDTOs = new ArrayList<>();
+        comments.forEach(comment -> commentDTOs.add(mapper(comment)));
+        return commentDTOs;
     }
 }

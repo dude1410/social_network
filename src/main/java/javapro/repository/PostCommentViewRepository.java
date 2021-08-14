@@ -1,6 +1,6 @@
 package javapro.repository;
 
-import javapro.model.PostComment;
+import javapro.model.view.PostCommentView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,24 +10,20 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface CommentRepository extends JpaRepository<PostComment, Integer> {
+public interface PostCommentViewRepository extends JpaRepository<PostCommentView, Integer> {
 
     @Query("SELECT " +
             "pc " +
-            "FROM PostComment pc " +
+            "FROM PostCommentView pc " +
             "WHERE pc.post.id = :postID " +
-            "AND pc.isDeleted = false " +
-            "AND pc.isBlocked = false " +
             "ORDER BY pc.time DESC")
-    Page<PostComment> findCommentsByPostID(int postID, Pageable pageable);
+    Page<PostCommentView> findCommentsByPostID(int postID, Pageable pageable);
 
     @Query("SELECT " +
             "pc " +
-            "FROM PostComment pc " +
-            "WHERE pc.id = :commentID " +
-            "AND pc.isDeleted = false " +
-            "AND pc.isBlocked = false ")
-    PostComment findCommentByID(int commentID);
+            "FROM PostCommentView pc " +
+            "WHERE pc.id = :commentID ")
+    PostCommentView findCommentByID(int commentID);
 
 
     @Query("SELECT " +
@@ -50,4 +46,5 @@ public interface CommentRepository extends JpaRepository<PostComment, Integer> {
             "WHERE pl.comment.id = :commentID " +
             "AND pl.person.id = :userID ")
     void deleteLikeOnComment(Integer userID, Integer commentID);
+
 }

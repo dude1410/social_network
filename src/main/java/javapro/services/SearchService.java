@@ -1,5 +1,6 @@
 package javapro.services;
 
+import javapro.repository.PostViewRepository;
 import javapro.util.PersonToDtoMapper;
 import javapro.api.response.PersonsResponse;
 import javapro.api.response.PostResponse;
@@ -11,10 +12,9 @@ import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.dto.PostDTO;
 import javapro.model.Person;
 import javapro.model.view.PersonView;
-import javapro.model.Post;
+import javapro.model.view.PostView;
 import javapro.repository.PersonRepository;
 import javapro.repository.PersonViewRepository;
-import javapro.repository.PostRepository;
 import javapro.util.PostToDtoCustomMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -32,14 +32,14 @@ import java.util.*;
 @Service
 public class SearchService {
 
-    private final PostRepository postRepository;
+    private final PostViewRepository postRepository;
     private final PersonRepository personRepository;
     private final PersonViewRepository personViewRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
     private final PostToDtoCustomMapper postToDTOCustomMapper;
 
-    public SearchService(PostRepository postRepository,
+    public SearchService(PostViewRepository postRepository,
                          PersonRepository personRepository,
                          PersonViewRepository personViewRepository,
                          PersonToDtoMapper personToDtoMapper) {
@@ -86,7 +86,7 @@ public class SearchService {
                                                            Integer itemPerPage) {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<Post> postsFound = postRepository.searchPostBy(searchText, pageable);
+        Page<PostView> postsFound = postRepository.searchPostBy(searchText, pageable);
 
         List<PostDTO> postDTOS = new ArrayList<>();
 
@@ -171,7 +171,7 @@ public class SearchService {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, searchTag, pageable);
+        Page<PostView> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, searchTag, pageable);
 
         List<PostDTO> postDTOList = new ArrayList();
 
