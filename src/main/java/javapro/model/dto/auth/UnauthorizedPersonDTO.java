@@ -2,10 +2,12 @@ package javapro.model.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class UnauthorizedPersonDTO {
 
@@ -18,7 +20,4 @@ public class UnauthorizedPersonDTO {
     @Schema(description = "пароль пользователя", example = "dHdf6dDHfd")
     private String password;
 
-
-
-    //TODO: слить с LoginRequest
 }

@@ -96,7 +96,7 @@ public class NotificationService {
 
         var notificationSetupList = getNotificationSetup(personId);
 
-        if (notificationSetupList.size() == 0) {
+        if (notificationSetupList.isEmpty()) {
             var saveNotificationList = new ArrayList<NotificationSetup>();
             for (NotificationType element : NotificationType.values()) {
                 var notification = new NotificationSetup();
@@ -114,7 +114,7 @@ public class NotificationService {
 
         var notificationDataFromBd = notificationSetupRepository.findAllByPersonId(personId);
 
-        if (notificationDataFromBd.size() == 0) {
+        if (notificationDataFromBd.isEmpty()) {
             throw new NotFoundException(Config.STRING_NOT_FOUND_NOTIFICATION_SETUP);
         }
 
@@ -174,7 +174,6 @@ public class NotificationService {
                 .getId();
         var notification = notificationRepository.findById(id);
         notificationRepository.deleteById(id);
-//        notification.ifPresent(value -> notificationEntityRepository.deleteById(value.getId()));
         return ResponseEntity.ok(createResponse(personId));
     }
 
@@ -192,7 +191,6 @@ public class NotificationService {
             notificationEntity.ifPresent(entity::add);
         });
         notificationRepository.deleteAll(personId);
-//        notificationEntityRepository.deleteAll(entity);
         return ResponseEntity.ok(createResponse(personId));
     }
 

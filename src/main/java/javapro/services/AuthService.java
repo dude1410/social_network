@@ -25,7 +25,6 @@ import org.springframework.validation.Errors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -82,6 +81,7 @@ public class AuthService {
         var userFromDB = personRepository.findByEmailForLogin(email);
 
         if(userFromDB == null){
+            logger.info("User with email {} is not found!", email);
             throw new NotFoundException(Config.STRING_NO_PERSON_IN_DB);
         }
 
@@ -89,14 +89,8 @@ public class AuthService {
             throw new BadRequestException(Config.STRING_PERSON_ISDELETED);
         }
 
-
-        if (userFromDB == null) {
-            logger.info(String.format("User with email '%s' is not found!", email));
-            throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
-        }
-
         if (!passwordEncoder.matches(password, userFromDB.getPassword())) {
-            logger.info(String.format("Wrong password for user with email '%s'!", email));
+            logger.info("Wrong password for user with email {}!", email);
             throw new BadRequestException(Config.STRING_AUTH_WRONG_PASSWORD);
         }
 
@@ -137,8 +131,8 @@ public class AuthService {
 //    @Scheduled(cron = "0 */1 * ? * *")
     private void deleteAllNotApprovedPerson() throws InterruptedException {
         var time = LocalDateTime.now().minusDays(1);
-        Instant instant =  time.toInstant(ZoneOffset.UTC);
-        Date date = Date.from(instant);
+        var instant =  time.toInstant(ZoneOffset.UTC);
+        var date = Date.from(instant);
         tokenRepository.deleteAllByDateBefore(date);
         Thread.sleep(5000);
         personRepository.deleteAllByRegDateBefore(date);
