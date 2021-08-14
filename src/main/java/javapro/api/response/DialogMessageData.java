@@ -20,4 +20,5 @@ public class DialogMessageData {
     private String messageText;
     @JsonProperty(value = "read_status")
     private ReadStatus readStatus;
+    private Boolean isSentByMe;
 }

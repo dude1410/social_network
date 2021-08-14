@@ -10,9 +10,10 @@ import javapro.model.dto.*;
 import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.enums.NotificationType;
 import javapro.repository.*;
-import javapro.util.CommentToDTOMapper;
+import javapro.util.CommentToDTOCustomMapper;
 import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class PostCommentService {
     private final NotificationEntityRepository notificationEntityRepository;
 
     private final PersonToDtoMapper personToDtoMapper;
-    private final CommentToDTOMapper commentToDTOMapper;
+    private final CommentToDTOCustomMapper commentToDTOCustomMapper;
 
     public PostCommentService(PersonRepository personRepository,
                               CommentRepository commentRepository,
@@ -44,8 +45,7 @@ public class PostCommentService {
                               LikeRepository likeRepository,
                               NotificationRepository notificationRepository,
                               NotificationEntityRepository notificationEntityRepository,
-                              PersonToDtoMapper personToDtoMapper,
-                              CommentToDTOMapper commentToDTOMapper) {
+                              PersonToDtoMapper personToDtoMapper) {
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
@@ -53,7 +53,7 @@ public class PostCommentService {
         this.notificationRepository = notificationRepository;
         this.notificationEntityRepository = notificationEntityRepository;
         this.personToDtoMapper = personToDtoMapper;
-        this.commentToDTOMapper = commentToDTOMapper;
+        this.commentToDTOCustomMapper = Mappers.getMapper(CommentToDTOCustomMapper.class);
     }
 
     public ResponseEntity<CommentResponse> addComment(Integer postID,
@@ -82,14 +82,14 @@ public class PostCommentService {
         }
 
         comment.setCommentText(commentRequest.getComment_text());
-        var person = getCurrentUser();
+        Person person = getCurrentUser();
         comment.setAuthor(person);
         comment.setDeleted(false);
         comment.setBlocked(false);
 
-        var commentData = commentRepository.save(comment).getId();
+        Integer commentData = commentRepository.save(comment).getId();
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+        CommentDTO commentDTO = commentToDTOCustomMapper.mapper(comment);
 
         Runnable task = () -> {
             try {
@@ -121,9 +121,7 @@ public class PostCommentService {
 
         List<CommentDTO> commentDTOs = new ArrayList();
 
-        comments.forEach(comment -> commentDTOs.add(commentToDTOMapper.convertToDTO(comment)));
-
-        commentDTOs.forEach(commentDTO -> commentDTO.setLikes(commentRepository.getLikesOnComment(commentDTO.getId())));
+        comments.forEach(comment -> commentDTOs.add(commentToDTOCustomMapper.mapper(comment)));
 
         return ResponseEntity
                 .ok(new CommentsResponse("successfully",
@@ -151,8 +149,7 @@ public class PostCommentService {
 
         commentRepository.save(comment);
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
+        CommentDTO commentDTO = commentToDTOCustomMapper.mapper(comment);
 
         return ResponseEntity
                 .ok(new CommentResponse("successfully",
@@ -200,8 +197,8 @@ public class PostCommentService {
 
         comment.setDeleted(false);
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
+        CommentDTO commentDTO = commentToDTOCustomMapper.mapper(comment);
+
         return ResponseEntity
                 .ok(new CommentResponse("successfully",
                         new Timestamp(System.currentTimeMillis()).getTime(),
@@ -221,7 +218,7 @@ public class PostCommentService {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
         }
 
-        //TODO отправляем id коммента куда-то
+        //отправляем id коммента куда-то
 
         return ResponseEntity
                 .ok(new ReportCommentResponse("successfully",
