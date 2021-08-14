@@ -6,12 +6,10 @@ import javapro.api.response.OkResponse;
 import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
-import javapro.config.exception.NotFoundException;
 import javapro.model.Person;
 import javapro.model.Token;
 import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
-import javapro.repository.TokenRepository;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +35,7 @@ public class AccountService {
 
     public AccountService(EmailService emailService,
                           TokenService tokenService, PersonRepository personRepository,
-                          TokenRepository tokenRepository, PasswordEncoder passwordEncoder,
+                          PasswordEncoder passwordEncoder,
                           @Qualifier("passRecoveryLogger") Logger logger,
                           @Qualifier("PassRecoveryTemplateMessage") String passRecoveryMessageTemplate,
                           DeletedPersonRepository deletedPersonRepository) {
@@ -50,7 +48,7 @@ public class AccountService {
         this.deletedPersonRepository = deletedPersonRepository;
     }
 
-    public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException, NotFoundException {
+    public ResponseEntity<OkResponse> passRecovery(String email) throws BadRequestException {
         Person person = personRepository.findByEmail(email);
 
         if (person == null) {

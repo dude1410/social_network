@@ -71,7 +71,7 @@ public class ProfileController {
 
     @PutMapping("/api/v1/users/me")
     @Operation(description = "Редактирование профиля")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Данные изменены")})
+    @ApiResponse(responseCode = "200", description = "Данные изменены")
     public ResponseEntity<Response<AuthorizedPerson>> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
         return profileService.editMyProfile(editMyProfileRequest);
     }
@@ -92,13 +92,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/api/v1/users/me")
-    public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException, AuthenticationException, NotFoundException {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException,  NotFoundException {
         return profileService.deletePerson();
     }
 }
