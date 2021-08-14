@@ -186,7 +186,7 @@ public class ProfileService {
         personRepository.save(person);
 
         DeletedPerson deletedPerson = new DeletedPerson();
-        deletedPerson.setType(DeletedType.Temporarily.toString());
+        deletedPerson.setType(DeletedType.TEMPORARILY.toString());
         deletedPerson.setPersonId(person.getId());
 
 //      adding an entry in the deletion database "deleted_person"
