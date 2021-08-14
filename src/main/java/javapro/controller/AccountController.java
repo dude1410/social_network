@@ -39,7 +39,7 @@ public class AccountController {
     @ApiResponse(responseCode = "200", description = "Получена ссылка на восстановление пароля")
     @ApiResponse(responseCode = "400", description = "Ошибка выполнения запроса или ошибка валидации тела запроса")
     public ResponseEntity<OkResponse> passwordRecovery(@Valid @RequestBody OnlyMailRequest onlyMailRequest, Errors errors)
-            throws ValidationException, BadRequestException, NotFoundException {
+            throws ValidationException, BadRequestException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }

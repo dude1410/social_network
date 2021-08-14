@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.MailSupportRequest;
 import javapro.api.response.MailSupportResponse;
 import javapro.config.Config;
-import javapro.config.exception.BadRequestException;
 import javapro.config.exception.ValidationException;
 import javapro.services.EmailService;
 import org.springframework.http.ResponseEntity;

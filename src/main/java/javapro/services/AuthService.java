@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -128,7 +129,7 @@ public class AuthService {
 
 //    @Scheduled(cron = "0 0 12 * * ?")
 
-//    @Scheduled(cron = "0 */1 * ? * *")
+    @Scheduled(cron = "0 */1 * ? * *")
     private void deleteAllNotApprovedPerson() throws InterruptedException {
         var time = LocalDateTime.now().minusDays(1);
         var instant =  time.toInstant(ZoneOffset.UTC);

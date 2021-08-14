@@ -14,13 +14,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 @Service
 public class StorageService {
@@ -28,15 +26,11 @@ public class StorageService {
     @Value("${javapro.storagepath}")
     private String uploadPath;
 
-    @Value(("${javapro.storagepath.baseurl}"))
-    private String baseURL;
-
     private final Logger logger = LogManager.getLogger(StorageService.class);
-
 
     private final PersonRepository personRepository;
 
-    public StorageService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+    public StorageService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
@@ -66,8 +60,19 @@ public class StorageService {
 
 
         var fileName = genName();
-        var fileExtension = Objects.requireNonNull(file.getOriginalFilename())
-                .substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+        if(file.getOriginalFilename() == null){
+            throw new BadRequestException("У файла отсутствует название и расширение");
+        }
+
+
+        String fileExtension = "";
+        try {
+            fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         var fullFileName = fileName + "." + fileExtension;
         var full = uploadPath + "/storage/thumb/" + fullFileName;
         String imagePath = uploadPath + "/storage/thumb/";
