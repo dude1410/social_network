@@ -56,6 +56,11 @@ public class Config {
     public static final String STRING_PERSON_EMPTY_LASTNAME = "Поле с фамилией не может быть пустым";
     public static final String STRING_NOTIFICATION_ISDELETED = "Уведомление отсутствует или уже удалено";
     public static final String STRING_FILE_TOO_BIG = "Файл слишком большой (не больше 500 килобайт)";
+    public static final String ERROR_MESSAGE = "string";
+    public static final String TIMEZONE = "Europe/Moscow";
+    public static final String DATEFORMAT = "MM-dd";
+    public static final String WALL_RESPONSE = "successfully";
+    public static final String STORAGE = "/storage/thumb/";
 
     public static final int INT_AUTH_BCRYPT_STRENGTH = 12;
 }

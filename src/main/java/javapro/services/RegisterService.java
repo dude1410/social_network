@@ -8,7 +8,6 @@ import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.model.NotificationSetup;
 import javapro.model.Person;
-import javapro.model.Token;
 import javapro.model.enums.MessagesPermission;
 import javapro.model.enums.NotificationType;
 import javapro.repository.NotificationSetupRepository;
@@ -56,26 +55,26 @@ public class RegisterService {
     public ResponseEntity<OkResponse> registerNewUser(RegisterRequest userInfo)
             throws BadRequestException {
         if (personRepository.findByEmail(userInfo.getEmail()) != null){
-            logger.warn(String.format("Запрос на регистрацию существующего пользователя. Email: %s", userInfo.getEmail()));
+            logger.warn("Запрос на регистрацию существующего пользователя. Email: {}", userInfo.getEmail());
             throw new BadRequestException(Config.STRING_REPEAT_EMAIL);
         }
         else {
-            Person person = addUserInDB(userInfo);
+            var person = addUserInDB(userInfo);
             if (person.getId() == null) {
-                logger.error(String.format("Ошибка при подтверждении регистрации. " +
-                        "Ошибка при добавлении нового пользователя в БД. Email: %s", person.getEmail()));
+                logger.error("Ошибка при подтверждении регистрации. Ошибка при добавлении нового пользователя в БД. Email: {}"
+                        , person.getEmail());
                 throw new BadRequestException(Config.STRING_AUTH_LOGIN_NO_SUCH_USER);
             }
-            Token token = tokenService.setNewPersonToken(person);
+            var token = tokenService.setNewPersonToken(person);
             if (token == null) {
-                logger.error(String.format("Ошибка при подтверждении регистрации. " +
-                        "Ошибка генерации токена. Email: %s", person.getEmail()));
+                logger.error("Ошибка при подтверждении регистрации. Ошибка генерации токена. Email: {}"
+                        , person.getEmail());
                 throw new BadRequestException(Config.STRING_TOKEN_ERROR);
             }
             emailService.sendMail("Registration in social network",
                                    String.format(registerMessageTemplate, address, token.getToken()),
                                    userInfo.getEmail());
-            logger.info(String.format("Успешная регистрация нового пользователя. Email: %s", userInfo.getEmail()));
+            logger.info("Успешная регистрация нового пользователя. Email: {}", userInfo.getEmail());
             return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
                                         HttpStatus.OK);
         }
@@ -83,7 +82,7 @@ public class RegisterService {
 
     public ResponseEntity<OkResponse> confirmRegistration(RegisterConfirmRequest registerConfirmRequest)
             throws BadRequestException {
-        Token token = tokenService.findToken(registerConfirmRequest.getToken());
+        var token = tokenService.findToken(registerConfirmRequest.getToken());
         if (token == null) {
             throw new BadRequestException(Config.STRING_NO_PERSON_IN_DB);
         }
@@ -91,25 +90,25 @@ public class RegisterService {
 
         if (tokenService.checkToken(token.getToken()) && !person.isApproved()) {
             if (personRepository.setIsApprovedTrue(person) == 1) {
-                logger.info(String.format("Подтверждение регистрации нового пользователя. Email: %s", person.getEmail()));
+                logger.info("Подтверждение регистрации нового пользователя. Email: {}", person.getEmail());
                 return new ResponseEntity<>(new OkResponse("null", getTimestamp(), new ResponseData("OK")),
                                             HttpStatus.OK);
             }
             else {
-                logger.error(String.format("Ошибка при подтверждении регистрации. " +
-                        "Ошибка при обработке запроса в БД. Email: %s", person.getEmail()));
+                logger.error("Ошибка при подтверждении регистрации. " +
+                        "Ошибка при обработке запроса в БД. Email: {}", person.getEmail());
                 throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
             }
         }
         else {
-            logger.warn(String.format("Ошибка при подтверждении регистрации. " +
-                    "Истек срок действия токена или регистрация была подтверждена ранее. Email: %s", person.getEmail()));
+            logger.warn("Ошибка при подтверждении регистрации. " +
+                    "Истек срок действия токена или регистрация была подтверждена ранее. Email: {}", person.getEmail());
             throw new BadRequestException(Config.STRING_INVALID_CONFIRM);
         }
     }
 
     private Person addUserInDB(RegisterRequest userInfo) {
-        Person person = new Person();
+        var person = new Person();
         person.setFirstName(userInfo.getFirstName());
         person.setLastName(userInfo.getLastName());
         person.setPassword(passwordEncoder.encode(userInfo.getPasswd1()));
@@ -119,7 +118,7 @@ public class RegisterService {
         person.setMessagesPermission(MessagesPermission.ALL);
         person.setRole(0);
         person.setLastOnlineTime(new Timestamp(System.currentTimeMillis()));
-        // TODO: 11.07.2021
+
         person.setConfirmationCode("token");
         var personId = personRepository.save(person).getId();
 

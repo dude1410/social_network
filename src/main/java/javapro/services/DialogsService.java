@@ -2,6 +2,7 @@ package javapro.services;
 
 import javapro.api.request.CreateDialogRequest;
 import javapro.api.response.*;
+import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.model.*;
 import javapro.model.dto.DialogMessageDTO;
@@ -28,6 +29,7 @@ public class DialogsService {
     private final DialogMessageRepository dialogMessageRepository;
     private final Dialog2PersonRepository dialog2PersonRepository;
 
+
     public DialogsService(DialogRepository dialogRepository, PersonRepository personRepository, DialogMessageRepository dialogMessageRepository, Dialog2PersonRepository dialog2PersonRepository) {
         this.dialogRepository = dialogRepository;
         this.personRepository = personRepository;
@@ -37,12 +39,12 @@ public class DialogsService {
 
     public ResponseEntity<AllPersonDialogsResponse> getAllPersonDialogs(String personEmail, Integer offset, Integer perPage) {
         List<DialogData> dialogData;
-        Person person = personRepository.findByEmail(personEmail);
+        var person = personRepository.findByEmail(personEmail);
         Pageable pageWithDialogs = PageRequest.of(offset / perPage, perPage);
         //получение списка диалогов пользователя
         List<Dialog> allUserDialog = Optional.of(dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId()))
                 .orElse(new ArrayList<>());
-        Integer countDialogs = dialogRepository.personDialogsCount();
+        var countDialogs = dialogRepository.personDialogsCount();
         dialogData = prepareDialogData(allUserDialog, person.getId());
         return new ResponseEntity<>(prepareAllPersonDialogResponse(dialogData,
                 countDialogs, offset, perPage), HttpStatus.OK);
@@ -50,7 +52,7 @@ public class DialogsService {
 
     public ResponseEntity<DialogMessagesResponse> getDialogMessages(Integer dialogId, Integer offset, Integer perPage, String currentUserEmail) throws BadRequestException {
         List<DialogMessageData> dialogMessageDataList;
-        Dialog dialog = dialogRepository.findById(dialogId).orElseThrow(() -> new BadRequestException("dialog not found"));
+        var dialog = dialogRepository.findById(dialogId).orElseThrow(() -> new BadRequestException("dialog not found"));
         List<DialogMessage> allDialogMessages = dialog.getDialogMessageList();
         List <DialogMessage> dialogMessagePage = allDialogMessages.stream()
                                                                   .sorted()
@@ -63,16 +65,16 @@ public class DialogsService {
     }
 
     public ResponseEntity<UnreadedCountResponse> getUnreadCount(String personEmail){
-        int unreadCount = 0;
-        UnreadedCountResponse unreadedCountResponse = new UnreadedCountResponse();
-        Person person = personRepository.findByEmail(personEmail);
+        var unreadCount = 0;
+        var unreadedCountResponse = new UnreadedCountResponse();
+        var person = personRepository.findByEmail(personEmail);
         List<Dialog> allPersonDialogs = dialogRepository.findAllPersonDialogs(person.getId());
         if (allPersonDialogs != null) {
             for (Dialog dialog : allPersonDialogs) {
                 unreadCount += getUnreadCountMessageInDialog(dialog, person.getId());
             }
             unreadedCountResponse = new UnreadedCountResponse(
-                    "string",
+                    Config.ERROR_MESSAGE,
                     Time.getTime(),
                     new UnreadedCountData(unreadCount));
         }
@@ -80,11 +82,10 @@ public class DialogsService {
     }
 
     public ResponseEntity<AddDialogMessageResponse> addDialogMessage(Integer id, String message, String authorEmail) throws BadRequestException {
-        Person author = personRepository.findByEmail(authorEmail);
-        System.out.println("dialog id " + id);
-        Dialog dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
-        DialogMessage newMessage = new DialogMessage();
-        Person recipient = dialog.getPersonInDialog().stream()
+        var author = personRepository.findByEmail(authorEmail);
+        var dialog = dialogRepository.findById(id).orElseThrow(() -> new BadRequestException("dialog not found"));
+        var newMessage = new DialogMessage();
+        var recipient = dialog.getPersonInDialog().stream()
                                                      .filter(p -> !p.getId().equals(author.getId()))
                                                      .findFirst().orElseThrow(() -> new BadRequestException("Recipient not found"));
         newMessage.setTime(new Date());
@@ -98,8 +99,8 @@ public class DialogsService {
     }
 
     public ResponseEntity<CreateDialogResponse> createDialog(CreateDialogRequest createDialogRequest, String currentUserEmail){
-        Person currentPerson = personRepository.findByEmail(currentUserEmail);
-        Person addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
+        var currentPerson = personRepository.findByEmail(currentUserEmail);
+        var addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
         List<Dialog> dialogList = currentPerson.getPersonsDialogs();
         if (dialogList != null) {
             for (Dialog dialog : dialogList) {
@@ -109,11 +110,11 @@ public class DialogsService {
                 }
             }
         }
-        Dialog dialog = new Dialog();
+        var dialog = new Dialog();
         dialogRepository.save(dialog);
         addInDialog2Person(dialog, currentPerson);
         addInDialog2Person(dialog, addingPerson);
-        DialogMessage newMessage = new DialogMessage();
+        var newMessage = new DialogMessage();
         newMessage.setTime(new Date());
         newMessage.setDialog(dialog);
         newMessage.setAuthorId(currentPerson);
@@ -125,7 +126,7 @@ public class DialogsService {
     }
 
     private void addInDialog2Person(Dialog dialog, Person person){
-        Dialog2person dialog2person = new Dialog2person();
+        var dialog2person = new Dialog2person();
         dialog2person.setDialog(dialog);
         dialog2person.setPerson(person);
         dialog2PersonRepository.save(dialog2person);
@@ -139,7 +140,7 @@ public class DialogsService {
 
     private CreateDialogResponse prepareCreateDialogResponse(Integer dialogId) {
         CreateDialogResponse createDialogResponse = new CreateDialogResponse();
-        createDialogResponse.setError("string");
+        createDialogResponse.setError(Config.ERROR_MESSAGE);
         createDialogResponse.setTimestamp(Time.getTime());
         createDialogResponse.setData(new CreateDialogData(dialogId));
         return createDialogResponse;
@@ -149,7 +150,7 @@ public class DialogsService {
     private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
                                                                     Integer total, Integer offset, Integer perPage){
         AllPersonDialogsResponse allPersonDialogsResponse = new AllPersonDialogsResponse();
-        allPersonDialogsResponse.setError("string");
+        allPersonDialogsResponse.setError(Config.ERROR_MESSAGE);
         allPersonDialogsResponse.setTimestamp(Time.getTime());
         allPersonDialogsResponse.setTotal(total);
         allPersonDialogsResponse.setOffset(offset);
@@ -161,7 +162,7 @@ public class DialogsService {
     private DialogMessagesResponse prepareDialogMessageResponse(List<DialogMessageData> dialogMessageDataList,
                                                                 Integer total, Integer offset, Integer perPage){
         DialogMessagesResponse dialogMessagesResponse = new DialogMessagesResponse();
-        dialogMessagesResponse.setError("string");
+        dialogMessagesResponse.setError(Config.ERROR_MESSAGE);
         dialogMessagesResponse.setTimestamp(Time.getTime());
         dialogMessagesResponse.setTotal(total);
         dialogMessagesResponse.setOffset(offset);
@@ -175,10 +176,10 @@ public class DialogsService {
         List<DialogMessage> dialogMessages;
         for (Dialog dialog : allUserDialog) {
             dialogMessages = dialog.getDialogMessageList();
-            if (dialogMessages.size() != 0) {
+            if (dialogMessages.isEmpty()) {
                 Collections.sort(dialogMessages);
                 DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
-                RecipientData recipientData = new RecipientData();
+                var recipientData = new RecipientData();
                 recipientData.setId(lastDialogMessage.getRecipientId().getId());
                 recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
                 recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
@@ -224,7 +225,7 @@ public class DialogsService {
         addDialogMessageData.setRecipientId(recipient.getId());
         addDialogMessageData.setMessageText(newMessage.getMessageText());
         addDialogMessageData.setReadStatus(newMessage.getReadStatus());
-        addDialogMessageResponse.setError("string");
+        addDialogMessageResponse.setError(Config.ERROR_MESSAGE);
         addDialogMessageResponse.setTimestamp(Time.getTime());
         addDialogMessageResponse.setData(addDialogMessageData);
         return addDialogMessageResponse;

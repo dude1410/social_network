@@ -43,8 +43,7 @@ public class NotificationService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationEntityRepository notificationEntityRepository;
     private final DeletedPersonRepository deletedPersonRepository;
-    private final String TIMEZONE = "Europe/Moscow";
-    private final String DATEFORMAT = "MM-dd";
+
 
     public NotificationService(PersonRepository personRepository,
                                NotificationSetupRepository notificationSetupRepository,
@@ -261,12 +260,12 @@ public class NotificationService {
     private void addFriendsBirthdayNotification() {
         notificationRepository.deleteAllByNotificationType(NotificationType.FRIEND_BIRTHDAY);
         var friendshipList = friendshipRepository.findAllByStatus(FriendshipStatus.FRIEND);
-        var today = LocalDate.now(ZoneId.of(TIMEZONE)).format(DateTimeFormatter.ofPattern(DATEFORMAT));
+        var today = LocalDate.now(ZoneId.of(Config.TIMEZONE)).format(DateTimeFormatter.ofPattern(Config.DATEFORMAT));
         for (Friendship element : friendshipList) {
 
             if (element.getDstPersonId().getBirthDate() != null) {
-                var dstPersonBirthDay = element.getDstPersonId().getBirthDate().toInstant().atZone(ZoneId.of(TIMEZONE))
-                        .toLocalDate().format(DateTimeFormatter.ofPattern(DATEFORMAT));
+                var dstPersonBirthDay = element.getDstPersonId().getBirthDate().toInstant().atZone(ZoneId.of(Config.TIMEZONE))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern(Config.DATEFORMAT));
                 if (dstPersonBirthDay.equals(today) && !element.getDstPersonId().isBlocked()) {
                     addNotification(element.getDstPersonId().getId(), element.getSrcPersonId().getId());
                 }
@@ -274,8 +273,8 @@ public class NotificationService {
 
             }
             if (element.getSrcPersonId().getBirthDate() != null) {
-                var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of(TIMEZONE))
-                        .toLocalDate().format(DateTimeFormatter.ofPattern(DATEFORMAT));
+                var srcPersonBirthDay = element.getSrcPersonId().getBirthDate().toInstant().atZone(ZoneId.of(Config.TIMEZONE))
+                        .toLocalDate().format(DateTimeFormatter.ofPattern(Config.DATEFORMAT));
 
                 if (srcPersonBirthDay.equals(today) && !element.getSrcPersonId().isBlocked()) {
                     addNotification(element.getSrcPersonId().getId(), element.getDstPersonId().getId());

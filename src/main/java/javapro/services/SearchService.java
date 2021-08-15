@@ -73,7 +73,7 @@ public class SearchService {
         personList.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
 
         return ResponseEntity
-                .ok(new PersonsResponse("successfully",
+                .ok(new PersonsResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) personFound.getTotalElements(),
                         offset,
@@ -93,7 +93,7 @@ public class SearchService {
         postsFound.forEach(post -> postDTOS.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
-                .ok(new PostResponse("successfully",
+                .ok(new PostResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) postsFound.getTotalElements(),
                         offset,
@@ -141,7 +141,7 @@ public class SearchService {
         personList.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
 
         return ResponseEntity
-                .ok(new PersonsResponse("successfully",
+                .ok(new PersonsResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) personFound.getTotalElements(),
                         offset,
@@ -178,7 +178,7 @@ public class SearchService {
         postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
-                .ok(new PostResponse("successfully",
+                .ok(new PostResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) postList.getTotalElements(),
                         offset,

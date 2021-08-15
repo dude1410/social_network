@@ -2,7 +2,6 @@ package javapro.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.IsFriendRequest;
 import javapro.api.response.FriendsResponse;
@@ -32,9 +31,9 @@ public class FriendsController {
     @GetMapping(value = "/friends",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Поиск друзей")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти друзей"),
-            @ApiResponse(responseCode = "404", description = "Список друзей пуст"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка найти друзей")
+    @ApiResponse(responseCode = "404", description = "Список друзей пуст")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
     public ResponseEntity<FriendsResponse> getFriends(@RequestParam(value = "name", required = false) String name,
                                                       @RequestParam(value = "offset", defaultValue = "0", required = false) Long offset,
                                                       @RequestParam(value = "itemPerPage", defaultValue = "20") Long itemPerPage)
@@ -45,10 +44,10 @@ public class FriendsController {
     @DeleteMapping(value = "/friends/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Удаление из друзей")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка удалить из друзей"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка удалить из друзей")
+    @ApiResponse(responseCode = "400", description = "Некорректный запрос")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     public ResponseEntity<OkResponse> deleteFriend(@PathVariable Integer id)
             throws AuthenticationException, NotFoundException, BadRequestException {
         return friendsService.deleteFriend(id);
@@ -57,10 +56,10 @@ public class FriendsController {
     @PostMapping(value = "/friends/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Отправить заявку на добавление в друзья")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Заявка на добавление в друзья направлена"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    @ApiResponse(responseCode = "200", description = "Заявка на добавление в друзья направлена")
+    @ApiResponse(responseCode = "400", description = "Некорректный запрос")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     public ResponseEntity<OkResponse> sendRequest(@PathVariable Integer id)
             throws AuthenticationException, BadRequestException, NotFoundException {
         return friendsService.sendRequest(id);
@@ -69,9 +68,9 @@ public class FriendsController {
     @GetMapping(value = "/friends/request",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Получить список заявок в друзья")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить список друзей"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден / пользователь уже у вас в друзьях")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка получить список друзей")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден / пользователь уже у вас в друзьях")
     public ResponseEntity<FriendsResponse> getRequestList(@RequestParam(value = "name", required = false) String name,
                                                           @RequestParam(value = "offset", defaultValue = "0", required = false) Long offset,
                                                           @RequestParam(value = "itemPerPage", defaultValue = "20") Long itemPerPage)
@@ -83,10 +82,10 @@ public class FriendsController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Получить информацию, является ли пользователь другом")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка получить список друзей"),
-            @ApiResponse(responseCode = "400", description = "Некорректный ввод данных"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка получить список друзей")
+    @ApiResponse(responseCode = "400", description = "Некорректный ввод данных")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     public ResponseEntity<IsFriendResponse> checkFriendStatus(@RequestBody IsFriendRequest request)
             throws AuthenticationException, NotFoundException, BadRequestException {
         return friendsService.checkFriendStatus(request);
@@ -101,7 +100,7 @@ public class FriendsController {
     public ResponseEntity<FriendsResponse> getRecommendations(@RequestParam(value = "offset", required = false) Long offset,
 
                                                               @RequestParam(value = "itemPerPage", required = false) Long itemPerPage)
-            throws AuthenticationException, NotFoundException, BadRequestException {
+            throws AuthenticationException, NotFoundException {
         return friendsService.getRecommendations(offset, itemPerPage);
     }
 
