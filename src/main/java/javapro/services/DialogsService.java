@@ -59,9 +59,11 @@ public class DialogsService {
                                                                   .skip(offset)
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
-        for (DialogMessage dialogMessage : dialogMessagePage) {
-            if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
-                dialogMessage.setReadStatus(ReadStatus.READ);
+        if (!dialogMessagePage.isEmpty()) {
+            for (DialogMessage dialogMessage : dialogMessagePage) {
+                if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
+                    dialogMessage.setReadStatus(ReadStatus.READ);
+                }
             }
         }
         dialogMessageDataList = prepareDialogMessageData(dialogMessagePage, currentUserEmail);
