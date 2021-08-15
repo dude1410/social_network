@@ -17,7 +17,9 @@ import javapro.repository.*;
 import javapro.util.PostToDtoCustomMapper;
 import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,7 @@ public class PostService {
     private final PersonRepository personRepository;
     private final PostViewRepository postRepository;
     private final TagRepository tagRepository;
-
+    private final Logger logger;
     private final DeletedPersonRepository deletedPersonRepository;
     private final NotificationEntityRepository notificationEntityRepository;
     private final NotificationRepository notificationRepository;
@@ -46,12 +48,14 @@ public class PostService {
     public PostService(PersonRepository personRepository,
                        PostViewRepository postRepository,
                        TagRepository tagRepository,
+                       @Qualifier("postLogger") Logger logger,
                        DeletedPersonRepository deletedPersonRepository,
                        NotificationEntityRepository notificationEntityRepository,
                        NotificationRepository notificationRepository) {
         this.personRepository = personRepository;
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
+        this.logger = logger;
         this.deletedPersonRepository = deletedPersonRepository;
         this.notificationEntityRepository = notificationEntityRepository;
         this.notificationRepository = notificationRepository;
@@ -225,7 +229,7 @@ public class PostService {
             try {
                 createNotificationEntity(newPost, currentUser);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         };
         var thread = new Thread(task);
