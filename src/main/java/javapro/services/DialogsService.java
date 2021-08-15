@@ -183,7 +183,7 @@ public class DialogsService {
         List<DialogMessage> dialogMessages;
         for (Dialog dialog : allUserDialog) {
             dialogMessages = dialog.getDialogMessageList();
-            if (dialogMessages.isEmpty()) {
+            if (!dialogMessages.isEmpty()) {
                 Collections.sort(dialogMessages);
                 DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
                 dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
