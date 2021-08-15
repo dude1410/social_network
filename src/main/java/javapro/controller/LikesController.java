@@ -72,10 +72,10 @@ public class LikesController {
     public ResponseEntity<LikeResponse> addLike(@RequestBody LikeRequest likeBody) throws NotFoundException, BadRequestException {
 
         if (likeBody.getType().equals("Post")) {
-            return likesService.addLike(likeBody.getItem_id());
+            return likesService.addLike(likeBody.getItemID());
         }
         if (likeBody.getType().equals("Comment")) {
-            return postCommentService.addLike(likeBody.getItem_id());
+            return postCommentService.addLike(likeBody.getItemID());
         }
         throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
@@ -87,10 +87,10 @@ public class LikesController {
             @ApiResponse(responseCode = "404", description = "id объекта не найден в базе")})
     public ResponseEntity<LikeResponse> deleteLike(@RequestBody LikeRequest likeBody) throws NotFoundException, BadRequestException {
         if (likeBody.getType().equals("Post")) {
-            return likesService.deleteLike(likeBody.getItem_id());
+            return likesService.deleteLike(likeBody.getItemID());
         }
         if (likeBody.getType().equals("Comment")) {
-            return postCommentService.deleteLike(likeBody.getItem_id());
+            return postCommentService.deleteLike(likeBody.getItemID());
         }
         throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }

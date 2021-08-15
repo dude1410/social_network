@@ -21,7 +21,7 @@ public class NotificationEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
-    private PostView postView;
+    private PostView post;
 
     @ManyToOne
     @JoinColumn(name = "post_comment_id", foreignKey = @ForeignKey(name = "FK_post_comment_id"))

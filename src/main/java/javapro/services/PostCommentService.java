@@ -76,14 +76,14 @@ public class PostCommentService {
         comment.setTime(new Date());
         comment.setPost(post);
 
-        if (commentRequest.getParent_id() != null) {
-            PostCommentView parentComment = commentRepository.findCommentByID(commentRequest.getParent_id());
+        if (commentRequest.getParentID() != null) {
+            PostCommentView parentComment = commentRepository.findCommentByID(commentRequest.getParentID());
             comment.setParentComment(parentComment);
         } else {
             comment.setParentComment(null);
         }
 
-        comment.setCommentText(commentRequest.getComment_text());
+        comment.setCommentText(commentRequest.getCommentText());
         Person person = getCurrentUser();
         comment.setAuthor(person);
         comment.setDeleted(false);
@@ -147,7 +147,7 @@ public class PostCommentService {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
         }
 
-        comment.setCommentText(editCommentBody.getComment_text());
+        comment.setCommentText(editCommentBody.getCommentText());
 
         commentRepository.save(comment);
 
@@ -363,7 +363,7 @@ public class PostCommentService {
                 notificationEntity.setPostComment(postComment);
             }
             var post = postRepository.findPostByID(postComment.getPost().getId());
-            notificationEntity.setPostView(post);
+            notificationEntity.setPost(post);
             var notificationEnt = notificationEntityRepository.save(notificationEntity);
             ArrayList<Notification> postCommentArrayList = new ArrayList<>();
             var notification = new Notification();

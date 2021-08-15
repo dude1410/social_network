@@ -20,7 +20,7 @@ public class PostFile implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "FK_post_id"))
-    private PostView postView;
+    private PostView post;
 
     @Column(name = "name", nullable = false)
     private String name;

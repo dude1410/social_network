@@ -161,7 +161,7 @@ public class PostService {
         }
 
 
-        post.setPostText(postDataRequest.getPost_text());
+        post.setPostText(postDataRequest.getPostText());
         post.setTitle(postDataRequest.getTitle());
         post.setPostTagList(createTagsIfNew(postDataRequest.getTags()));
 
@@ -209,7 +209,7 @@ public class PostService {
         } else {
             post.setTime(new Timestamp(publishDate));
         }
-        post.setPostText(postDataRequest.getPost_text());
+        post.setPostText(postDataRequest.getPostText());
         post.setTitle(postDataRequest.getTitle());
         post.setBlocked(false);
         post.setAuthor(currentUser);
@@ -323,7 +323,7 @@ public class PostService {
     private void createNotificationEntity(PostView postView, Person person) throws NotFoundException {
 //      create new notification_entity
         NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setPostView(postView);
+        notificationEntity.setPost(postView);
         notificationEntity.setPerson(person);
         var notificationEnt = notificationEntityRepository.save(notificationEntity);
 
