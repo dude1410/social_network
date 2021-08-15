@@ -2,16 +2,15 @@ package javapro.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "dialogs")
-public class Dialog{
+public class Dialog implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

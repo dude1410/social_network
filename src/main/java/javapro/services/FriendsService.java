@@ -66,9 +66,9 @@ public class FriendsService {
 
         if (allFriends.isEmpty()) {
             List<PersonDTO> personDTOList = new ArrayList<>();
-            return ResponseEntity.ok(new FriendsResponse("successfully",
+            return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                     new Timestamp(System.currentTimeMillis()).getTime(),
-                    (long) personDTOList.size(),
+                    0L,
                     offset,
                     itemPerPage,
                     personDTOList));
@@ -76,7 +76,7 @@ public class FriendsService {
 
         List<PersonDTO> personDTOList = personToPersonDTO(allFriends);
 
-        return ResponseEntity.ok(new FriendsResponse("successfully",
+        return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 (long) personDTOList.size(),
                 offset,
@@ -100,13 +100,12 @@ public class FriendsService {
 
         friendshipRepository.delete(friendship);
 
-        return ResponseEntity.ok(new OkResponse("successfully",
+        return ResponseEntity.ok(new OkResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));
     }
 
-    // todo: нет эндпойнта на утверждение дружбы
-    // todo: может измениться вариант ответа
+
 
     public ResponseEntity<OkResponse> addFriend(Integer id) throws AuthenticationException,
             NotFoundException,
@@ -123,7 +122,7 @@ public class FriendsService {
         friendshipRepository.save(friendshipInDB);
 
 
-        return ResponseEntity.ok(new OkResponse("successfully",
+        return ResponseEntity.ok(new OkResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));
     }
@@ -172,9 +171,9 @@ public class FriendsService {
         }
         if (allRequests.isEmpty()) {
             List<PersonDTO> personDTOS = new ArrayList<>();
-            ResponseEntity.ok(new FriendsResponse("successfully",
+            ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                     new Timestamp(System.currentTimeMillis()).getTime(),
-                    (long) personDTOS.size(),
+                    0L,
                     offset,
                     itemPerPage,
                     personDTOS));
@@ -182,7 +181,7 @@ public class FriendsService {
 
         List<PersonDTO> personDTOS = personToPersonDTO(allRequests);
 
-        return ResponseEntity.ok(new FriendsResponse("successfully",
+        return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 (long) personDTOS.size(),
                 offset,
@@ -247,31 +246,30 @@ public class FriendsService {
         if (allRecommendations.isEmpty()) {
             List<PersonDTO> personDTOS = new ArrayList<>();
 
-            return ResponseEntity.ok(new FriendsResponse("successfully",
+            return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                     new Timestamp(System.currentTimeMillis()).getTime(),
-                    (long) personDTOS.size(),
+                    0L,
                     offset,
                     itemPerPage,
                     personDTOS));
         }
         ArrayList<PersonDTO> personDTOS = personToPersonDTO(allRecommendations);
         var currentFriends = personRepository.findAllFriends(userId);
-        var size = personDTOS.size();
+
         ArrayList<PersonDTO> returnPersonList = new ArrayList<>();
         for (PersonDTO personDTO : personDTOS) {
-            int n = 0;
-            var pers = personDTO;
+            var n = 0;
             for (Person element : currentFriends) {
-                if (pers.getId() == (long) element.getId()) {
+                if (personDTO.getId() == (long) element.getId()) {
                     n++;
                 }
             }
             if (n == 0) {
-                returnPersonList.add(pers);
+                returnPersonList.add(personDTO);
             }
         }
 
-        return ResponseEntity.ok(new FriendsResponse("successfully",
+        return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 (long) personDTOS.size(),
                 offset,
@@ -333,7 +331,7 @@ public class FriendsService {
         var thread = new Thread(task);
         thread.start();
 
-        return ResponseEntity.ok(new OkResponse("successfully",
+        return ResponseEntity.ok(new OkResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 new ResponseData("ok")));
     }

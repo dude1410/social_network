@@ -8,18 +8,16 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class NotificationToNotificationDTOMaper {
+public class NotificationToNotificationDTOMapper {
 
 
     private final ModelMapper modelMapper;
 
-    public NotificationToNotificationDTOMaper() {
+    public NotificationToNotificationDTOMapper() {
         this.modelMapper = new ModelMapper();
 
         modelMapper.createTypeMap(Notification.class, NotificationDTO.class);
         modelMapper.createTypeMap(javapro.model.NotificationEntity.class, EntityAuthorDTO.class);
-//        modelMapper.createTypeMap(Country.class, javapro.model.dto.CountryDTO.class);
-
     }
 
     public NotificationDTO convertToDto(Notification entity) {

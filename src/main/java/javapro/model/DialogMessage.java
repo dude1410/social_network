@@ -1,6 +1,4 @@
 package javapro.model;
-
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javapro.model.enums.ReadStatus;
 import lombok.Getter;
@@ -14,7 +12,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "dialog_message")
-public class DialogMessage implements Comparable<DialogMessage>{
+public class DialogMessage implements Comparable<DialogMessage> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +43,15 @@ public class DialogMessage implements Comparable<DialogMessage>{
     @Column(name = "read_status", nullable = false)
     private ReadStatus readStatus;
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     @Override
     public int compareTo(@NotNull DialogMessage o) {
