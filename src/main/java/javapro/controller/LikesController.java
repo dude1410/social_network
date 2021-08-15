@@ -10,7 +10,6 @@ import javapro.services.LikesService;
 import javapro.services.PostCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +29,7 @@ public class LikesController {
         this.postCommentService = postCommentService;
     }
 
-    //TODO этот метод фронтом не вызывается
+    //этот метод фронтом не вызывается
     @GetMapping(value = "/api/v1/liked")
     @Operation(description = "Ставим лайк на объект(коммент/пост)")
     @ApiResponse(responseCode = "200", description = "Лайк поставлен")
@@ -48,7 +47,7 @@ public class LikesController {
         throw new BadRequestException(Config.STRING_NO_CONTENT_TYPE);
     }
 
-    //TODO этот метод фронтом не вызывается
+    //этот метод фронтом не вызывается
     @GetMapping(value = "/api/v1/likes")
     @Operation(description = "Получить лайки на объекте")
     @ApiResponse(responseCode = "200", description = "Лайки получены")

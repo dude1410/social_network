@@ -81,7 +81,7 @@ public class PostController {
         return postService.recoverPost(id);
     }
 
-    //TODO этот метод фронтом не вызывается
+    //этот метод фронтом не вызывается
     @PostMapping(value = "/api/v1/post/{id}/report")
     @Operation(description = "Подать жалобу на публикацию")
     @ApiResponse(responseCode = "200", description = "Жалоба подана успешно")
@@ -137,7 +137,7 @@ public class PostController {
         return postCommentService.deleteComment(commentID);
     }
 
-    //TODO этот метод фронтом не вызывается
+    //этот метод фронтом не вызывается
     @PutMapping(value = "/api/v1/post/{id}/comments/{comment_id}/recover")
     @Operation(description = "Восстановление комментария к публикации")
     @ApiResponse(responseCode = "200", description = "Комментарий восстановлен успешно")
@@ -148,7 +148,7 @@ public class PostController {
         return postCommentService.recoverComment(commentID);
     }
 
-    //TODO этот метод фронтом не вызывается
+    //этот метод фронтом не вызывается
     @PostMapping(value = "/api/v1/post/{id}/comments/{comment_id}/report")
     @Operation(description = "Жалоба на комментарий")
     @ApiResponse(responseCode = "200", description = "Жалоба на комментарий подана успешно")

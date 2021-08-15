@@ -15,7 +15,7 @@ spring:
     user: javapro
     password: iddqd
     enabled: true
-    contexts: dev
+    contexts: test
     change-log: classpath:db.changelog/db.changelog-master.yml
   mail:
     address: http://localhost:8080
