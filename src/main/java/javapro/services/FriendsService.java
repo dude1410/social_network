@@ -133,7 +133,7 @@ public class FriendsService {
     }
 
 
-    private Person checkPersonByEmail() throws AuthenticationException, NotFoundException {
+    public Person checkPersonByEmail() throws AuthenticationException, NotFoundException {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (userEmail == null) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
@@ -145,7 +145,7 @@ public class FriendsService {
         return person;
     }
 
-    private void checkPersonById(Integer id) throws BadRequestException,
+    public void checkPersonById(Integer id) throws BadRequestException,
             NotFoundException {
         if (id == null) {
             throw new BadRequestException(Config.STRING_NO_USER_ID);
@@ -210,7 +210,7 @@ public class FriendsService {
 
         List<Integer> idsToCheck = request.getUserIds();
 
-        if (idsToCheck == null) {
+        if (idsToCheck.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_FRIENDS_FOUND);
         }
 
@@ -228,7 +228,6 @@ public class FriendsService {
             } else {
                 newResponse.setStatus(friendship.getStatus().toString());
             }
-
             response.add(newResponse);
         }
 
@@ -276,7 +275,7 @@ public class FriendsService {
 
         return ResponseEntity.ok(new FriendsResponse(Config.WALL_RESPONSE,
                 new Timestamp(System.currentTimeMillis()).getTime(),
-                (long) personDTOS.size(),
+                (long) returnPersonList.size(),
                 offset,
                 itemPerPage,
                 returnPersonList));
