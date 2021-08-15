@@ -26,5 +26,5 @@ public interface DialogRepository extends JpaRepository<Dialog, Integer> {
         "join Dialog2person as dp on d.id = dp.dialog.id " +
         "join Person as p on p.id = dp.person.id " +
         "where p.id = :personId")
-    Integer personDialogsCount();
+    Integer personDialogsCount(@Param("personId") Integer personId);
 }

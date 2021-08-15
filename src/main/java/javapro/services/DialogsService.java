@@ -43,7 +43,7 @@ public class DialogsService {
         //получение списка диалогов пользователя
         List<Dialog> allUserDialog = Optional.of(dialogRepository.findAllPersonDialogs(pageWithDialogs, person.getId()))
                 .orElse(new ArrayList<>());
-        var countDialogs = dialogRepository.personDialogsCount();
+        var countDialogs = dialogRepository.personDialogsCount(person.getId());
         dialogData = prepareDialogData(allUserDialog, person.getId());
         return new ResponseEntity<>(prepareAllPersonDialogResponse(dialogData,
                 countDialogs, offset, perPage), HttpStatus.OK);
