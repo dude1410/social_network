@@ -17,7 +17,9 @@ import javapro.repository.PersonRepository;
 import javapro.repository.PersonViewRepository;
 import javapro.util.PostToDtoCustomMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,17 +37,18 @@ public class SearchService {
     private final PostViewRepository postRepository;
     private final PersonRepository personRepository;
     private final PersonViewRepository personViewRepository;
-
+    private final Logger logger;
     private final PersonToDtoMapper personToDtoMapper;
     private final PostToDtoCustomMapper postToDTOCustomMapper;
 
     public SearchService(PostViewRepository postRepository,
                          PersonRepository personRepository,
                          PersonViewRepository personViewRepository,
-                         PersonToDtoMapper personToDtoMapper) {
+                         @Qualifier("searchLogger") Logger logger, PersonToDtoMapper personToDtoMapper) {
         this.postRepository = postRepository;
         this.personRepository = personRepository;
         this.personViewRepository = personViewRepository;
+        this.logger = logger;
         this.personToDtoMapper = personToDtoMapper;
 
         this.postToDTOCustomMapper = Mappers.getMapper(PostToDtoCustomMapper.class);
@@ -64,7 +67,7 @@ public class SearchService {
             try {
                 personList.add(viewToPerson(personView));
             } catch (NotFoundException e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         });
 
@@ -132,7 +135,7 @@ public class SearchService {
             try {
                 personList.add(viewToPerson(personView));
             } catch (NotFoundException e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         });
 
