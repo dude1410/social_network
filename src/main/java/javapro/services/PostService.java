@@ -1,5 +1,6 @@
 package javapro.services;
 
+import javapro.api.request.PostDataRequest;
 import javapro.api.request.TagRequest;
 import javapro.model.enums.NotificationType;
 import javapro.model.view.PostView;
@@ -11,7 +12,12 @@ import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
 import javapro.model.*;
-import javapro.model.dto.*;
+import javapro.model.dto.MessageDTO;
+import javapro.model.dto.PostDTO;
+import javapro.model.dto.PostDeleteDTO;
+import javapro.model.enums.NotificationType;
+import javapro.model.view.PostView;
+import javapro.repository.*;
 import javapro.util.PostToDtoCustomMapper;
 import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +30,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -62,11 +71,11 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_USER_ID);
         }
 
-        Person person = personRepository.findPersonById(personID);
+        var person = personRepository.findPersonById(personID);
 
         if (deletedPersonRepository.findByPersonId(person.getId()).isPresent()) {
             return ResponseEntity
-                    .ok(new WallResponse("successfully",
+                    .ok(new WallResponse(Config.WALL_RESPONSE,
                             Time.getTime(),
                             0,
                             0,
@@ -77,14 +86,14 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<PostView> postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
+        var postList = postRepository.findPostsByAuthorID(person.getId(), pageable);
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
         postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
-                .ok(new WallResponse("successfully",
+                .ok(new WallResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         (int) postList.getTotalElements(),
                         offset,
@@ -96,16 +105,16 @@ public class PostService {
     public ResponseEntity<PostResponse> getAllPosts(Integer offset, Integer itemPerPage) throws NotFoundException {
 
 
-        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<PostView> postList = postRepository.findAllPosts(new Date(), pageable);
+        var postList = postRepository.findAllPosts(new Date(), pageable);
 
         List<PostDTO> postDTOList = new ArrayList<>();
 
         postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
-                .ok(new PostResponse("successfully",
+                .ok(new PostResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         (int) postList.getTotalElements(),
                         offset,
@@ -125,22 +134,22 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        PostView post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
-            log.info(String.format("ID doesn't exist"));
+            log.info("ID doesn't exist");
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
         post.setDeleted(true);
         postRepository.save(post);
 
-        PostDeleteDTO postDeleteDTO = new PostDeleteDTO();
+        var postDeleteDTO = new PostDeleteDTO();
         postDeleteDTO.setId(postID);
 
         return ResponseEntity
                 .ok(new DeletePostByIDResponse(
-                        "successfully",
+                        Config.WALL_RESPONSE,
                         Time.getTime(),
                         postDeleteDTO
                 ));
@@ -154,7 +163,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        PostView post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -167,10 +176,10 @@ public class PostService {
 
         postRepository.save(post);
 
-        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+        var postDTO = postToDTOCustomMapper.mapper(post);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostShortResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         postDTO
                 ));
@@ -182,16 +191,16 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        PostView post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+        var postDTO = postToDTOCustomMapper.mapper(post);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostShortResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         postDTO
                 ));
@@ -200,15 +209,11 @@ public class PostService {
     // создание поста
     public ResponseEntity<PostShortResponse> publishPost(Long publishDate,
                                                          PostDataRequest postDataRequest) throws NotFoundException {
-        Person currentUser = getCurrentUser();
+        var currentUser = getCurrentUser();
 
-        PostView post = new PostView();
+        var post = new PostView();
 
-        if (publishDate == null) {
-            post.setTime(new Timestamp(System.currentTimeMillis()));
-        } else {
-            post.setTime(new Timestamp(publishDate));
-        }
+        post.setTime(new Timestamp(Objects.requireNonNullElseGet(publishDate, System::currentTimeMillis)));
         post.setPostText(postDataRequest.getPostText());
         post.setTitle(postDataRequest.getTitle());
         post.setBlocked(false);
@@ -216,9 +221,9 @@ public class PostService {
         post.setDeleted(false);
         post.setPostTagList(createTagsIfNew(postDataRequest.getTags()));
 
-        PostView newPost = postRepository.save(post);
+        var newPost = postRepository.save(post);
 
-        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+        var postDTO = postToDTOCustomMapper.mapper(post);
 
 //      create notifications
         Runnable task = () -> {
@@ -228,11 +233,11 @@ public class PostService {
                 e.printStackTrace();
             }
         };
-        Thread thread = new Thread(task);
+        var thread = new Thread(task);
         thread.start();
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostShortResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         postDTO
                 ));
@@ -244,7 +249,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        PostView post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -252,10 +257,10 @@ public class PostService {
 
         postRepository.save(post);
 
-        PostDTO postDTO = postToDTOCustomMapper.mapper(post);
+        var postDTO = postToDTOCustomMapper.mapper(post);
 
         return ResponseEntity
-                .ok(new PostShortResponse("successfully",
+                .ok(new PostShortResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         postDTO
                 ));
@@ -267,7 +272,7 @@ public class PostService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        PostView post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
@@ -276,25 +281,25 @@ public class PostService {
         //отправляем id поста куда-то
 
         return ResponseEntity
-                .ok(new ReportCommentResponse("successfully",
+                .ok(new ReportCommentResponse(Config.WALL_RESPONSE,
                         Time.getTime(),
                         new MessageDTO()
                 ));
     }
 
     //this method creates tags when it's new
-    private List<Tag> createTagsIfNew(List<TagRequest> tagsRequest){
+    private List<Tag> createTagsIfNew(List<TagRequest> tagsRequest) {
         List<Tag> tags = new ArrayList<>();
         if (tagsRequest != null) {
 
             for (TagRequest tagRequest : tagsRequest) {
 
-                String tagName = tagRequest.getTag();
+                var tagName = tagRequest.getTag();
 
-                Tag tag = tagRepository.findTagByName(tagName);
+                var tag = tagRepository.findTagByName(tagName);
 
                 if (tag == null) {
-                    Tag newTag = new Tag();
+                    var newTag = new Tag();
                     newTag.setTag(tagName);
                     tags.add(tagRepository.save(newTag));
                 } else {
@@ -306,12 +311,12 @@ public class PostService {
     }
 
     private Person getCurrentUser() throws NotFoundException {
-        String personEmail = SecurityContextHolder
+        var personEmail = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
 
-        Person person = personRepository.findByEmail(personEmail);
+        var person = personRepository.findByEmail(personEmail);
 
         if (person == null) {
             throw new NotFoundException(Config.STRING_NO_PERSON_IN_DB);
@@ -322,7 +327,7 @@ public class PostService {
 
     private void createNotificationEntity(PostView postView, Person person) throws NotFoundException {
 //      create new notification_entity
-        NotificationEntity notificationEntity = new NotificationEntity();
+        var notificationEntity = new NotificationEntity();
         notificationEntity.setPost(postView);
         notificationEntity.setPerson(person);
         var notificationEnt = notificationEntityRepository.save(notificationEntity);
@@ -357,16 +362,14 @@ public class PostService {
         }
 
         for (Person element : person) {
-            int marker = 0;
+            var marker = 0;
             for (DeletedPerson deleteElement : deletedList) {
                 if (element.getId() == deleteElement.getPersonId()) {
                     marker++;
                 }
             }
-            if (marker == 0) {
-                if(!element.getId().equals(authorId)){
-                    personList.add(element);
-                }
+            if (marker == 0 && !element.getId().equals(authorId)) {
+                personList.add(element);
             }
         }
         return personList;

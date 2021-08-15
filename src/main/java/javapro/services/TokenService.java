@@ -22,7 +22,7 @@ public class TokenService {
     }
 
     public Boolean checkToken(String tokenIn) {
-        Token token = tokenRepository.findByToken(tokenIn);
+        var token = tokenRepository.findByToken(tokenIn);
         if (token == null) {
             return false;
         }
@@ -30,7 +30,7 @@ public class TokenService {
     }
 
     public Token setNewPersonToken(Person person){
-        Token token = tokenRepository.findByPerson(person);
+        var token = tokenRepository.findByPerson(person);
         if (token == null) {
             token = new Token();
         }

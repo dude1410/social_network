@@ -7,7 +7,6 @@ import javapro.api.request.*;
 import javapro.api.response.OkResponse;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
-import javapro.config.exception.NotFoundException;
 import javapro.config.exception.ValidationException;
 import javapro.services.AccountService;
 import javapro.services.EmailChangeService;
@@ -85,7 +84,7 @@ public class AccountController {
     @Operation(description = "Регистрация нового пользователя")
     @ApiResponse(responseCode = "200", description = "Ссылка на подтверждение регистрации направлена")
     @ApiResponse(responseCode = "400", description = "На этот почтовый ящик уже зарегестрирован другой аккаунт")
-    public ResponseEntity<OkResponse> registration(@Valid @RequestBody RegisterRequest registerRequest, Errors errors) throws BadRequestException, ValidationException, NotFoundException {
+    public ResponseEntity<OkResponse> registration(@Valid @RequestBody RegisterRequest registerRequest, Errors errors) throws BadRequestException, ValidationException {
         if (errors.hasErrors()) {
             throw new ValidationException(Config.STRING_FRONT_DATA_NOT_VALID);
         }

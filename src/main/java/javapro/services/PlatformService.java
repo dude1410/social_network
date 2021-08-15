@@ -31,14 +31,14 @@ public class PlatformService {
     }
 
 
-    public ResponseEntity<PlatformResponse<List<LanguageDTO>>> getLanguages(String language, Integer offset, Integer itemPerPage) {
+    public ResponseEntity<PlatformResponse<List<LanguageDTO>>> getLanguages(Integer offset, Integer itemPerPage) {
 
         List<LanguageDTO> data = new ArrayList<>();
 
         data.add(new LanguageDTO(1, Language.Русский.toString()));
         data.add(new LanguageDTO(2, Language.English.toString()));
 
-        return ResponseEntity.ok(new PlatformResponse("ok",
+        return ResponseEntity.ok(new PlatformResponse<>("ok",
                 new Timestamp(System.currentTimeMillis()).getTime(),
                 data.size(),
                 offset,

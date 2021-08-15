@@ -19,12 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Random;
 
 @Service
 public class StorageService {
 
     @Value("${javapro.storagepath}")
     private String uploadPath;
+
+
+
 
     private final Logger logger = LogManager.getLogger(StorageService.class);
 
@@ -65,17 +69,17 @@ public class StorageService {
         }
 
 
-        String fileExtension = "";
-        try {
-            fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
-        }catch (Exception e){
-            e.printStackTrace();
+        var fileExtension = "";
+        var name = file.getOriginalFilename();
+        if(name != null){
+            fileExtension = name.substring(name.lastIndexOf('.') + 1);
         }
 
 
+
         var fullFileName = fileName + "." + fileExtension;
-        var full = uploadPath + "/storage/thumb/" + fullFileName;
-        String imagePath = uploadPath + "/storage/thumb/";
+        var full = uploadPath + Config.STORAGE + fullFileName;
+        String imagePath = uploadPath + Config.STORAGE;
         String relative = "/" + new File(uploadPath).toURI().relativize(new File(imagePath).toURI()).getPath();
 
         var fileFromDb = person.getPhoto();
@@ -83,7 +87,7 @@ public class StorageService {
             FileUtils.deleteQuietly(FileUtils
                     .getFile(imagePath + fileFromDb.substring(fileFromDb.lastIndexOf('/') + 1)));
         }
-        person.setPhoto("/storage/thumb/" + fullFileName);
+        person.setPhoto(Config.STORAGE + fullFileName);
         personRepository.save(person);
 
         try {
@@ -93,7 +97,7 @@ public class StorageService {
         }
 
 
-        FileStorageResponse fileStorageResponse = new FileStorageResponse();
+        var fileStorageResponse = new FileStorageResponse();
 
         fileStorageResponse.setOwnerId(person.getId());
         fileStorageResponse.setBytes(file.getSize());
@@ -113,10 +117,9 @@ public class StorageService {
 
     private String genName() {
         var alfabet = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        StringBuilder stringBuilder = new StringBuilder();
-        var strLenght = alfabet.length() - 1;
-        for (int i = 0; i < 20; i++) {
-            stringBuilder.append(alfabet.charAt((int) (Math.random() * strLenght)));
+        var stringBuilder = new StringBuilder();
+        for (var i = 0; i < 20; i++) {
+            stringBuilder.append(alfabet.charAt(new Random().nextInt(alfabet.length() -1)));
         }
         return stringBuilder.toString();
     }

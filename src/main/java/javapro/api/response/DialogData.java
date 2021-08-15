@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class DialogData {
 
     private Integer id;
-    private Integer unread_count;
+    @JsonProperty(value = "unread_count")
+    private Integer unreadCount;
     @JsonProperty(value = "last_message")
     private DialogMessageDTO lastMessage;
 }

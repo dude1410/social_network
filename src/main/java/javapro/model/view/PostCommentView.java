@@ -58,6 +58,16 @@ public class PostCommentView implements Serializable, Comparable<PostCommentView
     private List<PostLike> commentLikeList = new ArrayList<>();
 
     @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public int compareTo(PostCommentView comment) {
         return comment.getTime().compareTo(this.getTime());
     }
