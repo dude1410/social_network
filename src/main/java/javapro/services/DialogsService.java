@@ -59,6 +59,11 @@ public class DialogsService {
                                                                   .skip(offset)
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
+        for (DialogMessage dialogMessage : dialogMessagePage) {
+            if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
+                dialogMessage.setReadStatus(ReadStatus.READ);
+            }
+        }
         dialogMessageDataList = prepareDialogMessageData(dialogMessagePage, currentUserEmail);
         return new ResponseEntity<>(prepareDialogMessageResponse(dialogMessageDataList,
                 allDialogMessages.size(), offset, perPage), HttpStatus.OK);
@@ -99,22 +104,22 @@ public class DialogsService {
     }
 
     public ResponseEntity<CreateDialogResponse> createDialog(CreateDialogRequest createDialogRequest, String currentUserEmail){
-        var currentPerson = personRepository.findByEmail(currentUserEmail);
-        var addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
+        Person currentPerson = personRepository.findByEmail(currentUserEmail);
+        Person addingPerson = personRepository.findPersonById(createDialogRequest.getUsersId().get(0));
         List<Dialog> dialogList = currentPerson.getPersonsDialogs();
         if (dialogList != null) {
             for (Dialog dialog : dialogList) {
-                var dialog2person = dialog2PersonRepository.findByDialogIdAndPersonId(dialog.getId(), addingPerson.getId());
+                Dialog2person dialog2person = dialog2PersonRepository.findByDialogIdAndPersonId(dialog.getId(), addingPerson.getId());
                 if (dialog2person != null) {
                     return new ResponseEntity<>(prepareCreateDialogResponse(dialog2person.getDialog().getId()), HttpStatus.OK);
                 }
             }
         }
-        var dialog = new Dialog();
+        Dialog dialog = new Dialog();
         dialogRepository.save(dialog);
         addInDialog2Person(dialog, currentPerson);
         addInDialog2Person(dialog, addingPerson);
-        var newMessage = new DialogMessage();
+        DialogMessage newMessage = new DialogMessage();
         newMessage.setTime(new Date());
         newMessage.setDialog(dialog);
         newMessage.setAuthorId(currentPerson);
@@ -126,7 +131,7 @@ public class DialogsService {
     }
 
     private void addInDialog2Person(Dialog dialog, Person person){
-        var dialog2person = new Dialog2person();
+        Dialog2person dialog2person = new Dialog2person();
         dialog2person.setDialog(dialog);
         dialog2person.setPerson(person);
         dialog2PersonRepository.save(dialog2person);
@@ -139,7 +144,7 @@ public class DialogsService {
     }
 
     private CreateDialogResponse prepareCreateDialogResponse(Integer dialogId) {
-        var createDialogResponse = new CreateDialogResponse();
+        CreateDialogResponse createDialogResponse = new CreateDialogResponse();
         createDialogResponse.setError(Config.ERROR_MESSAGE);
         createDialogResponse.setTimestamp(Time.getTime());
         createDialogResponse.setData(new CreateDialogData(dialogId));
@@ -149,7 +154,7 @@ public class DialogsService {
 
     private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
                                                                     Integer total, Integer offset, Integer perPage){
-        var allPersonDialogsResponse = new AllPersonDialogsResponse();
+        AllPersonDialogsResponse allPersonDialogsResponse = new AllPersonDialogsResponse();
         allPersonDialogsResponse.setError(Config.ERROR_MESSAGE);
         allPersonDialogsResponse.setTimestamp(Time.getTime());
         allPersonDialogsResponse.setTotal(total);
@@ -161,7 +166,7 @@ public class DialogsService {
 
     private DialogMessagesResponse prepareDialogMessageResponse(List<DialogMessageData> dialogMessageDataList,
                                                                 Integer total, Integer offset, Integer perPage){
-        var dialogMessagesResponse = new DialogMessagesResponse();
+        DialogMessagesResponse dialogMessagesResponse = new DialogMessagesResponse();
         dialogMessagesResponse.setError(Config.ERROR_MESSAGE);
         dialogMessagesResponse.setTimestamp(Time.getTime());
         dialogMessagesResponse.setTotal(total);
@@ -178,18 +183,12 @@ public class DialogsService {
             dialogMessages = dialog.getDialogMessageList();
             if (dialogMessages.isEmpty()) {
                 Collections.sort(dialogMessages);
-                var lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
-                var recipientData = new RecipientData();
-                recipientData.setId(lastDialogMessage.getRecipientId().getId());
-                recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
-                recipientData.setLastName(lastDialogMessage.getRecipientId().getLastName());
-                recipientData.setLastOnlineTime(lastDialogMessage.getRecipientId().getLastOnlineTime().getTime());
-                recipientData.setPhoto(lastDialogMessage.getRecipientId().getPhoto());
+                DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
                 dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
                         new DialogMessageDTO(lastDialogMessage.getId(),
                                 lastDialogMessage.getTime().getTime(),
                                 lastDialogMessage.getAuthorId().getId(),
-                                recipientData,
+                                prepareRecipientData(lastDialogMessage.getRecipientId()),
                                 lastDialogMessage.getMessageText(),
                                 lastDialogMessage.getReadStatus())));
             }
@@ -200,15 +199,9 @@ public class DialogsService {
     private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList, String currentUserEmail){
         List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
         for (DialogMessage dialogMessage : dialogMessageList) {
-            var recipientData = new RecipientData();
-            recipientData.setId(dialogMessage.getRecipientId().getId());
-            recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
-            recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
-            recipientData.setLastOnlineTime(dialogMessage.getRecipientId().getLastOnlineTime().getTime());
-            recipientData.setPhoto(dialogMessage.getRecipientId().getPhoto());
             dialogMessageDataList.add(new DialogMessageData(dialogMessage.getId(),
                                                             dialogMessage.getAuthorId().getId(),
-                                                            recipientData,
+                                                            prepareRecipientData(dialogMessage.getRecipientId()),
                                                             dialogMessage.getMessageText(),
                                                             dialogMessage.getReadStatus(),
                                                             dialogMessage.getAuthorId().getEmail().equals(currentUserEmail)));
@@ -229,5 +222,15 @@ public class DialogsService {
         addDialogMessageResponse.setTimestamp(Time.getTime());
         addDialogMessageResponse.setData(addDialogMessageData);
         return addDialogMessageResponse;
+    }
+
+    private RecipientData prepareRecipientData(Person recipient){
+        RecipientData recipientData = new RecipientData();
+        recipientData.setId(recipient.getId());
+        recipientData.setFirstName(recipient.getFirstName());
+        recipientData.setLastName(recipient.getLastName());
+        recipientData.setLastOnlineTime(recipient.getLastOnlineTime().getTime());
+        recipientData.setPhoto(recipient.getPhoto());
+        return recipientData;
     }
 }
