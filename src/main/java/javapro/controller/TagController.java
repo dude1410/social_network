@@ -38,7 +38,7 @@ public class TagController {
             @ApiResponse(responseCode = "400", description = "Не передан тэг")})
     public ResponseEntity<TagsResponse> getTags(@RequestParam String tag,
                                                 @RequestParam(defaultValue = "0") Integer offset,
-                                                @RequestParam(defaultValue = "20") Integer itemPerPage) throws BadRequestException {
+                                                @RequestParam(defaultValue = "20") Integer itemPerPage)  {
         return tagService.getTags(tag, offset, itemPerPage);
     }
 
