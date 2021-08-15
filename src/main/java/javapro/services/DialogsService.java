@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,11 +58,9 @@ public class DialogsService {
                                                                   .skip(offset)
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
-        if (!dialogMessagePage.isEmpty()) {
-            for (DialogMessage dialogMessage : dialogMessagePage) {
-                if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
-                    dialogMessage.setReadStatus(ReadStatus.READ);
-                }
+        for (DialogMessage dialogMessage : dialogMessagePage) {
+            if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
+                dialogMessage.setReadStatus(ReadStatus.READ);
             }
         }
         dialogMessageDataList = prepareDialogMessageData(dialogMessagePage, currentUserEmail);
@@ -185,7 +182,7 @@ public class DialogsService {
             dialogMessages = dialog.getDialogMessageList();
             if (!dialogMessages.isEmpty()) {
                 Collections.sort(dialogMessages);
-                DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
+                var lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
                 dialogDataList.add(new DialogData(dialog.getId(), getUnreadCountMessageInDialog(dialog, personId),
                         new DialogMessageDTO(lastDialogMessage.getId(),
                                 lastDialogMessage.getTime().getTime(),
