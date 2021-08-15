@@ -23,7 +23,13 @@ public interface PostViewRepository extends JpaRepository<PostView, Integer> {
             "AND LOWER(CONCAT(p.author.firstName, p.author.lastName)) LIKE %:searchAuthor%  " +
             "AND p.time BETWEEN :dateFrom AND :dateTo " +
             "AND (LOWER(COALESCE(t.tag,'')) LIKE :searchTag OR :searchTag = '') " +
-            "GROUP BY p.id " +
+            "GROUP BY p.id, " +
+            "p.author.id, " +
+            "p.isBlocked, " +
+            "p.isDeleted, " +
+            "p.title, " +
+            "p.postText, " +
+            "p.time " +
             "ORDER BY p.time DESC "
     )
     Page<PostView> findPostsByProperties(String searchText, Date dateFrom, Date dateTo, String searchAuthor, String searchTag, Pageable pageable);
