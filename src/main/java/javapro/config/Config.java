@@ -58,6 +58,8 @@ public class Config {
     public static final String STRING_FILE_TOO_BIG = "Файл слишком большой (не больше 500 килобайт)";
     public static final String ERROR_MESSAGE = "string";
     public static final String TIMEZONE = "Europe/Moscow";
+    public static final String LIKE_OBJECT_POST = "Post";
+    public static final String LIKE_OBJECT_COMMENT = "Comment";
     public static final String DATEFORMAT = "MM-dd";
     public static final String WALL_RESPONSE = "successfully";
     public static final String STORAGE = "/storage/thumb/";

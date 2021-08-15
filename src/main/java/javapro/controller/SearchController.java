@@ -7,7 +7,6 @@ import javapro.config.exception.UnAuthorizedException;
 import javapro.services.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +22,9 @@ public class SearchController {
 
     @GetMapping(value = "/api/v1/post")
     @Operation(description = "Поиск постов по тексту")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
     public ResponseEntity<PostResponse> getPost(@RequestParam(value = "text", required = false) String searchText,
                                                 @RequestParam(value = "date_from", required = false) Long dateFrom,
                                                 @RequestParam(value = "date_to", required = false) Long dateTo,
@@ -40,8 +39,8 @@ public class SearchController {
     @GetMapping(value = "/api/v1/users/search")
     @Operation(description = "Поиск пользователей")
     @ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту")
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
     public ResponseEntity<PersonsResponse> getPeople(@RequestParam(value = "first_name", required = false) String firstName,
                                                      @RequestParam(value = "last_name", required = false) String lastName,
                                                      @RequestParam(value = "age_from", required = false) Integer ageFrom,
@@ -58,8 +57,8 @@ public class SearchController {
     @GetMapping(value = "/api/v1/users/searchbar")
     @Operation(description = "Основная строка | Поиск пользователей")
     @ApiResponse(responseCode = "200", description = "Успешная попытка найти пользователя по тексту")
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
     public ResponseEntity<PersonsResponse> getPeopleGeneral(@RequestParam(value = "search_text") String searchText,
                                                             @RequestParam(defaultValue = "0", required = false) Integer offset,
                                                             @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) {
@@ -70,9 +69,9 @@ public class SearchController {
     //searchBarPosts
     @GetMapping(value = "/api/v1/posts/searchbar")
     @Operation(description = "Основная строка | Поиск постов")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту"),
-            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-            @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")})
+    @ApiResponse(responseCode = "200", description = "Успешная попытка найти пост по тексту")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "400", description = "Не задан текст для поиска")
     public ResponseEntity<PostResponse> getPostsGeneral(@RequestParam(value = "search_text") String searchText,
                                                         @RequestParam(defaultValue = "0", required = false) Integer offset,
                                                         @RequestParam(defaultValue = "20", required = false) Integer itemPerPage) {
