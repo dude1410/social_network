@@ -104,7 +104,7 @@ public class DialogsService {
         List<Dialog> dialogList = currentPerson.getPersonsDialogs();
         if (dialogList != null) {
             for (Dialog dialog : dialogList) {
-                Dialog2person dialog2person = dialog2PersonRepository.findByDialogIdAndPersonId(dialog.getId(), addingPerson.getId());
+                var dialog2person = dialog2PersonRepository.findByDialogIdAndPersonId(dialog.getId(), addingPerson.getId());
                 if (dialog2person != null) {
                     return new ResponseEntity<>(prepareCreateDialogResponse(dialog2person.getDialog().getId()), HttpStatus.OK);
                 }
@@ -139,7 +139,7 @@ public class DialogsService {
     }
 
     private CreateDialogResponse prepareCreateDialogResponse(Integer dialogId) {
-        CreateDialogResponse createDialogResponse = new CreateDialogResponse();
+        var createDialogResponse = new CreateDialogResponse();
         createDialogResponse.setError(Config.ERROR_MESSAGE);
         createDialogResponse.setTimestamp(Time.getTime());
         createDialogResponse.setData(new CreateDialogData(dialogId));
@@ -149,7 +149,7 @@ public class DialogsService {
 
     private AllPersonDialogsResponse prepareAllPersonDialogResponse(List<DialogData> dialogDataList,
                                                                     Integer total, Integer offset, Integer perPage){
-        AllPersonDialogsResponse allPersonDialogsResponse = new AllPersonDialogsResponse();
+        var allPersonDialogsResponse = new AllPersonDialogsResponse();
         allPersonDialogsResponse.setError(Config.ERROR_MESSAGE);
         allPersonDialogsResponse.setTimestamp(Time.getTime());
         allPersonDialogsResponse.setTotal(total);
@@ -161,7 +161,7 @@ public class DialogsService {
 
     private DialogMessagesResponse prepareDialogMessageResponse(List<DialogMessageData> dialogMessageDataList,
                                                                 Integer total, Integer offset, Integer perPage){
-        DialogMessagesResponse dialogMessagesResponse = new DialogMessagesResponse();
+        var dialogMessagesResponse = new DialogMessagesResponse();
         dialogMessagesResponse.setError(Config.ERROR_MESSAGE);
         dialogMessagesResponse.setTimestamp(Time.getTime());
         dialogMessagesResponse.setTotal(total);
@@ -178,7 +178,7 @@ public class DialogsService {
             dialogMessages = dialog.getDialogMessageList();
             if (dialogMessages.isEmpty()) {
                 Collections.sort(dialogMessages);
-                DialogMessage lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
+                var lastDialogMessage = dialogMessages.get(dialogMessages.size() - 1);
                 var recipientData = new RecipientData();
                 recipientData.setId(lastDialogMessage.getRecipientId().getId());
                 recipientData.setFirstName(lastDialogMessage.getRecipientId().getFirstName());
@@ -200,7 +200,7 @@ public class DialogsService {
     private List<DialogMessageData> prepareDialogMessageData(List<DialogMessage> dialogMessageList, String currentUserEmail){
         List<DialogMessageData> dialogMessageDataList = new ArrayList<>();
         for (DialogMessage dialogMessage : dialogMessageList) {
-            RecipientData recipientData = new RecipientData();
+            var recipientData = new RecipientData();
             recipientData.setId(dialogMessage.getRecipientId().getId());
             recipientData.setFirstName(dialogMessage.getRecipientId().getFirstName());
             recipientData.setLastName(dialogMessage.getRecipientId().getLastName());
@@ -217,8 +217,8 @@ public class DialogsService {
     }
 
     private AddDialogMessageResponse prepareAddDialogMessageResponse(Person author, Person recipient, DialogMessage newMessage){
-        AddDialogMessageResponse addDialogMessageResponse = new AddDialogMessageResponse();
-        AddDialogMessageData addDialogMessageData= new AddDialogMessageData();
+        var addDialogMessageResponse = new AddDialogMessageResponse();
+        var addDialogMessageData= new AddDialogMessageData();
         addDialogMessageData.setId(newMessage.getId());
         addDialogMessageData.setTime(newMessage.getTime().getTime());
         addDialogMessageData.setAuthorId(author.getId());
