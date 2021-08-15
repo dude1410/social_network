@@ -2,10 +2,6 @@ package javapro.services;
 
 import javapro.api.request.PostDataRequest;
 import javapro.api.request.TagRequest;
-import javapro.model.enums.NotificationType;
-import javapro.model.view.PostView;
-import javapro.repository.*;
-import javapro.api.request.PostDataRequest;
 import javapro.api.response.*;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
@@ -22,7 +18,6 @@ import javapro.util.PostToDtoCustomMapper;
 import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
