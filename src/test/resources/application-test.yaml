@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://31.40.251.201:5432/javapro?user=javapro&password=iddqd
+    url: jdbc:postgresql://31.40.251.201:5432/javapro_test?user=javapro&password=iddqd
     driver-class-name: org.postgresql.Driver
     username: javapro
     password: iddqd
@@ -11,10 +11,10 @@ spring:
       ddl-auto: none
     generate-ddl: false
   liquibase:
-    url: jdbc:postgresql://31.40.251.201:5432/javapro
+    url: jdbc:postgresql://31.40.251.201:5432/javapro_test
     user: javapro
     password: iddqd
-    enabled: false
+    enabled: true
     contexts: dev
     change-log: classpath:db.changelog/db.changelog-master.yml
   mail:

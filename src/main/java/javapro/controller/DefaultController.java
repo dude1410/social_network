@@ -5,6 +5,7 @@ package javapro.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @Controller
 public class DefaultController {
 
@@ -25,6 +26,15 @@ public class DefaultController {
         return "personal-data";
     }
 
+    @GetMapping(value = "en/policy.html")
+    public String enPolicy(){
+        return "en-policy";
+    }
+
+    @GetMapping(value = "en/personal-data.html")
+    public String enPersonalData(){
+        return "en-personal-data";
+    }
 
 
     @RequestMapping(

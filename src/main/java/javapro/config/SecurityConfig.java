@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -48,12 +49,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/logs").permitAll()
                 .antMatchers("/login").permitAll()
                 .and()
+                .sessionManagement()
+                .invalidSessionUrl("/login")
+                .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .logout()
                 .permitAll();
+
     }
-    
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/storage/**");
+    }
+
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
         var daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -81,9 +93,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .allowedMethods("*");
     }
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:/Users/olegprokhorov/IdeaProjects/group/study/img/");
+        registry.addResourceHandler("/storage/thumb/**")
+                .addResourceLocations("file:/Users/olegprokhorov/IdeaProjects/storage/thumb/");
     }
+
 }

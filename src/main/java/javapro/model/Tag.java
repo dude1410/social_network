@@ -1,11 +1,16 @@
 package javapro.model;
 
-import lombok.Data;
+import javapro.model.view.PostView;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tag")
 public class Tag implements Serializable {
@@ -18,5 +23,7 @@ public class Tag implements Serializable {
     @Column(name = "tag", nullable = false)
     private String tag;
 
+    @ManyToMany(mappedBy = "postTagList")
+    private List<PostView> postViewList = new ArrayList<>();
 
 }

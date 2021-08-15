@@ -54,10 +54,10 @@ public class TagService {
 
         tagRepository.save(newTag);
 
-        TagDTO tagDTO = tagToDTOMapper.convertToDto(newTag);
+        TagDTO tagDTO = tagToDTOMapper.convertToDTO(newTag);
 
         return ResponseEntity
-                .ok(new TagResponse("successfully",
+                .ok(new TagResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         tagDTO
                 ));
@@ -65,21 +65,17 @@ public class TagService {
 
     public ResponseEntity<TagsResponse> getTags(String tagText,
                                                 Integer offset,
-                                                Integer itemPerPage) throws BadRequestException {
-
-        if (tagText.isEmpty() || tagText.isBlank()){
-            throw new BadRequestException(Config.STRING_NO_TAG_NAME);
-        }
+                                                Integer itemPerPage) {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         Page<Tag> tagsList = tagRepository.findTagsByText(tagText.toLowerCase(Locale.ROOT), pageable);
 
         List<TagDTO> tagDTOs = new ArrayList<>();
 
-        tagsList.forEach(tag -> tagDTOs.add(tagToDTOMapper.convertToDto(tag)));
+        tagsList.forEach(tag -> tagDTOs.add(tagToDTOMapper.convertToDTO(tag)));
 
         return ResponseEntity
-                .ok(new TagsResponse("successfully",
+                .ok(new TagsResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) tagsList.getTotalElements(),
                         offset,
@@ -103,7 +99,7 @@ public class TagService {
         tagRepository.deleteById(tagID);
 
         return ResponseEntity
-                .ok(new TagDeleteResponse("successfully",
+                .ok(new TagDeleteResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         new TagDeleteDTO()
                 ));

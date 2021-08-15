@@ -1,11 +1,15 @@
 package javapro.model;
 
-import lombok.Data;
+import javapro.model.view.PostCommentView;
+import javapro.model.view.PostView;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "notification_entity")
 public class NotificationEntity implements Serializable {
@@ -17,11 +21,11 @@ public class NotificationEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
-    private Post post;
+    private PostView post;
 
     @ManyToOne
     @JoinColumn(name = "post_comment_id", foreignKey = @ForeignKey(name = "FK_post_comment_id"))
-    private PostComment postComment;
+    private PostCommentView postComment;
 
     @ManyToOne
     @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "FK_person_id"))

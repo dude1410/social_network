@@ -1,7 +1,7 @@
 package javapro.services;
 
+import javapro.repository.PostViewRepository;
 import javapro.util.PersonToDtoMapper;
-import javapro.util.PostToDTOMapper;
 import javapro.api.response.PersonsResponse;
 import javapro.api.response.PostResponse;
 import javapro.config.Config;
@@ -11,13 +11,15 @@ import javapro.config.exception.UnAuthorizedException;
 import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.dto.PostDTO;
 import javapro.model.Person;
-import javapro.model.PersonView;
-import javapro.model.Post;
-import javapro.repository.LikeRepository;
+import javapro.model.view.PersonView;
+import javapro.model.view.PostView;
 import javapro.repository.PersonRepository;
 import javapro.repository.PersonViewRepository;
-import javapro.repository.PostRepository;
+import javapro.util.PostToDtoCustomMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,26 +34,74 @@ import java.util.*;
 @Service
 public class SearchService {
 
-    private final PostRepository postRepository;
+    private final PostViewRepository postRepository;
     private final PersonRepository personRepository;
     private final PersonViewRepository personViewRepository;
-    private final LikeRepository likeRepository;
-
+    private final Logger logger;
     private final PersonToDtoMapper personToDtoMapper;
-    private final PostToDTOMapper postToDTOMapper;
+    private final PostToDtoCustomMapper postToDTOCustomMapper;
 
-    public SearchService(PostRepository postRepository,
+    public SearchService(PostViewRepository postRepository,
                          PersonRepository personRepository,
                          PersonViewRepository personViewRepository,
-                         LikeRepository likeRepository,
-                         PersonToDtoMapper personToDtoMapper,
-                         PostToDTOMapper postToDTOMapper) {
+                         @Qualifier("searchLogger") Logger logger, PersonToDtoMapper personToDtoMapper) {
         this.postRepository = postRepository;
         this.personRepository = personRepository;
         this.personViewRepository = personViewRepository;
-        this.likeRepository = likeRepository;
+        this.logger = logger;
         this.personToDtoMapper = personToDtoMapper;
-        this.postToDTOMapper = postToDTOMapper;
+
+        this.postToDTOCustomMapper = Mappers.getMapper(PostToDtoCustomMapper.class);
+    }
+
+    public ResponseEntity<PersonsResponse> searchPeopleGeneral(String searchText,
+                                                               Integer offset,
+                                                               Integer itemPerPage) {
+
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        Page<PersonView> personFound = personViewRepository.searchPersonBy(searchText, pageable);
+
+        List<Person> personList = new ArrayList<>();
+
+        personFound.forEach(personView -> {
+            try {
+                personList.add(viewToPerson(personView));
+            } catch (NotFoundException e) {
+                logger.error(e.toString());
+            }
+        });
+
+        List<AuthorizedPerson> personDTOS = new ArrayList<>();
+
+        personList.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
+
+        return ResponseEntity
+                .ok(new PersonsResponse(Config.WALL_RESPONSE,
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        (int) personFound.getTotalElements(),
+                        offset,
+                        itemPerPage,
+                        personDTOS));
+    }
+
+    public ResponseEntity<PostResponse> searchPostsGeneral(String searchText,
+                                                           Integer offset,
+                                                           Integer itemPerPage) {
+
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        Page<PostView> postsFound = postRepository.searchPostBy(searchText, pageable);
+
+        List<PostDTO> postDTOS = new ArrayList<>();
+
+        postsFound.forEach(post -> postDTOS.add(postToDTOCustomMapper.mapper(post)));
+
+        return ResponseEntity
+                .ok(new PostResponse(Config.WALL_RESPONSE,
+                        new Timestamp(System.currentTimeMillis()).getTime(),
+                        (int) postsFound.getTotalElements(),
+                        offset,
+                        itemPerPage,
+                        postDTOS));
     }
 
     public ResponseEntity<PersonsResponse> searchPeopleByProperties(
@@ -63,7 +113,7 @@ public class SearchService {
             String town,
             Integer offset,
             Integer itemPerPage
-    ) throws UnAuthorizedException, BadRequestException {
+    ) throws UnAuthorizedException {
 
         checkAuthentication();
 
@@ -76,7 +126,8 @@ public class SearchService {
         town = stringFix(town);
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<PersonView> personFound = personViewRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town, pageable);
+        Page<PersonView> personFound =
+                personViewRepository.findPersonsByProperties(firstName, lastName, ageFrom, ageTo, country, town, pageable);
 
         List<Person> personList = new ArrayList<>();
 
@@ -84,7 +135,7 @@ public class SearchService {
             try {
                 personList.add(viewToPerson(personView));
             } catch (NotFoundException e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         });
 
@@ -93,7 +144,7 @@ public class SearchService {
         personList.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
 
         return ResponseEntity
-                .ok(new PersonsResponse("successfully",
+                .ok(new PersonsResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) personFound.getTotalElements(),
                         offset,
@@ -101,12 +152,13 @@ public class SearchService {
                         personDTOS));
     }
 
-    public ResponseEntity<PostResponse> searchPosts(String searchText,
-                                                    Long dateFromLong,
-                                                    Long dateToLong,
-                                                    String searchAuthor,
-                                                    Integer offset,
-                                                    Integer itemPerPage) throws BadRequestException, UnAuthorizedException {
+    public ResponseEntity<PostResponse> searchPostsByProperties(String searchText,
+                                                                Long dateFromLong,
+                                                                Long dateToLong,
+                                                                String searchAuthor,
+                                                                String searchTag,
+                                                                Integer offset,
+                                                                Integer itemPerPage) throws BadRequestException, UnAuthorizedException {
 
         checkAuthentication();
 
@@ -116,19 +168,20 @@ public class SearchService {
 
         searchText = stringFix(searchText);
         searchAuthor = stringFix(searchAuthor);
+        searchTag = stringFix(searchTag);
         Date dateFrom = dateFromFix(dateFromLong);
         Date dateTo = dateToFix(dateToLong);
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<Post> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, pageable);
+
+        Page<PostView> postList = postRepository.findPostsByProperties(searchText, dateFrom, dateTo, searchAuthor, searchTag, pageable);
 
         List<PostDTO> postDTOList = new ArrayList();
 
-        postList.forEach(post -> postDTOList.add(postToDTOMapper.convertToDTO(post)));
-        postDTOList.forEach(postDTO -> postDTO.setLikes(likeRepository.getLikes(postDTO.getId())));
+        postList.forEach(post -> postDTOList.add(postToDTOCustomMapper.mapper(post)));
 
         return ResponseEntity
-                .ok(new PostResponse("successfully",
+                .ok(new PostResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         (int) postList.getTotalElements(),
                         offset,
@@ -163,11 +216,10 @@ public class SearchService {
 
     private String stringFix(String variable) {
         if (variable == null || variable.length() == 0) {
-            variable = "";
+            return "";
         } else {
-            variable = variable.toLowerCase(Locale.ROOT);
+            return variable.toLowerCase(Locale.ROOT);
         }
-        return variable;
     }
 
     private Integer ageFromFix(Integer ageFrom) {
@@ -185,28 +237,22 @@ public class SearchService {
     }
 
     private Date dateFromFix(Long dateFromLong) {
-        Date dateFrom = null;
 
         if (dateFromLong != null) {
-            dateFrom = new Date(dateFromLong);
+            return new Date(dateFromLong);
         } else {
             //нижняя граница 18.06.1970, 07:36:56
-            dateFrom = new Timestamp(14531816);
+            return new Timestamp(14531816);
         }
-
-        return dateFrom;
     }
 
     private Date dateToFix(Long dateToLong) {
-        Date dateTo = null;
 
         if (dateToLong != null) {
-            dateTo = new Timestamp(dateToLong);
+            return new Timestamp(dateToLong);
         } else {
             //верхняя граница - сейчас, т.к. посты из будущего мы не видим
-            dateTo = new Date();
+            return new Date();
         }
-
-        return dateTo;
     }
 }

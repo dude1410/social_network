@@ -1,14 +1,18 @@
 package javapro.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import javapro.model.view.PostCommentView;
+import javapro.model.view.PostView;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "block_history")
 public class BlockHistory implements Serializable {
@@ -29,11 +33,11 @@ public class BlockHistory implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
-    private Post postId;
+    private PostView postViewId;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "FK_comment_id"))
-    private PostComment commentId;
+    private PostCommentView commentId;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;

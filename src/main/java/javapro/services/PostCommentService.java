@@ -1,20 +1,27 @@
 package javapro.services;
 
-import javapro.util.CommentToDTOMapper;
-import javapro.util.PersonToDtoMapper;
 import javapro.api.request.CommentBodyRequest;
 import javapro.api.response.*;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
-import javapro.model.*;
+import javapro.model.Notification;
+import javapro.model.NotificationEntity;
+import javapro.model.Person;
+import javapro.model.PostLike;
 import javapro.model.dto.*;
 import javapro.model.dto.auth.AuthorizedPerson;
-import javapro.repository.CommentRepository;
-import javapro.repository.LikeRepository;
-import javapro.repository.PersonRepository;
-import javapro.repository.PostRepository;
+import javapro.model.enums.NotificationType;
+import javapro.model.view.PostCommentView;
+import javapro.repository.*;
+import javapro.util.CommentToDTOCustomMapper;
+import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,25 +35,33 @@ import java.util.List;
 @Service
 public class PostCommentService {
     private final PersonRepository personRepository;
-    private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
+    private final PostCommentViewRepository commentRepository;
+    private final PostViewRepository postRepository;
     private final LikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationEntityRepository notificationEntityRepository;
+    private final Logger logger;
 
     private final PersonToDtoMapper personToDtoMapper;
-    private final CommentToDTOMapper commentToDTOMapper;
+    private final CommentToDTOCustomMapper commentToDTOCustomMapper;
 
     public PostCommentService(PersonRepository personRepository,
-                              CommentRepository commentRepository,
-                              PostRepository postRepository,
+                              PostCommentViewRepository commentRepository,
+                              PostViewRepository postRepository,
                               LikeRepository likeRepository,
-                              PersonToDtoMapper personToDtoMapper,
-                              CommentToDTOMapper commentToDTOMapper) {
+                              NotificationRepository notificationRepository,
+                              NotificationEntityRepository notificationEntityRepository,
+                              @Qualifier("postCommentLogger") Logger logger,
+                              PersonToDtoMapper personToDtoMapper) {
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.notificationRepository = notificationRepository;
+        this.notificationEntityRepository = notificationEntityRepository;
+        this.logger = logger;
         this.personToDtoMapper = personToDtoMapper;
-        this.commentToDTOMapper = commentToDTOMapper;
+        this.commentToDTOCustomMapper = Mappers.getMapper(CommentToDTOCustomMapper.class);
     }
 
     public ResponseEntity<CommentResponse> addComment(Integer postID,
@@ -56,64 +71,72 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        Post post = postRepository.findPostByID(postID);
+        var post = postRepository.findPostByID(postID);
 
         if (post == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
-        PostComment comment = new PostComment();
+        var comment = new PostCommentView();
 
         comment.setTime(new Date());
         comment.setPost(post);
 
-        if (commentRequest.getParent_id() != null) {
-            PostComment parentComment = commentRepository.findCommentByID(commentRequest.getParent_id());
+        if (commentRequest.getParentID() != null) {
+            var parentComment = commentRepository.findCommentByID(commentRequest.getParentID());
             comment.setParentComment(parentComment);
         } else {
             comment.setParentComment(null);
         }
 
-        comment.setCommentText(commentRequest.getComment_text());
-        comment.setAuthor(getCurrentUser());
+        comment.setCommentText(commentRequest.getCommentText());
+        var person = getCurrentUser();
+        comment.setAuthor(person);
         comment.setDeleted(false);
         comment.setBlocked(false);
 
-        commentRepository.save(comment);
+        var commentData = commentRepository.save(comment).getId();
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
+        var commentDTO = commentToDTOCustomMapper.mapper(comment);
+
+        Runnable task = () -> {
+            try {
+                createNotificationEntity(commentData, person);
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
+        };
+        var thread = new Thread(task);
+        thread.start();
+
 
         return ResponseEntity
-                .ok(new CommentResponse("successfully",
+                .ok(new CommentResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         commentDTO
                 ));
     }
 
-    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID) throws BadRequestException, NotFoundException {
+    public ResponseEntity<CommentsResponse> getCommentsByPostID(Integer postID, Integer offset, Integer itemPerPage) throws BadRequestException {
 
         if (postID == null) {
             throw new BadRequestException(Config.STRING_NO_POST_ID);
         }
 
-        List<PostComment> comments = commentRepository.findCommentsByPostID(postID);
+        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        if (comments.isEmpty()) {
-            throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
-        }
+        Page<PostCommentView> comments = commentRepository.findCommentsByPostID(postID, pageable);
 
-        List<CommentDTO> commentDTOs = new ArrayList();
+        List<CommentDTO> commentDTOs = new ArrayList<>();
 
-        comments.forEach(comment -> commentDTOs.add(commentToDTOMapper.convertToDTO(comment)));
-
-        commentDTOs.forEach(commentDTO -> commentDTO.setLikes(commentRepository.getLikesOnComment(commentDTO.getId())));
+        comments.forEach(comment -> commentDTOs.add(commentToDTOCustomMapper.mapper(comment)));
 
         return ResponseEntity
-                .ok(new CommentsResponse("successfully",
+                .ok(new CommentsResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
-                        0,
-                        0,
-                        20,
+                        (int) comments.getTotalElements(),
+                        offset,
+                        itemPerPage,
                         commentDTOs
                 ));
     }
@@ -124,21 +147,20 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        var comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
         }
 
-        comment.setCommentText(editCommentBody.getComment_text());
+        comment.setCommentText(editCommentBody.getCommentText());
 
         commentRepository.save(comment);
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
+        var commentDTO = commentToDTOCustomMapper.mapper(comment);
 
         return ResponseEntity
-                .ok(new CommentResponse("successfully",
+                .ok(new CommentResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         commentDTO
                 ));
@@ -150,7 +172,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        var comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -159,11 +181,11 @@ public class PostCommentService {
         comment.setDeleted(true);
         commentRepository.save(comment);
 
-        PostDeleteDTO deleteDTO = new PostDeleteDTO();
+        var deleteDTO = new PostDeleteDTO();
         deleteDTO.setId(commentID);
 
         return ResponseEntity
-                .ok(new DeletePostByIDResponse("successfully",
+                .ok(new DeletePostByIDResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         deleteDTO
                 ));
@@ -175,7 +197,7 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        var comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
@@ -183,10 +205,10 @@ public class PostCommentService {
 
         comment.setDeleted(false);
 
-        CommentDTO commentDTO = commentToDTOMapper.convertToDTO(comment);
-        commentDTO.setLikes(commentRepository.getLikesOnComment(commentID));
+        var commentDTO = commentToDTOCustomMapper.mapper(comment);
+
         return ResponseEntity
-                .ok(new CommentResponse("successfully",
+                .ok(new CommentResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         commentDTO
                 ));
@@ -198,16 +220,16 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostComment comment = commentRepository.findCommentByID(commentID);
+        var comment = commentRepository.findCommentByID(commentID);
 
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
         }
 
-        //TODO отправляем id коммента куда-то
+        //отправляем id коммента куда-то
 
         return ResponseEntity
-                .ok(new ReportCommentResponse("successfully",
+                .ok(new ReportCommentResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         new MessageDTO()
                 ));
@@ -219,19 +241,19 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        Integer personID = getCurrentUser().getId();
+        var personID = getCurrentUser().getId();
         boolean isLiked = false;
 
         if (commentRepository.isUserLikedComment(personID, commentID) > 0) {
             isLiked = true;
         }
 
-        IsLikedDTO isLikedDTO = new IsLikedDTO();
+        var isLikedDTO = new IsLikedDTO();
 
         isLikedDTO.setLikes(isLiked);
 
         return ResponseEntity
-                .ok(new IsLikedResponse("successfully",
+                .ok(new IsLikedResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         isLikedDTO
                 ));
@@ -244,12 +266,13 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        PostLike like = new PostLike();
+        var like = new PostLike();
 
         like.setTime(new Date());
         like.setPerson(getCurrentUser());
 
-        PostComment likedComment = commentRepository.findCommentByID(commentID);
+        var likedComment = commentRepository.findCommentByID(commentID);
+
         if (likedComment == null) {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
@@ -258,17 +281,17 @@ public class PostCommentService {
 
         List<AuthorizedPerson> personDTOS = new ArrayList<>();
 
-        List<Person> persons = likeRepository.getUsersWhoLikedComment(commentID);
+        var persons = likeRepository.getUsersWhoLikedComment(commentID);
         if (!persons.isEmpty()) {
             persons.forEach(person -> personDTOS.add(personToDtoMapper.convertToDto(person)));
         }
 
-        LikeDTO likesDTO = new LikeDTO();
+        var likesDTO = new LikeDTO();
         likesDTO.setLikes(commentRepository.getLikesOnComment(commentID));
         likesDTO.setUsers(personDTOS);
 
         return ResponseEntity
-                .ok(new LikeResponse("successfully",
+                .ok(new LikeResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         likesDTO
                 ));
@@ -280,16 +303,16 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        Integer userID = getCurrentUser().getId();
+        var userID = getCurrentUser().getId();
 
         commentRepository.deleteLikeOnComment(userID, commentID);
-        Integer likesCount = commentRepository.getLikesOnComment(commentID);
+        var likesCount = commentRepository.getLikesOnComment(commentID);
 
-        LikeDTO likesDTO = new LikeDTO();
+        var likesDTO = new LikeDTO();
         likesDTO.setLikes(likesCount);
 
         return ResponseEntity
-                .ok(new LikeResponse("successfully",
+                .ok(new LikeResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         likesDTO
                 ));
@@ -301,10 +324,10 @@ public class PostCommentService {
             throw new BadRequestException(Config.STRING_NO_COMMENT_ID);
         }
 
-        Integer likesCount = commentRepository.getLikesOnComment(commentID);
+        var likesCount = commentRepository.getLikesOnComment(commentID);
         List<Person> persons = likeRepository.getUsersWhoLikedComment(commentID);
 
-        LikeDTO likesDTO = new LikeDTO();
+        var likesDTO = new LikeDTO();
 
         likesDTO.setLikes(likesCount);
 
@@ -315,24 +338,54 @@ public class PostCommentService {
         }
 
         return ResponseEntity
-                .ok(new LikeResponse("successfully",
+                .ok(new LikeResponse(Config.WALL_RESPONSE,
                         new Timestamp(System.currentTimeMillis()).getTime(),
                         likesDTO
                 ));
     }
 
     private Person getCurrentUser() throws NotFoundException {
-        String personEmail = SecurityContextHolder
+        var personEmail = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
 
-        Person person = personRepository.findByEmail(personEmail);
+        var person = personRepository.findByEmail(personEmail);
 
         if (person == null) {
             throw new NotFoundException(Config.STRING_NO_PERSON_IN_DB);
         }
 
         return person;
+    }
+
+    private void createNotificationEntity(Integer id, Person person)  {
+//      create new notification_entity
+        var postComment = commentRepository.findCommentByID(id);
+        if (!postComment.getPost().getAuthor().getId().equals(person.getId())) {
+            var notificationEntity = new NotificationEntity();
+            notificationEntity.setPerson(person);
+            if (postComment.getParentComment() != null) {
+                notificationEntity.setPostComment(postComment);
+            }
+            var post = postRepository.findPostByID(postComment.getPost().getId());
+            notificationEntity.setPost(post);
+            var notificationEnt = notificationEntityRepository.save(notificationEntity);
+            ArrayList<Notification> postCommentArrayList = new ArrayList<>();
+            var notification = new Notification();
+            notification.setSentTime((Timestamp) postComment.getTime());
+            notification.setEntity(notificationEnt);
+            if (postComment.getParentComment() != null) {
+                notification.setNotificationType(NotificationType.COMMENT_COMMENT);
+                var parentComment = commentRepository.findCommentByID(postComment.getParentComment().getId());
+                notification.setPerson(personRepository.findPersonById(parentComment.getAuthor().getId()));
+                postCommentArrayList.add(notification);
+            }
+            notification.setNotificationType(NotificationType.POST_COMMENT);
+            notification.setPerson(personRepository.findPersonById(postComment.getPost().getAuthor().getId()));
+            notification.setInfo(post.getTitle());
+            postCommentArrayList.add(notification);
+            notificationRepository.saveAll(postCommentArrayList);
+        }
     }
 }

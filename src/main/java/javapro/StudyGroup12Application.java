@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
+import static javapro.config.Config.TIME_ZONE;
+
 @SpringBootApplication
 public class StudyGroup12Application {
 
@@ -14,6 +16,6 @@ public class StudyGroup12Application {
 
 	@PostConstruct
 	public void init(){
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+		TimeZone.setDefault(TimeZone.getTimeZone(TIME_ZONE));
 	}
 }

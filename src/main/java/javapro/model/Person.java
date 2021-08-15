@@ -2,13 +2,16 @@ package javapro.model;
 
 import javapro.model.enums.MessagesPermission;
 import javapro.model.enums.Role;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "person",
         uniqueConstraints =
@@ -75,6 +78,12 @@ public class Person implements Serializable {
 
     @Column(name = "role", nullable = false)
     private Integer role;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "dialog2person",
+            joinColumns = {@JoinColumn(name = "person_id")},
+            inverseJoinColumns = {@JoinColumn(name = "dialog_id")})
+    private List<Dialog> personsDialogs;
 
     public Role getRole() {
         if (role == 0) {

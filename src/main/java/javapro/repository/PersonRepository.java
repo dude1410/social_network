@@ -7,17 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 
 @Repository
 @Transactional
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
-//    @Query("SELECT p " +
-//            "FROM Person p " +
-//            "WHERE p.email = :email ")
     Person findByEmail(String email);
 
 
@@ -28,10 +25,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "WHERE p.email =:email ")
     Person findByEmailForLogin(@Param("email") String email);
 
-//    @Query("SELECT p " +
-//            "FROM Person p " +
-//            "WHERE p.confirmationCode = :code")
-//    Person findByCode(@Param("code") String code);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
@@ -66,12 +59,14 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "from Person p " +
             "WHERE p.isApproved = false " +
             "AND p.regDate < :timestamp")
-    void deleteAllByRegDateBefore(Timestamp timestamp);
+    void deleteAllByRegDateBefore(Date timestamp);
 
-    @Query("select p.id " +
+
+
+    @Query("select p " +
             "from Person p " +
             "where p.email = :email ")
-    int findUserIdByEmail(@Param("email") String email);
+    Person findUserIdByEmail(@Param("email") String email);
 
     @Query("select p " +
             "from Person p " +
@@ -132,6 +127,16 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "group by p ")
     List<Person> findRecommendations(@Param("userId") Integer userId);
 
+    @Query("SELECT p " +
+            "FROM Person p " +
+            "WHERE p.isApproved = true " +
+            "AND p.isBlocked = false ")
+    List<Person> findAllByisApprovedTrueAndisBlockedTrue();
+
+    @Query("select p " +
+            "from Person p " +
+            "WHERE p.id = :personId")
+    Person findPersonByApprovedIsTrueAAndBlockedIsFalse(@Param("personId") Integer personID);
 
 
 }

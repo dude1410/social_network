@@ -13,10 +13,7 @@ import javapro.model.dto.DeletedPersonData;
 import javapro.model.dto.MessageDTO;
 import javapro.model.dto.auth.AuthorizedPerson;
 import javapro.model.enums.DeletedType;
-import javapro.repository.CountryRepository;
-import javapro.repository.DeletedPersonRepository;
-import javapro.repository.PersonRepository;
-import javapro.repository.TownRepository;
+import javapro.repository.*;
 import javapro.util.PersonToDtoMapper;
 import javapro.util.Time;
 import lombok.extern.slf4j.Slf4j;
@@ -36,21 +33,25 @@ public class ProfileService {
     private final CountryRepository countryRepository;
     private final TownRepository townRepository;
     private final DeletedPersonRepository deletedPersonRepository;
+    private final NotificationRepository notificationRepository;
 
     public ProfileService(PersonRepository personRepository,
                           PersonToDtoMapper personToDtoMapper,
                           CountryRepository countryRepository,
                           TownRepository townRepository,
-                          DeletedPersonRepository deletedPersonRepository) {
+                          DeletedPersonRepository deletedPersonRepository,
+                          NotificationRepository notificationRepository) {
         this.personRepository = personRepository;
         this.personToDtoMapper = personToDtoMapper;
         this.countryRepository = countryRepository;
         this.townRepository = townRepository;
         this.deletedPersonRepository = deletedPersonRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
             NotFoundException {
+
 
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             throw new AuthenticationException(Config.STRING_AUTH_ERROR);
@@ -112,15 +113,13 @@ public class ProfileService {
         }
 
         //about
-        if (editMyProfileRequest.getAbout() != null) {
-            person.setAbout(editMyProfileRequest.getAbout());
-        }
+        person.setAbout(editMyProfileRequest.getAbout() != null ? editMyProfileRequest.getAbout() : null);
         //birth day
         if (editMyProfileRequest.getBirthDate() != null) {
             if (editMyProfileRequest.getBirthDate().after(new Timestamp(System.currentTimeMillis()))) {
                 throw new BadRequestException(Config.STRING_WRONG_DATA);
             }
-            person.setBirthDate(editMyProfileRequest.getBirthDate());
+            person.setBirthDate(new Timestamp(editMyProfileRequest.getBirthDate().getTime()+ 14400000L));
         }
         //country
         if (editMyProfileRequest.getCountryId() != null) {
@@ -137,13 +136,15 @@ public class ProfileService {
             person.setPhone(editMyProfileRequest.getPhone());
         }
         //First Name
-        if (editMyProfileRequest.getFirstName() != null) {
+        if (!editMyProfileRequest.getFirstName().isEmpty()) {
             person.setFirstName(editMyProfileRequest.getFirstName());
-        }
+        } else throw new BadRequestException(Config.STRING_PERSON_EMPTY_FISTNAME);
+
+
         //Last Name
-        if (editMyProfileRequest.getLastName() != null) {
+        if (!editMyProfileRequest.getLastName().isEmpty()) {
             person.setLastName(editMyProfileRequest.getLastName());
-        }
+        } else throw new BadRequestException(Config.STRING_PERSON_EMPTY_LASTNAME);
 
         personRepository.save(person);
 
@@ -181,13 +182,18 @@ public class ProfileService {
         person.setFirstName(deletedPersonData.getFirstName());
         person.setLastName(deletedPersonData.getLastName());
         person.setPhone(deletedPersonData.getPhone());
+//      change person in db
         personRepository.save(person);
 
-        DeletedPerson deletedPerson = new DeletedPerson();
-        deletedPerson.setType(DeletedType.Temporarily.toString());
+        var deletedPerson = new DeletedPerson();
+        deletedPerson.setType(DeletedType.TEMPORARILY.toString());
         deletedPerson.setPersonId(person.getId());
 
+//      adding an entry in the deletion database "deleted_person"
         deletedPersonRepository.save(deletedPerson);
+
+
+        notificationRepository.deleteAllByAuthorId(person.getId());
 
         var response = new Response<MessageDTO>();
         response.setError("Пользователь удален");

@@ -1,14 +1,19 @@
 package javapro.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import javapro.model.view.PostCommentView;
+import javapro.model.view.PostView;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "post_like")
 public class PostLike implements Serializable {
@@ -28,10 +33,11 @@ public class PostLike implements Serializable {
     private Person person;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_id"))
-    private Post post;
+    private PostView post;
 
     @ManyToOne
     @JoinColumn(name = "comment_id", foreignKey = @ForeignKey(name = "FK_comment_id"))
-    private PostComment comment;
+    private PostCommentView comment;
 }

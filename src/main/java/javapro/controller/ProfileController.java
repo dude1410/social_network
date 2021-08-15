@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.EditMyProfileRequest;
 import javapro.api.request.PostDataRequest;
 import javapro.api.response.LoginResponse;
-import javapro.api.response.MyWallResponse;
+import javapro.api.response.WallResponse;
 import javapro.api.response.PostShortResponse;
 import javapro.api.response.Response;
 import javapro.config.Config;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@CrossOrigin
 @RestController
 @Tag(name = "/api/v1/users", description = "Операции с профилем")
 public class ProfileController {
@@ -50,10 +51,10 @@ public class ProfileController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Успешная попытка открыть стену пользователя"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "400", description = "id пользователя не задан")})
-    public ResponseEntity<MyWallResponse> myWall(@PathVariable Integer id,
-                                                 @RequestParam(name = "offset", defaultValue = "0") Integer offset,
-                                                 @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws NotFoundException {
-        return postService.getPostsByUser(offset, itemPerPage);
+    public ResponseEntity<WallResponse> myWall(@PathVariable Integer id,
+                                               @RequestParam(name = "offset", defaultValue = "0") Integer offset,
+                                               @RequestParam(name = "itemPerPage", defaultValue = "20") Integer itemPerPage) throws BadRequestException {
+        return postService.getPostsByUser(id, offset, itemPerPage);
     }
 
 
@@ -64,13 +65,12 @@ public class ProfileController {
     public ResponseEntity<PostShortResponse> publishPost(@PathVariable Integer id,
                                                          @RequestParam(name = "publish_date", required = false) Long publishDate,
                                                          @RequestBody PostDataRequest postDataRequest) throws NotFoundException {
-        return postService.publishPost(publishDate,
-                postDataRequest);
+        return postService.publishPost(publishDate, postDataRequest);
     }
 
     @PutMapping("/api/v1/users/me")
     @Operation(description = "Редактирование профиля")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Данные изменены")})
+    @ApiResponse(responseCode = "200", description = "Данные изменены")
     public ResponseEntity<Response<AuthorizedPerson>> editMyProfile(@RequestBody EditMyProfileRequest editMyProfileRequest) throws AuthenticationException, NotFoundException, BadRequestException {
         return profileService.editMyProfile(editMyProfileRequest);
     }
@@ -91,13 +91,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/api/v1/users/me")
-    public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException, AuthenticationException, NotFoundException {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException,  NotFoundException {
         return profileService.deletePerson();
     }
 }
