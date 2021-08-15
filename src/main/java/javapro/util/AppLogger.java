@@ -32,4 +32,24 @@ public class AppLogger {
     public Logger getMailChangeLogger(){
         return LogManager.getLogger("mailChangeLogger");
     }
+
+    @Bean(name = "friendsServiceLogger")
+    public Logger getFriendsServiceLogger(){
+        return LogManager.getLogger("friendsServiceLogger");
+    }
+
+    @Bean(name = "postCommentLogger")
+    public Logger getPostCommentLogger(){
+        return LogManager.getLogger("postCommentLogger");
+    }
+
+    @Bean(name = "postLogger")
+    public Logger getPostLogger(){
+        return LogManager.getLogger("postLogger");
+    }
+
+    @Bean(name = "searchLogger")
+    public Logger getSearchLogger(){
+        return LogManager.getLogger("searchLogger");
+    }
 }

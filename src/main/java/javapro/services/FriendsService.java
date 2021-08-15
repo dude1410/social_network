@@ -18,7 +18,9 @@ import javapro.repository.NotificationEntityRepository;
 import javapro.repository.NotificationRepository;
 import javapro.repository.PersonRepository;
 import javapro.util.PersonToPersonDTOMapper;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,18 +37,21 @@ public class FriendsService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationEntityRepository notificationEntityRepository;
     private final NotificationRepository notificationRepository;
+    private final Logger logger;
 
     @Autowired
     public FriendsService(PersonRepository personRepository,
                           PersonToPersonDTOMapper personToPersonDTOMapper,
                           FriendshipRepository friendshipRepository,
                           NotificationEntityRepository notificationEntityRepository,
-                          NotificationRepository notificationRepository) {
+                          NotificationRepository notificationRepository,
+                          @Qualifier("friendsServiceLogger")Logger logger) {
         this.personRepository = personRepository;
         this.personToPersonDTOMapper = personToPersonDTOMapper;
         this.friendshipRepository = friendshipRepository;
         this.notificationEntityRepository = notificationEntityRepository;
         this.notificationRepository = notificationRepository;
+        this.logger = logger;
     }
 
     // получение всех друзей пользователя
@@ -325,7 +330,7 @@ public class FriendsService {
                 notification.setInfo("Не имей сто рублей, а имей сто друзей.");
                 notificationRepository.save(notification);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         };
         var thread = new Thread(task);

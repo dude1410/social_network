@@ -17,7 +17,9 @@ import javapro.repository.*;
 import javapro.util.CommentToDTOCustomMapper;
 import javapro.util.PersonToDtoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,7 @@ public class PostCommentService {
     private final LikeRepository likeRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationEntityRepository notificationEntityRepository;
+    private final Logger logger;
 
     private final PersonToDtoMapper personToDtoMapper;
     private final CommentToDTOCustomMapper commentToDTOCustomMapper;
@@ -48,6 +51,7 @@ public class PostCommentService {
                               LikeRepository likeRepository,
                               NotificationRepository notificationRepository,
                               NotificationEntityRepository notificationEntityRepository,
+                              @Qualifier("postCommentLogger") Logger logger,
                               PersonToDtoMapper personToDtoMapper) {
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
@@ -55,6 +59,7 @@ public class PostCommentService {
         this.likeRepository = likeRepository;
         this.notificationRepository = notificationRepository;
         this.notificationEntityRepository = notificationEntityRepository;
+        this.logger = logger;
         this.personToDtoMapper = personToDtoMapper;
         this.commentToDTOCustomMapper = Mappers.getMapper(CommentToDTOCustomMapper.class);
     }
@@ -98,7 +103,7 @@ public class PostCommentService {
             try {
                 createNotificationEntity(commentData, person);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.toString());
             }
         };
         var thread = new Thread(task);
@@ -122,7 +127,7 @@ public class PostCommentService {
 
         Page<PostCommentView> comments = commentRepository.findCommentsByPostID(postID, pageable);
 
-        List<CommentDTO> commentDTOs = new ArrayList();
+        List<CommentDTO> commentDTOs = new ArrayList<>();
 
         comments.forEach(comment -> commentDTOs.add(commentToDTOCustomMapper.mapper(comment)));
 

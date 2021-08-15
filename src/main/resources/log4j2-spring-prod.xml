@@ -9,7 +9,7 @@
             <PatternLayout
                     pattern="%style{%d{HH:mm:ss}}{cyan} [%style{%t}{magenta}] %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} %logger{5} - %msg%n" disableAnsi="false"/>
         </Console>
-
+<!--Root-->
         <RollingFile name="rootFileAppender"
                      filePattern="${file-path}/rootLogs.log"
                      append="true"
@@ -19,7 +19,7 @@
                 <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
         </RollingFile>
-
+<!--Register-->
         <RollingFile name="registerLogAppender"
                      filePattern="${file-path}/registerLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
@@ -30,7 +30,7 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-
+<!--PassRecovery-->
         <RollingFile name="passRecoveryLogAppender"
                      filePattern="${file-path}/passRecoveryLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
@@ -41,7 +41,7 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-
+<!--Authorization-->
         <RollingFile name="authorizationLogAppender"
                      filePattern="${file-path}/authorizationLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
@@ -52,11 +52,66 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-
+<!--MailSend-->
         <RollingFile name="mailSenderLogAppender"
                      filePattern="${file-path}/mailSenderLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
                      append="true"
                      filename="${file-path}/mailSenderLogs.log">
+            <PatternLayout pattern="${pattern-file}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<!--FriendsService-->
+        <RollingFile name="friendsServiceLoggerAppender"
+                     filePattern="${file-path}/friendsServiceLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     append="true"
+                     filename="${file-path}/friendsServiceLogs.log">
+            <PatternLayout pattern="${pattern-file}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<!--MailChange-->
+        <RollingFile name="mailChangeLogAppender"
+                     filePattern="${file-path}/mailChangeLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     append="true"
+                     filename="${file-path}/mailChangeLogs.log">
+            <PatternLayout pattern="${pattern-file}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<!--PostComment-->
+        <RollingFile name="postCommentLogger"
+                     filePattern="${file-path}/postCommentLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     append="true"
+                     filename="${file-path}/postCommentLogs.log">
+            <PatternLayout pattern="${pattern-file}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<!--Post-->
+        <RollingFile name="postLogger"
+                     filePattern="${file-path}/postLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     append="true"
+                     filename="${file-path}/postLogs.log">
+            <PatternLayout pattern="${pattern-file}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<!--Search-->
+        <RollingFile name="searchLogger"
+                     filePattern="${file-path}/searchLogs_%d{yyyy-MM-dd_HH-mm}_%i.log"
+                     append="true"
+                     filename="${file-path}/searchLogs.log">
             <PatternLayout pattern="${pattern-file}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -77,6 +132,21 @@
         </Logger>
         <Logger name="mailSenderLogger" level="info">
             <AppenderRef ref="mailSenderLogAppender"/>
+        </Logger>
+        <Logger name="mailChangeLogger" level="info">
+            <AppenderRef ref="mailChangeLogAppender"/>
+        </Logger>
+        <Logger name="friendsServiceLogger" level="info">
+            <AppenderRef ref="friendsServiceLoggerAppender"/>
+        </Logger>
+        <Logger name="postCommentLogger" level="info">
+            <AppenderRef ref="postCommentLoggerAppender"/>
+        </Logger>
+        <Logger name="postLogger" level="info">
+            <AppenderRef ref="postLoggerAppender"/>
+        </Logger>
+        <Logger name="searchLogger" level="info">
+            <AppenderRef ref="searchLoggerAppender"/>
         </Logger>
         <Root level="info">
             <AppenderRef ref="rootFileAppender"/>
