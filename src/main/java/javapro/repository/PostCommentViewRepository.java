@@ -16,7 +16,7 @@ public interface PostCommentViewRepository extends JpaRepository<PostCommentView
             "pc " +
             "FROM PostCommentView pc " +
             "WHERE pc.post.id = :postID " +
-            "ORDER BY pc.time DESC")
+            "ORDER BY pc.time DESC ")
     Page<PostCommentView> findCommentsByPostID(int postID, Pageable pageable);
 
     @Query("SELECT " +

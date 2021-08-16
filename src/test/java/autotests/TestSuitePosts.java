@@ -7,6 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.context.annotation.Profile;
 
@@ -67,10 +68,11 @@ public class TestSuitePosts {
     private By deletePostBtn = By.xpath("(//button[contains(@class, 'edit__icon')])[2]");
     private By editPostBtn = By.xpath("(//button[contains(@class, 'edit__icon')])[1]");
 
+    private By generateDelayedPost = By.xpath("(//a[contains(@class, 'btn-modified')])");
+
     private By selectDateBtn = By.xpath("(//select[contains(@class, 'day')])");
     private By selectMonthBtn = By.xpath("(//select[contains(@class, 'month')])");
     private By selectYearBtn = By.xpath("(//select[contains(@class, 'year')])");
-    private By selectTimeBtn = By.xpath("(//select[contains(@class, 'time')])");
 
     private By postTitleField = By.xpath("//h3[@class = 'news-block__content-title']");
 
@@ -104,7 +106,6 @@ public class TestSuitePosts {
         calendar.setTime(dateDelay);
         calendar.add(Calendar.DATE, 1);
 
-
         //act
         generateDelayedPost("Delayed Post", postBody, calendar);
 
@@ -112,15 +113,15 @@ public class TestSuitePosts {
         Thread.sleep(2000);
 
         //assert
-        boolean isCorrect = false;
+        boolean isError = false;
         for (WebElement post : driver.findElements(findPostsBlock)) {
             if (post.findElement(postTitleField).getText().equals("Delayed Post")) {
-                isCorrect = true;
+                isError = true;
                 break;
             }
         }
 
-        Assert.assertTrue(isCorrect);
+        Assert.assertFalse(isError);
     }
 
     @Test
@@ -189,16 +190,6 @@ public class TestSuitePosts {
         Assert.assertTrue(isDeleted);
     }
 
-    private boolean isElementPresent(By locatorKey) {
-        try {
-            driver.findElement(locatorKey);
-            return true;
-        } catch (org.openqa.selenium.NoSuchElementException e) {
-            return false;
-        }
-    }
-
-
     private void generateDefaultPost(String postTitle, String postBody) {
         wait.until(ExpectedConditions.elementToBeClickable(addPostBtn));
         driver.findElement(addPostBtn).click();
@@ -207,18 +198,21 @@ public class TestSuitePosts {
         driver.findElement(createPostBtn).click();
     }
 
-    private void generateDelayedPost(String postTitle, String postBody, Calendar time) throws InterruptedException {
+    private void generateDelayedPost(String postTitle, String postBody, Calendar time) {
         wait.until(ExpectedConditions.elementToBeClickable(addPostBtn));
         driver.findElement(addPostBtn).click();
         driver.findElement(inputPostTitleField).sendKeys(postTitle);
         driver.findElement(inputPostBody).sendKeys(postBody);
         driver.findElement(createDelayedPostBtn).click();
-        driver.findElement(selectDateBtn).click();
 
-        System.out.println(time.get(Calendar.DATE)
-                + " " + time.get(Calendar.MONTH)
-                + " " + time.get(Calendar.YEAR));
-        Thread.sleep(3000);
+        Select days = new Select(driver.findElement(selectDateBtn));
+        days.selectByVisibleText(String.valueOf(time.get(Calendar.DATE)));
+
+        Select month = new Select(driver.findElement(selectMonthBtn));
+        month.selectByIndex(time.get(Calendar.MONTH));
+
+        Select year = new Select(driver.findElement(selectYearBtn));
+        year.selectByVisibleText(String.valueOf(time.get(Calendar.YEAR)));
+        driver.findElement(generateDelayedPost).click();
     }
-
 }

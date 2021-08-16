@@ -1,9 +1,6 @@
 package autotests;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +9,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.context.annotation.Profile;
 
+@Profile("test")
 public class TestSuiteComments {
 
     public static WebDriver driver;
@@ -63,8 +62,8 @@ public class TestSuiteComments {
     private By createPostBtn = By.xpath("//a[@class = 'btn']");
     private By createDelayedPostBtn = By.xpath("//a[@class = 'btn news-add__planning btn--white btn--bordered']");
 
-    private By deleteBtn = By.xpath("(//div[@class = 'edit__icon'])[1]");
-    private By editBtn = By.xpath("(//div[@class = 'edit__icon'])[2]");
+    private By deleteBtn = By.xpath("(//button[contains(@class, 'edit__icon')])[2]");
+    private By editBtn = By.xpath("(//button[contains(@class, 'edit__icon')])[1]");
 
     private By commentInputField = By.xpath("//input[@class = 'comment-add__input']");
 
@@ -75,10 +74,11 @@ public class TestSuiteComments {
 
 
     @Test
-    public void createComment()
-    {
+    public void createComment() throws InterruptedException {
         generateDefaultPost(postTitle, postBody);
 
+        driver.navigate().refresh();
+        Thread.sleep(2000);
 
         for (WebElement post : driver.findElements(findPostsBlock)) {
             //Получим созданный пост
@@ -86,10 +86,21 @@ public class TestSuiteComments {
                 //Создадим коммент на посте
                 post.findElement(commentInputField).sendKeys("Текст комментария");
                 post.findElement(commentInputField).sendKeys(Keys.ENTER);
-
                 break;
             }
         }
+
+        //assert
+        boolean isError = false;
+        for (WebElement post : driver.findElements(findPostsBlock)) {
+            if (post.findElement(postTitleField).getText().equals(postTitle)) {
+
+                isError = true;
+                break;
+            }
+        }
+
+        Assert.assertFalse(isError);
 
     }
 
@@ -112,9 +123,26 @@ public class TestSuiteComments {
             }
         }
 
+    }
 
+    @Test
+    public void deleteComment()
+    {
+        generateDefaultPost(postTitle, postBody);
+
+        for (WebElement post : driver.findElements(findPostsBlock)) {
+            //Получим созданный пост
+            if (post.findElement(postTitleField).getText().equals(postTitle)) {
+                //Создадим коммент на посте
+                post.findElement(commentInputField).sendKeys("Текст комментария");
+                post.findElement(commentInputField).sendKeys(Keys.ENTER);
+
+                break;
+            }
+        }
 
     }
+
 
     private void generateDefaultPost(String postTitle, String postBody) {
         wait.until(ExpectedConditions.elementToBeClickable(addPostBtn));

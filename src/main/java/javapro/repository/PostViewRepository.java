@@ -37,7 +37,8 @@ public interface PostViewRepository extends JpaRepository<PostView, Integer> {
     @Query("SELECT " +
             "p " +
             "FROM PostView p " +
-            "WHERE LOWER(CONCAT(p.title, p.postText, p.author.firstName, p.author.lastName)) LIKE %:searchText% "
+            "WHERE LOWER(CONCAT(p.title, p.postText, p.author.firstName, p.author.lastName)) LIKE %:searchText% " +
+            "ORDER BY p.time DESC "
     )
     Page<PostView> searchPostBy(String searchText, Pageable pageable);
 
