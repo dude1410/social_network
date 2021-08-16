@@ -210,7 +210,7 @@ public class FriendsService {
 
         List<Integer> idsToCheck = request.getUserIds();
 
-        if (idsToCheck == null) {
+        if (idsToCheck.isEmpty()) {
             throw new NotFoundException(Config.STRING_NO_FRIENDS_FOUND);
         }
 

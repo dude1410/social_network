@@ -11,7 +11,6 @@ import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.services.AuthService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,9 +36,8 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Успешная попытка зайти в учетную запись")
     @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")
     public ResponseEntity<LoginResponse> login(@RequestBody UnauthorizedPersonDTO user,
-                                               Errors error,
                                                HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
-        return authService.loginUser(user, error, httpServletRequest);
+        return authService.loginUser(user, httpServletRequest);
     }
 
     @PostMapping(value = "/api/v1/auth/logout",
