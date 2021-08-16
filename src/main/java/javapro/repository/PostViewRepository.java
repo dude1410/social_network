@@ -29,7 +29,7 @@ public interface PostViewRepository extends JpaRepository<PostView, Integer> {
             "p.isDeleted, " +
             "p.title, " +
             "p.postText, " +
-            "p.time " +
+            "p.time  " +
             "ORDER BY p.time DESC "
     )
     Page<PostView> findPostsByProperties(String searchText, Date dateFrom, Date dateTo, String searchAuthor, String searchTag, Pageable pageable);
