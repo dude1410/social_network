@@ -140,8 +140,10 @@ public class PostService {
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
 
+
         post.setDeleted(true);
         postRepository.save(post);
+
 
         var postDeleteDTO = new PostDeleteDTO();
         postDeleteDTO.setId(postID);

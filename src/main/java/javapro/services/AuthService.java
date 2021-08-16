@@ -22,10 +22,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -60,22 +60,17 @@ public class AuthService {
         this.tokenRepository = tokenRepository;
     }
 
+
+
     public ResponseEntity<LoginResponse> loginUser(UnauthorizedPersonDTO user,
-                                                   Errors validationErrors,
                                                    HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
 
-
-
-        if (validationErrors.hasErrors()) {
-            logger.error(String.format("Errors in UnauthorizedPersonDTO All-errors= '%s'", validationErrors.getFieldErrors()));
-            throw new BadRequestException(Config.STRING_FRONT_DATA_NOT_VALID);
-        }
 
         final String email = user.getEmail();
         final CharSequence password = user.getPassword();
 
         if (email.isBlank() || password.length() == 0) {
-            logger.error("Ошибка предоставленных в запросе данных. Поля Email (и)или Password пустые");
+            logger.error("Поля Email (и)или Password пустые");
             throw new BadRequestException(Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD);
         }
 
@@ -96,9 +91,11 @@ public class AuthService {
         }
 
         if (!userFromDB.isApproved() || userFromDB.isBlocked()) {
-            logger.info(String.format("User with email '%s' , not approved or is blocked!", email));
+            logger.info("User with email {} , not approved or is blocked!", email);
             throw new BadRequestException(Config.STRING_USER_NOTAPPRUVED_OR_BLOCKED);
         }
+        userFromDB.setLastOnlineTime(new Timestamp(Time.getTime()));
+        personRepository.save(userFromDB);
 
         var authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -107,13 +104,13 @@ public class AuthService {
 
         HttpSession session = httpServletRequest.getSession();
         session.setMaxInactiveInterval(-1);
-
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
-        logger.info("Успешная авторизация пользователя. Email: " + email);
+        logger.info("Успешная авторизация пользователя. Email: {} ", email);
         return ResponseEntity
-                .ok(new LoginResponse("successfully", Time.getTime(), authorizedPerson));
+                .ok(new LoginResponse(Config.WALL_RESPONSE, Time.getTime(), authorizedPerson));
     }
+
 
 
     public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest) {
