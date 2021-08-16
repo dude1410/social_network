@@ -303,9 +303,7 @@ public class NotificationService {
         notification.setInfo("Не забудьте поздравить его");
         notification.setNotificationType(NotificationType.FRIEND_BIRTHDAY);
         notification.setSentTime(new Timestamp(Time.getTime()));
-
         notificationRepository.save(notification);
-
 
     }
 }
