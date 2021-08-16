@@ -38,9 +38,10 @@ public interface PostViewRepository extends JpaRepository<PostView, Integer> {
             "p " +
             "FROM PostView p " +
             "WHERE LOWER(CONCAT(p.title, p.postText, p.author.firstName, p.author.lastName)) LIKE %:searchText% " +
+            "AND p.time BETWEEN :dateFrom AND :dateTo " +
             "ORDER BY p.time DESC "
     )
-    Page<PostView> searchPostBy(String searchText, Pageable pageable);
+    Page<PostView> searchPostBy(String searchText, Date dateFrom, Date dateTo, Pageable pageable);
 
     @Query("SELECT DISTINCT " +
             "p " +
