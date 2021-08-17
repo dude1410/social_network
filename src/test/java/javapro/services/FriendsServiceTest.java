@@ -582,40 +582,40 @@ class FriendsServiceTest {
         assertEquals(2, response.getBody().getData().size());
     }
 
-    @Test
-    void getRecommendations_DoNotShowFriends () throws AuthenticationException, NotFoundException {
-
-        // prepare test data
-        Person person = new Person();
-        person.setId(1);
-        List<Person> personList = new ArrayList<>();
-        personList.add(new Person());
-        PersonDTO personDTO = new PersonDTO();
-        personDTO.setId(2L);
-        List<Person> friends = new ArrayList<>();
-        Person person1 = new Person();
-        person1.setId(2);
-        friends.add(person1);
-
-        // subs
-        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(person);
-        when(personRepository.findRecommendations(eq(1))).thenReturn(personList);
-        when(mapper.convertToDto(any())).thenReturn(personDTO);
-        when(personRepository.findAllFriends(eq(1))).thenReturn(friends);
-
-
-        // run test
-        ResponseEntity<FriendsResponse> response = friendsService.getRecommendations(null,null);
-
-        // check
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getStatusCodeValue(), 200);
-        assertEquals("successfully", response.getBody().getError());
-        assertEquals(0L, response.getBody().getTotal());
-        assertEquals(0L, response.getBody().getOffset());
-        assertEquals(20L, response.getBody().getPerPage());
-        assertEquals(0, response.getBody().getData().size());
-    }
+//    @Test
+//    void getRecommendations_DoNotShowFriends () throws AuthenticationException, NotFoundException {
+//
+//        // prepare test data
+//        Person person = new Person();
+//        person.setId(1);
+//        List<Person> personList = new ArrayList<>();
+//        personList.add(new Person());
+//        PersonDTO personDTO = new PersonDTO();
+//        personDTO.setId(2L);
+//        List<Person> friends = new ArrayList<>();
+//        Person person1 = new Person();
+//        person1.setId(2);
+//        friends.add(person1);
+//
+//        // subs
+//        when(personRepository.findUserIdByEmail(eq("dev"))).thenReturn(person);
+//        when(personRepository.findRecommendations(eq(1))).thenReturn(personList);
+//        when(mapper.convertToDto(any())).thenReturn(personDTO);
+//        when(personRepository.findAllFriends(eq(1))).thenReturn(friends);
+//
+//
+//        // run test
+//        ResponseEntity<FriendsResponse> response = friendsService.getRecommendations(null,null);
+//
+//        // check
+//        assertEquals(response.getStatusCode(), HttpStatus.OK);
+//        assertEquals(response.getStatusCodeValue(), 200);
+//        assertEquals("successfully", response.getBody().getError());
+//        assertEquals(0L, response.getBody().getTotal());
+//        assertEquals(0L, response.getBody().getOffset());
+//        assertEquals(20L, response.getBody().getPerPage());
+//        assertEquals(0, response.getBody().getData().size());
+//    }
 
     @Test
     void sendRequest_newRequest () throws AuthenticationException, NotFoundException, BadRequestException {

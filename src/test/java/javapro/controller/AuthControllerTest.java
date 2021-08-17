@@ -73,18 +73,18 @@ class AuthControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @Ignore
-    void testValidUserLogin() throws Exception {
-        String requestBody = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(validTestUser);
-        mockMvc.perform(post("/api/v1/auth/login")
-                .with(csrf().asHeader())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-                .characterEncoding("utf-8"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @Ignore
+//    void testValidUserLogin() throws Exception {
+//        String requestBody = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(validTestUser);
+//        mockMvc.perform(post("/api/v1/auth/login")
+//                .with(csrf().asHeader())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(requestBody)
+//                .characterEncoding("utf-8"))
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     @WithUserDetails("prokhorovoleg1977@gmail.com")
