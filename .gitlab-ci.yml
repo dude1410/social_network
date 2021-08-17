@@ -18,7 +18,7 @@ build:
     - echo "Do your build here and there"
     - mvn compile -Dmaven.test.skip=true
 
-module_testing:
+main_testing:
   stage: test
   only:
     - master
@@ -26,9 +26,10 @@ module_testing:
     - tags
   script:
     - echo "Do a test here and there"
+    - mvn test -Dspring.profiles.active=test
     - echo "For example run a test suite"
 
-integrational_testing:
+additional_testing:
   stage: test
   only:
     - master
