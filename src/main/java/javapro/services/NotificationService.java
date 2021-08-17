@@ -219,7 +219,8 @@ public class NotificationService {
         ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
         entity.forEach(el -> {
             if (!el.getEntity().getPerson().getId().equals(personId)) {
-                if (setupData.get(el.getNotificationType().toString()).equals(true)) {
+                if (setupData.get(el.getNotificationType().toString()).equals(true)  &&
+                el.getSentTime().before(new Timestamp(Time.getTime()))) {
                     var notificationDTO = new NotificationDTO();
                     notificationDTO.setId(el.getId());
                     var entityAuthorDTO = new EntityAuthorDTO();
