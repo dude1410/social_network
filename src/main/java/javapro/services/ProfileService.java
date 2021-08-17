@@ -1,7 +1,6 @@
 package javapro.services;
 
 import javapro.api.request.EditMyProfileRequest;
-import javapro.api.response.LoginResponse;
 import javapro.api.response.Response;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
@@ -16,7 +15,6 @@ import javapro.model.enums.DeletedType;
 import javapro.repository.*;
 import javapro.util.PersonToDtoMapper;
 import javapro.util.Time;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class ProfileService {
 
@@ -49,7 +46,7 @@ public class ProfileService {
         this.notificationRepository = notificationRepository;
     }
 
-    public ResponseEntity<LoginResponse> getMyProfile() throws AuthenticationException,
+    public ResponseEntity<Response<AuthorizedPerson>> getMyProfile() throws AuthenticationException,
             NotFoundException {
 
 
@@ -70,8 +67,10 @@ public class ProfileService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         authorizedPerson.setToken(null);
+
         return ResponseEntity
-                .ok(new LoginResponse("successfully", Time.getTime(), authorizedPerson));
+                .ok(new Response<>(Config.WALL_RESPONSE, Time.getTime(),
+                        authorizedPerson));
     }
 
     public ResponseEntity<Response<AuthorizedPerson>> getProfileById(Integer id) throws NotFoundException, BadRequestException {

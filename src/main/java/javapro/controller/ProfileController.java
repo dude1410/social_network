@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javapro.api.request.EditMyProfileRequest;
 import javapro.api.request.PostDataRequest;
-import javapro.api.response.LoginResponse;
-import javapro.api.response.WallResponse;
 import javapro.api.response.PostShortResponse;
 import javapro.api.response.Response;
+import javapro.api.response.WallResponse;
 import javapro.config.Config;
 import javapro.config.exception.AuthenticationException;
 import javapro.config.exception.BadRequestException;
@@ -41,7 +40,7 @@ public class ProfileController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Профиль пользователя открыт"),
             @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден в БД")})
-    public ResponseEntity<LoginResponse> me() throws AuthenticationException,
+    public ResponseEntity<Response<AuthorizedPerson>> me() throws AuthenticationException,
             NotFoundException {
         return profileService.getMyProfile();
     }
