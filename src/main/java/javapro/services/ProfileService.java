@@ -67,10 +67,11 @@ public class ProfileService {
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         authorizedPerson.setToken(null);
-
-        return ResponseEntity
-                .ok(new Response<>(Config.WALL_RESPONSE, Time.getTime(),
-                        authorizedPerson));
+        var response = new Response<AuthorizedPerson>();
+        response.setError(Config.WALL_RESPONSE);
+        response.setTimestamp(Time.getTime());
+        response.setData(authorizedPerson);
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response<AuthorizedPerson>> getProfileById(Integer id) throws NotFoundException, BadRequestException {
