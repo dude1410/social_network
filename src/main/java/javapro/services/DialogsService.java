@@ -61,6 +61,7 @@ public class DialogsService {
         for (DialogMessage dialogMessage : dialogMessagePage) {
             if (dialogMessage.getRecipientId().getEmail().equals(currentUserEmail)) {
                 dialogMessage.setReadStatus(ReadStatus.READ);
+                dialogMessageRepository.save(dialogMessage);
             }
         }
         dialogMessageDataList = prepareDialogMessageData(dialogMessagePage, currentUserEmail);
