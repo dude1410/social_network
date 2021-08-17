@@ -10,5 +10,7 @@ public class Response<T> {
     private Long timestamp;
     private T data;
 
+    public Response(String error, long timestamp, T authorizedPerson) {
+    }
 }
 

@@ -144,6 +144,7 @@ public class PostService {
         post.setDeleted(true);
         postRepository.save(post);
 
+        deleteNotificationAboutDeletedPost(post.getId());
 
         var postDeleteDTO = new PostDeleteDTO();
         postDeleteDTO.setId(postID);
@@ -374,6 +375,17 @@ public class PostService {
             }
         }
         return personList;
+    }
+
+    private void deleteNotificationAboutDeletedPost (Integer postId){
+        var notificationEntityList = notificationEntityRepository.findAllByPost(postId);
+        for(NotificationEntity element: notificationEntityList){
+            notificationRepository.deleteAllNotificationFromDeletedPost(element.getId(), NotificationType.POST);
+           if( notificationRepository.findAllByEntity(element.getId()).isEmpty()) {
+               notificationEntityRepository.deleteById(element.getId());
+           }
+        }
+
     }
 
 }
