@@ -2,6 +2,8 @@ package javapro.repository;
 
 import javapro.model.NotificationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,5 +17,8 @@ public interface NotificationEntityRepository extends JpaRepository<Notification
     @Override
     Optional<NotificationEntity> findById(Integer integer);
 
-    List<NotificationEntity> findAllByPost(Integer postId);
+    @Query("select ne " +
+            "from NotificationEntity ne " +
+            "WHERE ne.post.id = :postId ")
+    List<NotificationEntity> findAllByPost(@Param("postId") Integer postId);
 }

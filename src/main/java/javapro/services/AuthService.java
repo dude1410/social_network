@@ -6,8 +6,10 @@ import javapro.api.response.ResponseData;
 import javapro.config.Config;
 import javapro.config.exception.BadRequestException;
 import javapro.config.exception.NotFoundException;
+import javapro.model.Person;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.repository.DeletedPersonRepository;
+import javapro.repository.NotificationSetupRepository;
 import javapro.repository.PersonRepository;
 import javapro.repository.TokenRepository;
 import javapro.util.PersonToDtoMapper;
@@ -41,6 +43,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final DeletedPersonRepository deletedPersonRepository;
     private final TokenRepository tokenRepository;
+    private final NotificationSetupRepository notificationSetupRepository;
 
 
     public AuthService(@Qualifier("authorizationLogger") Logger logger,
@@ -49,7 +52,8 @@ public class AuthService {
                        PersonToDtoMapper personToDtoMapper,
                        PasswordEncoder passwordEncoder,
                        DeletedPersonRepository deletedPersonRepository,
-                       TokenRepository tokenRepository) {
+                       TokenRepository tokenRepository,
+                       NotificationSetupRepository notificationSetupRepository) {
         this.logger = logger;
         this.personRepository = personRepository;
         this.authenticationManager = authenticationManager;
@@ -58,6 +62,7 @@ public class AuthService {
 
         this.deletedPersonRepository = deletedPersonRepository;
         this.tokenRepository = tokenRepository;
+        this.notificationSetupRepository = notificationSetupRepository;
     }
 
 
@@ -133,6 +138,10 @@ public class AuthService {
         var date = Date.from(instant);
         tokenRepository.deleteAllByDateBefore(date);
         Thread.sleep(5000);
+        var listNotApprovedPerson = personRepository.findAllByRegDateBefore(date);
+        for(Person element: listNotApprovedPerson ){
+            notificationSetupRepository.deleteNotificationSetupsByPersonId(element.getId());
+        }
         personRepository.deleteAllByRegDateBefore(date);
     }
 

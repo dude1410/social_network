@@ -61,6 +61,11 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
             "AND p.regDate < :timestamp")
     void deleteAllByRegDateBefore(Date timestamp);
 
+    @Query("SELECT p " +
+            "from Person p " +
+            "WHERE p.isApproved = false " +
+            "AND p.regDate < :timestamp")
+    List<Person> findAllByRegDateBefore(Date timestamp);
 
 
     @Query("select p " +
