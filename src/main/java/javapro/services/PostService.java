@@ -139,12 +139,12 @@ public class PostService {
             log.info("ID doesn't exist");
             throw new NotFoundException(Config.STRING_NO_POST_IN_DB);
         }
-
+        deleteNotificationAboutDeletedPost(post.getId());
 
         post.setDeleted(true);
         postRepository.save(post);
 
-        deleteNotificationAboutDeletedPost(post.getId());
+
 
         var postDeleteDTO = new PostDeleteDTO();
         postDeleteDTO.setId(postID);
@@ -380,6 +380,8 @@ public class PostService {
     private void deleteNotificationAboutDeletedPost (Integer postId){
         var notificationEntityList = notificationEntityRepository.findAllByPost(postId);
         for(NotificationEntity element: notificationEntityList){
+            notificationRepository.deleteAllNotificationFromDeletedPost(element.getId(), NotificationType.COMMENT_COMMENT);
+            notificationRepository.deleteAllNotificationFromDeletedPost(element.getId(), NotificationType.POST_COMMENT);
             notificationRepository.deleteAllNotificationFromDeletedPost(element.getId(), NotificationType.POST);
            if( notificationRepository.findAllByEntity(element.getId()).isEmpty()) {
                notificationEntityRepository.deleteById(element.getId());
