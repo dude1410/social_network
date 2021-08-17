@@ -47,7 +47,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     List<Notification> findAllByPersonId(Integer personId);
 
-    List<Notification> findAllByEntity(Integer entityId);
+    @Query("select n " +
+            "FROM Notification n " +
+            "where n.entity.id = :entityId ")
+    List<Notification> findAllByEntity(@Param("entityId") Integer entityId);
 
     @Modifying
     @Query("delete " +
