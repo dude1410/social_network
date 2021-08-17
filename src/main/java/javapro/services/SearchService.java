@@ -58,6 +58,8 @@ public class SearchService {
                                                                Integer offset,
                                                                Integer itemPerPage) {
 
+        searchText = stringFix(searchText);
+
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         Page<PersonView> personFound = personViewRepository.searchPersonBy(searchText, pageable);
 
@@ -88,8 +90,12 @@ public class SearchService {
                                                            Integer offset,
                                                            Integer itemPerPage) {
 
+        searchText = stringFix(searchText);
+        Date dateFrom = dateFromFix(null);
+        Date dateTo = dateToFix(null);
+
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<PostView> postsFound = postRepository.searchPostBy(searchText, pageable);
+        Page<PostView> postsFound = postRepository.searchPostBy(searchText, dateFrom, dateTo, pageable);
 
         List<PostDTO> postDTOS = new ArrayList<>();
 
