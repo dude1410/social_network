@@ -2,6 +2,7 @@ package javapro.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testng.annotations.Ignore;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -77,7 +77,6 @@ class AuthControllerTest {
     @Ignore
     void testValidUserLogin() throws Exception {
         String requestBody = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(validTestUser);
-
         mockMvc.perform(post("/api/v1/auth/login")
                 .with(csrf().asHeader())
                 .contentType(MediaType.APPLICATION_JSON)
