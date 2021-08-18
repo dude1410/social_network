@@ -362,25 +362,27 @@ public class PostCommentService {
     private void createNotificationEntity(Integer id, Person person)  {
 //      create new notification_entity
         var postComment = commentRepository.findCommentByID(id);
+        var post = postRepository.findPostByID(postComment.getPost().getId());
         if (!postComment.getPost().getAuthor().getId().equals(person.getId())) {
             var notificationEntity = new NotificationEntity();
             notificationEntity.setPerson(person);
-            if (postComment.getParentComment() != null) {
-                notificationEntity.setPostComment(postComment);
-            }
-            var post = postRepository.findPostByID(postComment.getPost().getId());
+            notificationEntity.setPostComment(postComment);
             notificationEntity.setPost(post);
             var notificationEnt = notificationEntityRepository.save(notificationEntity);
+
             ArrayList<Notification> postCommentArrayList = new ArrayList<>();
             var notification = new Notification();
+
             notification.setSentTime((Timestamp) postComment.getTime());
             notification.setEntity(notificationEnt);
+
             if (postComment.getParentComment() != null) {
                 notification.setNotificationType(NotificationType.COMMENT_COMMENT);
                 var parentComment = commentRepository.findCommentByID(postComment.getParentComment().getId());
                 notification.setPerson(personRepository.findPersonById(parentComment.getAuthor().getId()));
                 postCommentArrayList.add(notification);
             }
+
             notification.setNotificationType(NotificationType.POST_COMMENT);
             notification.setPerson(personRepository.findPersonById(postComment.getPost().getAuthor().getId()));
             notification.setInfo(post.getTitle());

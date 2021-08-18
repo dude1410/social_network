@@ -228,6 +228,8 @@ public class NotificationService {
                     entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
                     entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
                     entityAuthorDTO.setId(el.getEntity().getPerson().getId());
+
+                    notificationDTO.setId(el.getId());
                     notificationDTO.setEntityAuthor(entityAuthorDTO);
                     notificationDTO.setEventType(el.getNotificationType().toString());
                     notificationDTO.setSentTime(el.getSentTime().getTime());
@@ -305,6 +307,5 @@ public class NotificationService {
         notification.setNotificationType(NotificationType.FRIEND_BIRTHDAY);
         notification.setSentTime(new Timestamp(Time.getTime()));
         notificationRepository.save(notification);
-
     }
 }
