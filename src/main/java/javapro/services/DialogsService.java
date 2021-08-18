@@ -55,7 +55,7 @@ public class DialogsService {
         List<DialogMessage> allDialogMessages = dialog.getDialogMessageList();
         List <DialogMessage> dialogMessagePage = allDialogMessages.stream()
                                                                   .sorted()
-                                                                  .skip(offset)
+                                                                  .skip(offset / (perPage - 1) * (perPage - 1))
                                                                   .limit(perPage)
                                                                   .collect(Collectors.toList());
         for (DialogMessage dialogMessage : dialogMessagePage) {
