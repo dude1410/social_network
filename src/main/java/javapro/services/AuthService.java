@@ -109,6 +109,7 @@ public class AuthService {
 
         HttpSession session = httpServletRequest.getSession();
         session.setMaxInactiveInterval(-1);
+
         var authorizedPerson = personToDtoMapper.convertToDto(userFromDB);
 
         logger.info("Успешная авторизация пользователя. Email: {} ", email);
@@ -124,7 +125,7 @@ public class AuthService {
         if (session != null) {
             session.invalidate();
         }
-        return ResponseEntity.ok(new OkResponse("successfully",
+        return ResponseEntity.ok(new OkResponse(Config.WALL_RESPONSE,
                 Time.getTime(),
                 new ResponseData("ok")));
     }

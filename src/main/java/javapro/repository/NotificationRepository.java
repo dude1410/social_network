@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -59,5 +60,18 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
             "AND n.notificationType = :notificationType ")
     void deleteAllNotificationFromDeletedPost(@Param("entity") Integer entity,
                                               @Param("notificationType") NotificationType notificationType);
+
+
+    @Modifying
+    @Query("delete " +
+            "from Notification n " +
+            "where n.entity.id = :notificationEntity ")
+    void deleteAllByEntity(@Param("notificationEntity") Integer notificationEntity);
+
+    @Modifying
+    @Query("delete " +
+            "from Notification n " +
+            "where n.sentTime < :date ")
+    void deleteAllBySentTimeBefore(@Param("date") Date date);
 
 }
