@@ -36,7 +36,8 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Успешная попытка зайти в учетную запись")
     @ApiResponse(responseCode = "400", description = "Полученные данные не прошли валидацию")
     public ResponseEntity<LoginResponse> login(@RequestBody UnauthorizedPersonDTO user,
-                                               HttpServletRequest httpServletRequest) throws BadRequestException, NotFoundException {
+                                               HttpServletRequest httpServletRequest) throws BadRequestException,
+            NotFoundException {
         return authService.loginUser(user, httpServletRequest);
     }
 
@@ -45,7 +46,7 @@ public class AuthController {
     @Operation(description = "Выход из учетной записи")
     @ApiResponse(responseCode = "200", description = "Успешная попытка выйти из учетной записи")
     @ApiResponse(responseCode = "400", description = "Неуспешная попытка выйти из учетной записи")
-    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest)  {
+    public ResponseEntity<OkResponse> logout(HttpServletRequest httpServletRequest) {
         return authService.logout(httpServletRequest);
     }
 }

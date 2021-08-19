@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Repository
 public interface PostCommentViewRepository extends JpaRepository<PostCommentView, Integer> {
 
@@ -46,5 +47,7 @@ public interface PostCommentViewRepository extends JpaRepository<PostCommentView
             "WHERE pl.comment.id = :commentID " +
             "AND pl.person.id = :userID ")
     void deleteLikeOnComment(Integer userID, Integer commentID);
+
+
 
 }

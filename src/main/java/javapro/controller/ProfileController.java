@@ -90,6 +90,8 @@ public class ProfileController {
     }
 
     @DeleteMapping("/api/v1/users/me")
+    @Operation(description = "Удаление профиля")
+    @ApiResponse(responseCode = "200", description = "Профиль удален")
     public ResponseEntity<Response<MessageDTO>> deletePerson () throws BadRequestException,  NotFoundException {
         return profileService.deletePerson();
     }
