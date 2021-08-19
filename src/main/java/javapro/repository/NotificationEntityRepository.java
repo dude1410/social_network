@@ -21,4 +21,11 @@ public interface NotificationEntityRepository extends JpaRepository<Notification
             "from NotificationEntity ne " +
             "WHERE ne.post.id = :postId ")
     List<NotificationEntity> findAllByPost(@Param("postId") Integer postId);
+
+    @Query("select ne " +
+            "from NotificationEntity ne " +
+            "where ne.postComment.id = :postCommenId")
+    List<NotificationEntity> findAllByPostComment(@Param("postCommenId") Integer postCommenId);
+
+
 }

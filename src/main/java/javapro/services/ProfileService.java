@@ -149,8 +149,9 @@ public class ProfileService {
         personRepository.save(person);
 
         var response = new Response<AuthorizedPerson>();
-        response.setError("successfully");
+        response.setError(Config.WALL_RESPONSE);
         response.setTimestamp(Time.getTime());
+
         var authorizedPerson = personToDtoMapper.convertToDto(person);
         authorizedPerson.setToken(null);
         response.setData(authorizedPerson);

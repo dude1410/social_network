@@ -27,9 +27,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -219,8 +222,8 @@ public class NotificationService {
         ArrayList<NotificationDTO> notificationDTOArrayList = new ArrayList<>();
         entity.forEach(el -> {
             if (!el.getEntity().getPerson().getId().equals(personId)) {
-                if (setupData.get(el.getNotificationType().toString()).equals(true)  &&
-                el.getSentTime().before(new Timestamp(Time.getTime()))) {
+                if (setupData.get(el.getNotificationType().toString()).equals(true) &&
+                        el.getSentTime().before(new Timestamp(Time.getTime()))) {
                     var notificationDTO = new NotificationDTO();
                     notificationDTO.setId(el.getId());
                     var entityAuthorDTO = new EntityAuthorDTO();
@@ -228,8 +231,6 @@ public class NotificationService {
                     entityAuthorDTO.setFirstName(el.getEntity().getPerson().getFirstName());
                     entityAuthorDTO.setLastName(el.getEntity().getPerson().getLastName());
                     entityAuthorDTO.setId(el.getEntity().getPerson().getId());
-
-                    notificationDTO.setId(el.getId());
                     notificationDTO.setEntityAuthor(entityAuthorDTO);
                     notificationDTO.setEventType(el.getNotificationType().toString());
                     notificationDTO.setSentTime(el.getSentTime().getTime());
@@ -285,7 +286,7 @@ public class NotificationService {
 
             }
         }
-
+        deleteAllOldNotification();
     }
 
     private void addNotification(Integer authorPerson, Integer targetPerson) {
@@ -307,5 +308,19 @@ public class NotificationService {
         notification.setNotificationType(NotificationType.FRIEND_BIRTHDAY);
         notification.setSentTime(new Timestamp(Time.getTime()));
         notificationRepository.save(notification);
+
+    }
+
+    private void deleteAllOldNotification() {
+        Date date = Date.from(LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC));
+        notificationRepository.deleteAllBySentTimeBefore(date);
+        var notificationEntity = notificationEntityRepository.findAll();
+        for(NotificationEntity element: notificationEntity){
+            var notification = notificationRepository.findAllByEntity(element.getId());
+            if(notification.isEmpty()){
+                notificationEntityRepository.delete(element);
+            }
+        }
+
     }
 }

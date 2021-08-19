@@ -177,7 +177,7 @@ public class PostCommentService {
         if (comment == null) {
             throw new NotFoundException(Config.STRING_NO_COMMENT_IN_DB);
         }
-
+        deleteCommentNotification(commentID);
         comment.setDeleted(true);
         commentRepository.save(comment);
 
@@ -389,5 +389,13 @@ public class PostCommentService {
             postCommentArrayList.add(notification);
             notificationRepository.saveAll(postCommentArrayList);
         }
+    }
+
+    private void deleteCommentNotification(Integer commentID){
+        var notificationEntity = notificationEntityRepository.findAllByPostComment(commentID);
+        for(NotificationEntity element: notificationEntity){
+            notificationRepository.deleteAllByEntity(element.getId());
+        }
+        notificationEntityRepository.deleteAll(notificationEntity);
     }
 }

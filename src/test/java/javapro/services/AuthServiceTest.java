@@ -10,9 +10,6 @@ import javapro.model.Town;
 import javapro.model.dto.auth.UnauthorizedPersonDTO;
 import javapro.repository.DeletedPersonRepository;
 import javapro.repository.PersonRepository;
-import javapro.repository.TokenRepository;
-import javapro.util.PersonToDtoMapper;
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,14 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,16 +39,7 @@ public class AuthServiceTest {
     private AuthService authService;
 
     @Mock
-    private Logger logger;
-
-    @Mock
     PersonRepository personRepository;
-
-    @Mock
-    private AuthenticationManager authenticationManager;
-
-    @Mock
-    private PersonToDtoMapper personToDtoMapper;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -61,13 +48,7 @@ public class AuthServiceTest {
     private DeletedPersonRepository deletedPersonRepository;
 
     @Mock
-    private TokenRepository tokenRepository;
-
-    @Mock
     private HttpServletRequest httpServletRequest;
-
-    @Mock
-    private Authentication auth;
 
     @Before
     public void setUp() {
