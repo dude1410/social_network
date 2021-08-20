@@ -193,6 +193,7 @@ public class DialogsService {
                                 lastDialogMessage.getReadStatus())));
             }
         }
+        Collections.sort(dialogDataList);
         return dialogDataList;
     }
 
