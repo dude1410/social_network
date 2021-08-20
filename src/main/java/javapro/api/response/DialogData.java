@@ -20,6 +20,14 @@ public class DialogData implements Comparable<DialogData>{
 
     @Override
     public int compareTo(@NonNull DialogData o) {
-        return this.getLastMessage().getTime().compareTo(o.getLastMessage().getTime());
+        if (this.getLastMessage().getTime() > o.getLastMessage().getTime()) {
+            return -1;
+        }
+        else {
+            if (this.getLastMessage().getTime() < o.getLastMessage().getTime()) {
+                return 1;
+            }
+            return 0;
+        }
     }
 }
