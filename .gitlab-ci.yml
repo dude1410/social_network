@@ -1,7 +1,7 @@
 stages:
     - build
     - test
-    - sonar
+    # - sonar
     - deploy
 
 build:
@@ -39,14 +39,14 @@ additional_testing:
     - echo "Do another parallel test here.."
     - echo "For example run a lint test"
 
-update_sonar_report:
-  stage: sonar
-  only:
-    - master
-  except:
-    - tags
-  script:
-    - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
+# update_sonar_report:
+#   stage: sonar
+#   only:
+#     - master
+#   except:
+#     - tags
+#   script:
+#     - mvn clean package sonar:sonar -Dsonar.login=e5e266e93d8140c7ea8932a43bfd55d369b47efa -Dmaven.test.skip=true
 
 deploy:
   stage: deploy
